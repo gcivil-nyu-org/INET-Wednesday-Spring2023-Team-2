@@ -1,0 +1,16 @@
+
+
+<form action="." method="POST">{% csrf_token %}
+    {{ form.as_p }}
+    <!-- {% for i in form %}
+    {{ i }}
+    {% endfor %} -->
+    <input type="submit">
+
+</form>
+
+
+
+<h1>
+    Already Registered? <a href={% url 'login_page' %}> Login </a>
+</h1>
