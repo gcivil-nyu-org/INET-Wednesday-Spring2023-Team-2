@@ -1,17 +1,18 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm
 
-from .models import UserRegistration
+from .models import Custom_User
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField()
+    username = forms.CharField()
     password = forms.CharField(widget = forms.PasswordInput)
 
 
-class RegisterForm(forms.ModelForm):
+class RegisterForm(UserCreationForm):
     class Meta:
-        model = UserRegistration
-        exclude = []
-        widget = {
-        'password': forms.PasswordInput,
-        }
+        model = Custom_User
+        fields = ['username', 'email']
+        # widget = {
+        # 'password': forms.PasswordInput,
+        # }

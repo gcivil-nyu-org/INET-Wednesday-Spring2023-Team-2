@@ -19,6 +19,8 @@ from posts.views import redirect_to_home_view
 from posts.views import home_view
 from login.views import login_view
 from login.views import register_view
+from login.views import logout_view
+
 
 
 
@@ -28,4 +30,6 @@ urlpatterns = [
     path('home/', home_view, name="home_page"),
     path('login/', login_view, name="login_page"),
     path('register/', register_view, name="register_page"),
+    path('logout/', logout_view, name="logout_page"),
+    
 ]
