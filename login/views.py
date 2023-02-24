@@ -22,7 +22,6 @@ def logout_view(request):
 def login_view(request):
     my_form = LoginForm()
     if request.method == 'POST':
-        print(request.POST)
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username = username, password = password)
@@ -39,7 +38,6 @@ def login_view(request):
 
 def register_view(request):
     my_form = RegisterForm()
-    print('pp', request)
     if request.method == 'POST':
         my_form = RegisterForm(request.POST)
         if my_form.is_valid():
