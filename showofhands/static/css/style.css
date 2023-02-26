@@ -30,7 +30,7 @@ p {
 	font-weight: 100;
 	line-height: 20px;
 	letter-spacing: 0.5px;
-	margin: 20px 0 30px;
+	margin: 20pxFED99B 0 30px;
 }
 
 span {
@@ -46,8 +46,8 @@ a {
 
 button {
 	border-radius: 20px;
-	border: 1px solid #FF4B2B;
-	background-color: #FF4B2B;
+	border: 1px solid #FED18C;
+	background-color: #ffb20f;
 	color: #FFFFFF;
 	font-size: 12px;
 	font-weight: bold;
@@ -96,9 +96,9 @@ input {
 			0 10px 10px rgba(0,0,0,0.22);
 	position: relative;
 	overflow: hidden;
-	width: 1000px;
+	width: 1200px;
 	max-width: 100%;
-	min-height: 800px;
+	min-height: 850px;
 }
 
 .form-container {
@@ -160,9 +160,9 @@ input {
 }
 
 .overlay {
-	background: #FF416C;
-	background: -webkit-linear-gradient(to right, #FF4B2B, #FF416C);
-	background: linear-gradient(to right, #FF4B2B, #FF416C);
+	background: #fe654f;
+	background: -webkit-linear-gradient(to right, #FED18C, #fe654f);
+	background: linear-gradient(to right, #FED18C, #fe654f);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: 0 0;
@@ -253,9 +253,28 @@ footer a {
 
 select {
 	outline: 0;
-	background: #fff;
+	background-color: #eee;
+	border-color: #FFFFFF;
 	color: #333;
-	border: 1px solid #FF4B2B;
-	padding: 5px 45px;
-	border-radius: 20px;
+	border: none;
+	padding: 12px 15px;
+	margin: 8px 0;
+	width: 100%;
+}
+
+.label-flex {
+	justify-content: space-between;
+	-moz-justify-content: space-between;
+	-webkit-justify-content: space-between;
+	-o-justify-content: space-between;
+	-ms-justify-content: space-between; }
+	.label-flex label {
+	  width: auto; }
+
+.select-list {
+  position: relative;
+  display: inline-block;}
+
+.yearsold ::after {
+	content: 'Years Old';
 }

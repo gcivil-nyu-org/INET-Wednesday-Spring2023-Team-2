@@ -9,31 +9,37 @@
 	<div class="form-container sign-up-container">
 		<form action="#">
 			<h1>Create Account</h1>
+			<br></br>
+			<!--
 			<div class="social-container">
 				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
 				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your email for registration</span>
+			-->
 			<input type="text" placeholder="Username" required/>
 			<input type="email" placeholder="Email" required/>
 			<input type="password" placeholder="Password" required/>
             <!--Zip codes or boroughs? Change this to funnel in zip codes from ds-->
-			<label for="location">Location</label>
-				<select name="location" id="location">
-					<option value="11368">11368</option>
-					<option value="11385">11385</option>
-					<option value="11208">11208</option>
-					<option value="11236">11236</option>
-					<option value="10467">10467</option>
-				</select>
+			<!--<label for="location">Location</label>-->
+			<select name="location" id="location" required>
+				<option disabled="disabled" selected="selected">Choose zip code</option>
+				<option value="11368">11368</option>
+				<option value="11385">11385</option>
+				<option value="11208">11208</option>
+				<option value="11236">11236</option>
+				<option value="10467">10467</option>
+			</select>
 			<!--Change this to drop down list/single choice multi later-->
-			<label for="gender">Gender</label>
-				<select name="location" id="location">
-					<option value="female">Female</option>
-					<option value="male">Male</option>
-					<option value="other">Other</option>
-				</select>
+			<!--<label for="gender">Gender</label>-->
+			<select name="location" id="location" required>
+				<option disabled="disabled" selected="selected">Choose gender</option>
+				<option value="female">Female</option>
+				<option value="male">Male</option>
+				<option value="other">Other</option>
+			</select>
+			<input type="number" id="age" name="age" min="13" max="100" placeholder="Age" required>
 			<a></a>
 			<button>Sign Up</button>
 		</form>
@@ -41,12 +47,15 @@
 	<div class="form-container sign-in-container">
 		<form action="#">
 			<h1>Sign in</h1>
+			<br></br>
+			<!--
 			<div class="social-container">
 				<a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
 				<a href="#" class="social"><i class="fab fa-google-plus-g"></i></a>
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your account</span>
+			-->
 			<input type="email" placeholder="Email" required/>
 			<input type="password" placeholder="Password" required/>
 			<a href="#">Forgot your password?</a>
@@ -57,7 +66,7 @@
 		<div class="overlay">
 			<div class="overlay-panel overlay-left">
 				<h1>Welcome Back!</h1>
-				<p>To keep connected with us please login with your personal info</p>
+				<p>Log in now to Show of Hands</p>
 				<button class="ghost" id="signIn">Sign In</button>
 			</div>
 			<div class="overlay-panel overlay-right">
