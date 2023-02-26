@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+
+    
+<head>
+    <meta charset="UTF-8" />
+    <title>Headers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{% static '../static/css/reset.min.css' %}"/>
+    <link rel="stylesheet" href="{% static '../static/css/headerstyle.css' %}"/>
+    <link rel="stylesheet" href="{% static '../static/css/header.css' %}" />
+</head> 
+
+<body>
+    <!-- Header Start -->
+    <header class="site-header">
+        <div class="wrapper site-header__wrapper">
+            <div class="site-header__start">
+                <nav class="nav">
+                    <button class="nav__toggle" aria-expanded="false" type="button">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+              </svg>
+            </button>
+                    <ul class="nav__wrapper">
+                        <li class="nav__item"><a href="#">Home</a></li>
+                        <li class="nav__item"><a href="#">Profile</a></li>
+                        <li class="nav__item"><a href="#">Friends</a></li>
+                        <li class="nav__item"><a href="#">Party!</a></li>
+                        <li class="nav__item"><a href="#">Login</a></li>
+                    </ul>
+                </nav>
+                <a href="#" class="brand">Show Of Hands</a>
+            </div>
+            <div class="site-header__middle">
+                <ul class="sub-nav">
+                    <li class=""><a href="#">Home</a></li>
+                    <li class=""><a href="#">Profile</a></li>
+                    <li class=""><a href="#">Party!</a></li>
+                    <li class=""><a href="#">About</a></li>
+                </ul>
+            </div>
+            <div class="site-header__end">
+                <a href="#" class="button button--icon" aria-label="Sign in">
+                    <svg version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <g>
+                <path
+                  d="m83.898 77.398c-2.3984-13-13.699-22.5-26.898-22.5h-13.699c-13.5 0-24.898 9.8008-27.102 23.102-1.1016 6.6992 4.1016 12.699 10.801 12.699h46.199c6.8008 0 12-6.1992 10.801-12.898z"
+                />
+                <path
+                  d="m36.102 44.199c7.8008 7.8008 20.398 8 28.398 0.39844l0.19922-0.19922c6.8984-6.6016 7.6016-17.301 1.5-24.699-8.3008-10-23.699-9.8008-31.699 0.39844-5.6016 7.1992-5 17.5 1.5 24z"
+                />
+              </g>
+            </svg>
+
+                    <span>Sign in</span>
+                </a>
+            </div>
+        </div>
+    </header>
+    <!-- Header End -->
+
+    <script src="{% static '../static/js/header.js' %}"></script>
+</body>
+
+</html>
