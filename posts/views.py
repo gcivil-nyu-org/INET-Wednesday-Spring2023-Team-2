@@ -4,10 +4,8 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 # Create your views here.
-
-def redirect_to_home_view(request):
-    return redirect(reverse('home_page'))
     
-
+#home page - will generate random post id to display for user - will change to empty later in urls
+#generate id and redirect/reverse with that parameter
 def home_view(request):
     return render(request, "pages/home.html")

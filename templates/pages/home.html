@@ -4,9 +4,9 @@
 
 <h1>
     {% if not user.is_authenticated %}
-    <a href={% url 'login_page' %}> Login </a>
+    <a href={% url 'account:login_page' %}> Login </a>
     <p></p>
     {% elif user.is_authenticated %}
-    <a href={% url 'logout_page' %}> Logout </a>
+    <a href={% url 'account:logout_page' %}> Logout </a>
     {% endif %}
 </h1>
