@@ -3,7 +3,6 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}" />
-	<script type="text/javascript" src="{% static '../static/js/login.js' %}"></script>
 </head>
 
 <div class="container" id="container">
@@ -19,10 +18,23 @@
 			<input type="text" placeholder="Username" required/>
 			<input type="email" placeholder="Email" required/>
 			<input type="password" placeholder="Password" required/>
-            <!--Change this to drop down list later. Maybe boroughs or zip codes?-->
-            <input type="text" placeholder="Location" required/>
+            <!--Zip codes or boroughs? Change this to funnel in zip codes from ds-->
+			<label for="location">Location</label>
+				<select name="location" id="location">
+					<option value="11368">11368</option>
+					<option value="11385">11385</option>
+					<option value="11208">11208</option>
+					<option value="11236">11236</option>
+					<option value="10467">10467</option>
+				</select>
 			<!--Change this to drop down list/single choice multi later-->
-			<input type="text" placeholder="Gender" required/>
+			<label for="gender">Gender</label>
+				<select name="location" id="location">
+					<option value="female">Female</option>
+					<option value="male">Male</option>
+					<option value="other">Other</option>
+				</select>
+			<a></a>
 			<button>Sign Up</button>
 		</form>
 	</div>
@@ -46,12 +58,14 @@
 			<div class="overlay-panel overlay-left">
 				<h1>Welcome Back!</h1>
 				<p>To keep connected with us please login with your personal info</p>
-				<button class="ghost" id="signIn" onclick="signInClick()">Sign In</button>
+				<button class="ghost" id="signIn">Sign In</button>
 			</div>
 			<div class="overlay-panel overlay-right">
-				<h1>Hello, Friend!</h1>
-				<p>Enter your personal details and start journey with us</p>
-				<button class="ghost" id="signUp" onclick="signUpClick()">Sign Up</button>
+				<h1>Hello!</h1>
+				<p>Enter your info and begin polling with us!</p>
+				<button class="ghost" id="signUp">Sign Up</button>
+				<!--this js script must be placed at the end of the file AFTER buttons-->
+				<script type="text/javascript" src="{% static '../static/js/login.js' %}"></script>
 			</div>
 		</div>
 	</div>

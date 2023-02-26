@@ -96,9 +96,9 @@ input {
 			0 10px 10px rgba(0,0,0,0.22);
 	position: relative;
 	overflow: hidden;
-	width: 768px;
+	width: 1000px;
 	max-width: 100%;
-	min-height: 480px;
+	min-height: 800px;
 }
 
 .form-container {
@@ -249,4 +249,13 @@ footer i {
 footer a {
     color: #3c97bf;
     text-decoration: none;
+}
+
+select {
+	outline: 0;
+	background: #fff;
+	color: #333;
+	border: 1px solid #FF4B2B;
+	padding: 5px 45px;
+	border-radius: 20px;
 }
