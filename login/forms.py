@@ -1,12 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 
 from .models import Custom_User
 
 
 
 class PasswordResetConfirmationForm(forms.Form):
-    username_email = forms.CharField()
+    username_or_email = forms.CharField()
 
 
 class PasswordResetForm(UserCreationForm):
@@ -27,3 +28,9 @@ class RegisterForm(UserCreationForm):
         # widget = {
         # 'password': forms.PasswordInput,
         # }
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        if Custom_User.objects.filter(email=email).exists():
+            raise ValidationError("Email already exists")
+        return email

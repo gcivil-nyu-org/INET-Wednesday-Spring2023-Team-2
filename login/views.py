@@ -36,7 +36,8 @@ def password_reset_view(request, uid, token):
             password_reset_form = PasswordResetForm(request.POST)
 
             if password_reset_form.is_valid():
-                user_.password = password_reset_form['password1']
+                user_.set_password(password_reset_form.cleaned_data["password1"])
+                print(password_reset_form.cleaned_data['password1'])
                 user_.save()
 
                 messages.success(request, f"Password Reset! Login to proceed")
@@ -59,7 +60,7 @@ def password_reset_view(request, uid, token):
 def password_reset_confirmation_view(request):
     password_reset_form = PasswordResetConfirmationForm()
     if request.method == 'POST':
-        username_email = request.POST['username_email']
+        username_email = request.POST['username_or_email']
         try:
             user_ = Custom_User.objects.get(username=username_email)
             email_ = user_.email
@@ -71,6 +72,7 @@ def password_reset_confirmation_view(request):
                 messages.error(request, f"Username or Email doesn't exist!")
                 contents = {'form': password_reset_form}
                 return render(request, "pages/password_reset_confirmation.html", contents)
+        print(user_.username, email_)
         
         #send token mail
         email_subject = "Password Reset"
