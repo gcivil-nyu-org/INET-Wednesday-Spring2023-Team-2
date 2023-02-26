@@ -1,7 +1,9 @@
 {% include 'includes/messages.html' %}
+{% load static %}
 
 <head>
-    <link rel="stylesheet" type="text/css" href="css/style.css" />
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}" />
+	<script type="text/javascript" src="{% static '../static/js/login.js' %}"></script>
 </head>
 
 <div class="container" id="container">
@@ -14,11 +16,13 @@
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your email for registration</span>
-			<input type="text" placeholder="Username" />
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
+			<input type="text" placeholder="Username" required/>
+			<input type="email" placeholder="Email" required/>
+			<input type="password" placeholder="Password" required/>
             <!--Change this to drop down list later. Maybe boroughs or zip codes?-->
-            <input type="location" placeholder="Location" />
+            <input type="text" placeholder="Location" required/>
+			<!--Change this to drop down list/single choice multi later-->
+			<input type="text" placeholder="Gender" required/>
 			<button>Sign Up</button>
 		</form>
 	</div>
@@ -31,8 +35,8 @@
 				<a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
 			</div>
 			<span>or use your account</span>
-			<input type="email" placeholder="Email" />
-			<input type="password" placeholder="Password" />
+			<input type="email" placeholder="Email" required/>
+			<input type="password" placeholder="Password" required/>
 			<a href="#">Forgot your password?</a>
 			<button>Sign In</button>
 		</form>
@@ -42,12 +46,12 @@
 			<div class="overlay-panel overlay-left">
 				<h1>Welcome Back!</h1>
 				<p>To keep connected with us please login with your personal info</p>
-				<button class="ghost" id="signIn">Sign In</button>
+				<button class="ghost" id="signIn" onclick="signInClick()">Sign In</button>
 			</div>
 			<div class="overlay-panel overlay-right">
 				<h1>Hello, Friend!</h1>
 				<p>Enter your personal details and start journey with us</p>
-				<button class="ghost" id="signUp">Sign Up</button>
+				<button class="ghost" id="signUp" onclick="signUpClick()">Sign Up</button>
 			</div>
 		</div>
 	</div>
