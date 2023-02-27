@@ -38,7 +38,6 @@ def password_reset_view(request, uid, token):
 
             if password_reset_form.is_valid():
                 user_.set_password(password_reset_form.cleaned_data["password1"])
-                print(password_reset_form.cleaned_data['password1'])
                 user_.save()
 
                 messages.success(request, f"Password Reset! Login to proceed")
@@ -148,7 +147,7 @@ def access_view(request):
     if request.method == 'POST':
         return access_info_d[request.POST['access_info']](request, login_form, register_form)
     
-    contents = {'login_form': login_form, 'register_form': register_form}
+    contents = {'login_form': login_form, 'register_form': register_form, 'class_': ""}
     return render(request, "pages/login.html", contents)
 
 
@@ -160,15 +159,13 @@ def login_view(request, login_form, register_form):
         username = login_form.cleaned_data['username']
         password = login_form.cleaned_data['password']
         user = authenticate(request, username=username, password=password)
-        print(user)
         if user is not None:
             login(request, user)
             return redirect(reverse('posts:home_page'))
     else:
-        print("here3 - error")
         messages.error(request, f"Username or password is wrong.")
     
-    contents = {'login_form': login_form, 'register_form': register_form}
+    contents = {'login_form': login_form, 'register_form': register_form, 'class_': ""}
     return render(request, "pages/login.html", contents)
 
 
@@ -195,5 +192,5 @@ def register_view(request, login_form, register_form):
         for err in list(register_form.errors.values()):
             messages.error(request, err)
 
-    contents = {'login_form': login_form, 'register_form': register_form}
+    contents = {'login_form': login_form, 'register_form': register_form, 'class_': "right-panel-active"}
     return render(request, "pages/login.html", contents)

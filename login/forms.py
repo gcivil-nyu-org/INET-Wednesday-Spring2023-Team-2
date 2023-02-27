@@ -25,13 +25,22 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = Custom_User
         fields = ['username', 'email', 'password1', 'password2']
-        widgets = {
-            'password1': forms.PasswordInput(attrs={'placeholder': 'Password'}),
-            'password2': forms.PasswordInput(attrs={'placeholder': 'Confirm Password'}),
-        }
+        # widgets = {
+        #     'password1': forms.PasswordInput(attrs={'placeholder': 'Password'}),
+        #     'password2': forms.PasswordInput(attrs={'placeholder': 'Confirm Password'}),
+        # }
         # widget = {
         # 'password': forms.PasswordInput,
         # }
+
+    # def __init__(self, *args, **kwargs):
+    #     super(RegisterForm, self).__init__(*args, **kwargs)
+
+    #     self.fields['username'].widget.attrs['placeholder'] = 'Username'
+    #     self.fields['password1'].widget.attrs['placeholder'] = 'Password'
+    #     self.fields['password2'].widget.attrs['placeholder'] = 'Confirm Password'
+    #     self.fields['email'].widget.attrs['placeholder'] = 'Email'
+        
 
     def clean_email(self):
         email = self.cleaned_data['email']
