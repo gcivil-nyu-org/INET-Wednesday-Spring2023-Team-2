@@ -63,7 +63,7 @@
 			{{ form.username }}
 			<!-- <input type="password" placeholder="Password" required/> -->
 			{{ form.password }}
-			<a href="#">Forgot your password?</a>
+			<a href="{% url 'account:passwordresetconfirmation_page' %}">Forgot your password?</a>
 			<input type = "submit" placeholder="Submit">
 		</form>
 	</div>
@@ -77,7 +77,7 @@
 			<div class="overlay-panel overlay-right">
 				<h1>Hello!</h1>
 				<p>Enter your info and begin polling with us!</p>
-				<a href = "{% url 'register_page' %}">
+				<a href = "{% url 'account:register_page' %}">
 				<button class="ghost" id="signUp">Sign Up</button>
 				</a>
 				<!--this js script must be placed at the end of the file AFTER buttons-->
