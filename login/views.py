@@ -54,6 +54,26 @@ def password_reset_view(request, uid, token):
     return redirect(reverse('account:login_page'))
 
 
+#fucntion to send eamil for account verf and reset password
+def email_token(request, user_, email_subject, text_, token_, reverse_link):
+    uid = urlsafe_base64_encode(force_bytes(user_.pk)),
+    token = token_.make_token(user_)
+    password_reset_link = request.build_absolute_uri(reverse(reverse_link, kwargs={'uid': uid[0], 'token': token}))
+
+    email_msg = f"Hello {user_.username},\n\nPlease click the following link to {text_}:\n{password_reset_link}"
+
+    try:
+        send_mail(
+            subject = email_subject,
+            message = email_msg,
+            from_email = settings.EMAIL_HOST_USER,
+            recipient_list = [user_.email]
+        )
+    except:
+        return 0
+    
+    return 1
+
 
 
 #to send password link in mail
@@ -63,41 +83,28 @@ def password_reset_confirmation_view(request):
         username_email = request.POST['username_or_email']
         try:
             user_ = Custom_User.objects.get(username=username_email)
-            email_ = user_.email
         except:
             try:
                 user_ = Custom_User.objects.get(email=username_email)
-                email_ = user_.email
             except:
                 messages.error(request, f"Username or Email doesn't exist!")
                 contents = {'form': password_reset_form}
                 return render(request, "pages/password_reset_confirmation.html", contents)
-        print(user_.username, email_)
         
         #send token mail
         email_subject = "Password Reset"
-        uid = urlsafe_base64_encode(force_bytes(user_.pk)),
-        token = password_reset_token.make_token(user_)
-        password_reset_link = request.build_absolute_uri(reverse('account:passwordreset_page', kwargs={'uid': uid[0], 'token': token}))
-
-        email_msg = f"Hello {user_.username},\n\nPlease click the following link to reset your password:\n{password_reset_link}"
+        text_ = "reset your password"
+        token_ = password_reset_token
+        reverse_link = "account:passwordreset_page"
         
-        try:
-            send_mail(
-                subject = email_subject,
-                message = email_msg,
-                from_email = settings.EMAIL_HOST_USER,
-                recipient_list = [email_]
-            )
-        except:
+        if email_token(request, user_, email_subject, text_, token_, reverse_link):
+            messages.success(request, "Password Reset Link set via email. Reset Password to Login")
+            # return maybe redirect to home? or login?
+
+        else:
             messages.error(request, "Error sending email!")
             password_reset_form = PasswordResetConfirmationForm(request.POST)
-            contents = {'form': password_reset_form}
-            return render(request, "pages/password_reset_confirmation.html", contents)
-
-        messages.success(request, "Password Reset Link set via email. Reset Password to Login")
-        # return maybe redirect to home? or login?
-
+            
 
     contents = {'form': password_reset_form}
     return render(request, "pages/password_reset_confirmation.html", contents)
@@ -155,39 +162,27 @@ def register_view(request):
         my_form = RegisterForm(request.POST)
         
         if my_form.is_valid():
-            user_obj = my_form.save(commit=False)
-            user_obj.is_active = False
-            user_obj.save()
+            user_ = my_form.save(commit=False)
+            user_.is_active = False
+            user_.save()
             
-            data_ = my_form.cleaned_data
-            
+            #send email token
             email_subject = "Verification"
-            uid = urlsafe_base64_encode(force_bytes(user_obj.pk)),
-            token = account_activation_token.make_token(user_obj)
-            email_act_link = request.build_absolute_uri(reverse('account:activate_page', kwargs={'uid': uid[0], 'token': token}))
-
-            email_msg = f"Hello {data_['username']},\n\nPlease click the following link to activate your account:\n{email_act_link}"
+            text_ = "activate your account"
+            token_ = account_activation_token
+            reverse_link = "account:activate_page"
             
-            try:
-                send_mail(
-                    subject = email_subject,
-                    message = email_msg,
-                    from_email = settings.EMAIL_HOST_USER,
-                    recipient_list = [data_['email']]
-                )
-            except:
+            if email_token(request, user_, email_subject, text_, token_, reverse_link):
+                messages.success(request, "Registration Successfull, Verify Email to Login")
+                return redirect(reverse('account:login_page'))
+            else:
                 messages.error(request, "Email verification failed!")
                 my_form = RegisterForm(request.POST)
-                contents = {'form': my_form}
-                return render(request, "pages/register.html", contents)
-
-            messages.success(request, "Registration Successfull, Verify Email to Login")
-            return redirect(reverse('account:login_page'))
 
         else:
             for err in list(my_form.errors.values()):
                 messages.error(request, err)
             my_form = RegisterForm(request.POST)
-    
+
     contents = {'form': my_form}
     return render(request, "pages/register.html", contents)
