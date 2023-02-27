@@ -136,104 +136,64 @@ def logout_view(request):
     logout(request)
     return redirect(reverse('posts:home_page')) 
 
-def login_view(request):
+
+
+#comprises of both login_view and register_view
+def access_view(request):
     login_form = LoginForm()
     register_form = RegisterForm()
 
-    if request.method == 'POST':
-        # handle login
-        print("here=out")
-        if 'sign_in' in request.POST:
-            login_form = AuthenticationForm(request, data=request.POST)
-            print("here1")
-            if login_form.is_valid():
-                print("here2 - valid")
-                username = login_form.cleaned_data['username']
-                password = login_form.cleaned_data['password']
-                user = authenticate(request, username=username, password=password)
-                if user is not None:
-                    login(request, user)
-                    return redirect(reverse('posts:home_page'))
-                else:
-                    print("here3 - error")
-                    messages.error(request, f"Username or password is wrong.")
-        # handle registration
-        elif 'sign_up' in request.POST:
-            register_form = RegisterForm(request.POST)
-            if register_form.is_valid():
-                user_ = register_form.save(commit=False)
-                user_.is_active = False
-                user_.save()
-                
-                # send email token
-                email_subject = "Verification"
-                text_ = "activate your account"
-                token_ = account_activation_token
-                reverse_link = "account:activate_page"
-                
-                if email_token(request, user_, email_subject, text_, token_, reverse_link):
-                    messages.success(request, "Registration successful, verify email to login.")
-                    return redirect(reverse('account:login_page'))
-                else:
-                    messages.error(request, "Email verification failed!")
-            else:
-                for err in list(register_form.errors.values()):
-                    messages.error(request, err)
+    access_info_d = {'Sign In': login_view, 'Sign Up': register_view}
 
+    if request.method == 'POST':
+        return access_info_d[request.POST['access_info']](request, login_form, register_form)
+    
     contents = {'login_form': login_form, 'register_form': register_form}
     return render(request, "pages/login.html", contents)
 
 
-"""
+
 #log in a user
-def login_view(request):
-    my_form = LoginForm()
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username = username, password = password)
+def login_view(request, login_form, register_form):
+    login_form = AuthenticationForm(request, data=request.POST)
+    if login_form.is_valid():
+        username = login_form.cleaned_data['username']
+        password = login_form.cleaned_data['password']
+        user = authenticate(request, username=username, password=password)
         print(user)
         if user is not None:
             login(request, user)
             return redirect(reverse('posts:home_page'))
-        else:
-            messages.error(request, f"username or password is wrong")
-
-    contents = {'form': my_form}
+    else:
+        print("here3 - error")
+        messages.error(request, f"Username or password is wrong.")
+    
+    contents = {'login_form': login_form, 'register_form': register_form}
     return render(request, "pages/login.html", contents)
 
 
 #register a user
-def register_view(request):
-    my_form = RegisterForm()
-   
-    if request.method == 'POST':
-        my_form = RegisterForm(request.POST)
+def register_view(request, login_form, register_form):
+    register_form = RegisterForm(request.POST)
+    if register_form.is_valid():
+        user_ = register_form.save(commit=False)
+        user_.is_active = False
+        user_.save()
         
-        if my_form.is_valid():
-            user_ = my_form.save(commit=False)
-            user_.is_active = False
-            user_.save()
-            
-            #send email token
-            email_subject = "Verification"
-            text_ = "activate your account"
-            token_ = account_activation_token
-            reverse_link = "account:activate_page"
-            
-            if email_token(request, user_, email_subject, text_, token_, reverse_link):
-                messages.success(request, "Registration Successfull, Verify Email to Login")
-                return redirect(reverse('account:login_page'))
-            else:
-                messages.error(request, "Email verification failed!")
-                my_form = RegisterForm(request.POST)
-
+        # send email token
+        email_subject = "Verification"
+        text_ = "activate your account"
+        token_ = account_activation_token
+        reverse_link = "account:activate_page"
+        
+        if email_token(request, user_, email_subject, text_, token_, reverse_link):
+            messages.success(request, "Registration successful, verify email to login.")
+            return redirect(reverse('account:login_page'))
         else:
-            for err in list(my_form.errors.values()):
-                messages.error(request, err)
-            my_form = RegisterForm(request.POST)
+            messages.error(request, "Email verification failed!")
+    else:
+        for err in list(register_form.errors.values()):
+            messages.error(request, err)
 
-    contents = {'form': my_form}
-    return render(request, "pages/register.html", contents)
-    """
-    
+    contents = {'login_form': login_form, 'register_form': register_form}
+    return render(request, "pages/login.html", contents)
