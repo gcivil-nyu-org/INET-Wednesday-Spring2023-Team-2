@@ -1,3 +1,5 @@
+{% extends 'includes/header.html' %}
+{% block content %}
 <h1>
     Welcome, {{ request.user }}
 </h1>
@@ -10,3 +12,4 @@
     <a href={% url 'logout_page' %}> Logout </a>
     {% endif %}
 </h1>
+{% endblock %}

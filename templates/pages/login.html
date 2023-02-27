@@ -1,5 +1,7 @@
-{% include 'includes/messages.html' %}
+{% extends 'includes/header.html' %}
 
+{% block content %}
+{% include 'includes/messages.html' %}
 <form action="." method="POST">{% csrf_token %}
     {{ form.as_p }}
     <!-- {% for i in form %}
@@ -14,3 +16,5 @@
 <h1>
     Not a member? <a href={% url 'register_page' %}> Register </a>
 </h1>
+
+{% endblock %}

@@ -20,7 +20,6 @@ from posts.views import home_view
 from login.views import login_view
 from login.views import register_view
 from login.views import logout_view
-from header.views import header_view
 
 
 
@@ -31,5 +30,5 @@ urlpatterns = [
     path('login/', login_view, name="login_page"),
     path('register/', register_view, name="register_page"),
     path('logout/', logout_view, name="logout_page"),
-    path('header/', header_view, name='header'),
+    
 ]

@@ -11,6 +11,7 @@ from .forms import LoginForm
 from .forms import RegisterForm
 
 
+
 # Create your views here.
 
 def logout_view(request):
