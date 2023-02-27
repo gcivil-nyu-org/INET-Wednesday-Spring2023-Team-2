@@ -2,12 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.conf import settings
 from django.core.mail import send_mail
 from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 from .forms import LoginForm
 from .forms import RegisterForm
@@ -135,12 +136,59 @@ def logout_view(request):
     logout(request)
     return redirect(reverse('posts:home_page')) 
 
+def login_view(request):
+    login_form = LoginForm()
+    register_form = RegisterForm()
 
+    if request.method == 'POST':
+        # handle login
+        print("here=out")
+        if 'sign_in' in request.POST:
+            login_form = AuthenticationForm(request, data=request.POST)
+            print("here1")
+            if login_form.is_valid():
+                print("here2 - valid")
+                username = login_form.cleaned_data['username']
+                password = login_form.cleaned_data['password']
+                user = authenticate(request, username=username, password=password)
+                if user is not None:
+                    login(request, user)
+                    return redirect(reverse('posts:home_page'))
+                else:
+                    print("here3 - error")
+                    messages.error(request, f"Username or password is wrong.")
+        # handle registration
+        elif 'sign_up' in request.POST:
+            register_form = RegisterForm(request.POST)
+            if register_form.is_valid():
+                user_ = register_form.save(commit=False)
+                user_.is_active = False
+                user_.save()
+                
+                # send email token
+                email_subject = "Verification"
+                text_ = "activate your account"
+                token_ = account_activation_token
+                reverse_link = "account:activate_page"
+                
+                if email_token(request, user_, email_subject, text_, token_, reverse_link):
+                    messages.success(request, "Registration successful, verify email to login.")
+                    return redirect(reverse('account:login_page'))
+                else:
+                    messages.error(request, "Email verification failed!")
+            else:
+                for err in list(register_form.errors.values()):
+                    messages.error(request, err)
+
+    contents = {'login_form': login_form, 'register_form': register_form}
+    return render(request, "pages/login.html", contents)
+
+
+"""
 #log in a user
 def login_view(request):
     my_form = LoginForm()
     if request.method == 'POST':
-        print("loggggggggged in")
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username = username, password = password)
@@ -187,3 +235,5 @@ def register_view(request):
 
     contents = {'form': my_form}
     return render(request, "pages/register.html", contents)
+    """
+    

@@ -24,7 +24,11 @@ class LoginForm(forms.Form):
 class RegisterForm(UserCreationForm):
     class Meta:
         model = Custom_User
-        fields = ['username', 'email']
+        fields = ['username', 'email', 'password1', 'password2']
+        widgets = {
+            'password1': forms.PasswordInput(attrs={'placeholder': 'Password'}),
+            'password2': forms.PasswordInput(attrs={'placeholder': 'Confirm Password'}),
+        }
         # widget = {
         # 'password': forms.PasswordInput,
         # }
