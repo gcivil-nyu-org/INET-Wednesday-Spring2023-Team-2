@@ -96,9 +96,9 @@ input {
 			0 10px 10px rgba(0,0,0,0.22);
 	position: relative;
 	overflow: hidden;
-	width: 1200px;
+	width: 60%;
 	max-width: 100%;
-	min-height: 850px;
+	min-height: 75%;
 }
 
 .form-container {

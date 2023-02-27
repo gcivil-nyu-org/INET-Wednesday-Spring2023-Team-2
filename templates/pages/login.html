@@ -8,6 +8,7 @@
 <div class="container" id="container">
 	<div class="form-container sign-up-container">
 		<form action="#">
+			{% csrf_token %}
 			<h1>Create Account</h1>
 			<br></br>
 			<!--
@@ -45,7 +46,8 @@
 		</form>
 	</div>
 	<div class="form-container sign-in-container">
-		<form action="#">
+		<form action="." method = "POST">
+			{% csrf_token %}
 			<h1>Sign in</h1>
 			<br></br>
 			<!--
@@ -56,10 +58,13 @@
 			</div>
 			<span>or use your account</span>
 			-->
-			<input type="email" placeholder="Email" required/>
-			<input type="password" placeholder="Password" required/>
+			
+			<!-- <input type="text" placeholder="Username" name = "{{ form.username }}" required/> -->
+			{{ form.username }}
+			<!-- <input type="password" placeholder="Password" required/> -->
+			{{ form.password }}
 			<a href="#">Forgot your password?</a>
-			<button>Sign In</button>
+			<input type = "submit" placeholder="Submit">
 		</form>
 	</div>
 	<div class="overlay-container">
@@ -72,7 +77,9 @@
 			<div class="overlay-panel overlay-right">
 				<h1>Hello!</h1>
 				<p>Enter your info and begin polling with us!</p>
+				<a href = "{% url 'register_page' %}">
 				<button class="ghost" id="signUp">Sign Up</button>
+				</a>
 				<!--this js script must be placed at the end of the file AFTER buttons-->
 				<script type="text/javascript" src="{% static '../static/js/login.js' %}"></script>
 			</div>
