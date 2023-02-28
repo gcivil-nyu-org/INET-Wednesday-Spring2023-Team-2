@@ -11,5 +11,5 @@ urlpatterns = [
     path('activate/<uid>/<token>/', views.activate_view, name="activate_page"),
     path('password-reset-confirmation/', views.password_reset_confirmation_view, name="passwordresetconfirmation_page"),
     path('password-reset/<uid>/<token>/', views.password_reset_view, name="passwordreset_page"),
-    
+    path('profile/', views.profile_view, name="profile_page")
 ]

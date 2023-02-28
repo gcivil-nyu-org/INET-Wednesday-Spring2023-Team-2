@@ -277,7 +277,14 @@ select {
   position: relative;
   display: inline-block;}
 
-.yearsold ::after {
-	content: 'Years Old';
+.image-container {
+	width: 80%; /* or whatever width you want */
+	height: 50%; /* or whatever height you want */
+	background-color: transparent;
 }
-
+  
+.image {
+	width: 100%; /* Make the image take up the full width of the container */
+	height: 100%; /* Make the image take up the full height of the container */
+	object-fit: cover; /* Scale the image while preserving its aspect ratio to cover the entire container */
+  }

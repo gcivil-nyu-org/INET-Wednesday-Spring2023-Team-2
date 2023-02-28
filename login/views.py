@@ -195,3 +195,6 @@ def register_view(request, login_form, register_form):
 
     contents = {'login_form': login_form, 'register_form': register_form, 'class_': "right-panel-active"}
     return render(request, "pages/login.html", contents)
+
+def profile_view(request):
+    return render(request, "pages/profile.html")

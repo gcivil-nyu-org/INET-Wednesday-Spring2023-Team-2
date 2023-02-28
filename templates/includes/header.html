@@ -25,7 +25,11 @@
             </button>
                     <ul class="nav__wrapper">
                         <li class="nav__item"><a href="#">Home</a></li>
+                        {% if not user.is_authenticated %}
                         <li class="nav__item"><a href="#">Profile</a></li>
+                        {% elif user.is_authenticated %}
+                        <li class="nav__item"><a href={% url 'account:profile_page' %}>Profile</a></li>
+                        {% endif %}
                         <li class="nav__item"><a href="#">Friends</a></li>
                         <li class="nav__item"><a href="#">Party!</a></li>
                         {% if not user.is_authenticated %}
@@ -40,7 +44,12 @@
             <div class="site-header__middle">
                 <ul class="sub-nav">
                     <li class=""><a href="#">Home</a></li>
+                    <!-- <li class=""><a href="#">Profile</a></li> -->
+                    {% if not user.is_authenticated %}
                     <li class=""><a href="#">Profile</a></li>
+                    {% elif user.is_authenticated %}
+                    <li class=""><a href={% url 'account:profile_page' %}>Profile</a></li>
+                    {% endif %}
                     <li class=""><a href="#">Party!</a></li>
                     <li class=""><a href="#">About</a></li>
                 </ul>
