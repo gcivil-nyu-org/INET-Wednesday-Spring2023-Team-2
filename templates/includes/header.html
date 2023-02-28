@@ -7,9 +7,9 @@
     <meta charset="UTF-8" />
     <title>Headers</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" href="{% static 'css/reset.min.css' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/headerstyle.css' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static 'css/header.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/reset.min.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/headerstyle.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/header.css' %}" />
 </head> 
 
 <body>
@@ -28,7 +28,11 @@
                         <li class="nav__item"><a href="#">Profile</a></li>
                         <li class="nav__item"><a href="#">Friends</a></li>
                         <li class="nav__item"><a href="#">Party!</a></li>
-                        <li class="nav__item"><a href="#">Login</a></li>
+                        {% if not user.is_authenticated %}
+                            <li class="nav__item"><a href={% url 'account:login_page' %}>Log In</a></li>
+                        {% elif user.is_authenticated %}
+                            <li class="nav__item" ><a href={% url 'account:logout_page' %}>Log Out</a></li>
+                        {% endif %}
                     </ul>
                 </nav>
                 <a href="#" class="brand">Show Of Hands</a>
@@ -42,8 +46,12 @@
                 </ul>
             </div>
             <div class="site-header__end">
-                <a href="#" class="button button--icon" aria-label="Sign in">
-                    <svg version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'account:login_page' %}" class="button button--icon" >Sign In</a>
+                {% elif user.is_authenticated %}
+                    <a href="{% url 'account:logout_page' %}" class="button button--icon" >Sign Out</a>
+                {% endif %}
+                    <!-- <svg version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> -->
               <g>
                 <path
                   d="m83.898 77.398c-2.3984-13-13.699-22.5-26.898-22.5h-13.699c-13.5 0-24.898 9.8008-27.102 23.102-1.1016 6.6992 4.1016 12.699 10.801 12.699h46.199c6.8008 0 12-6.1992 10.801-12.898z"
@@ -54,12 +62,14 @@
               </g>
             </svg>
 
-                    <span>Sign in</span>
+                    
                 </a>
             </div>
         </div>
     </header>
     <!-- Header End -->
+
+      
 
     <script src="{% static 'js/header.js' %}"></script>
 </body>
