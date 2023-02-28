@@ -18,6 +18,7 @@ from .tokens import account_activation_token, password_reset_token
 from .models import Custom_User
 
 
+
 # Create your views here.
 
 #put token generator in a single function and call it function

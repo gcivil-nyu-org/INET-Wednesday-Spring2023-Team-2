@@ -20,7 +20,6 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 
 
-
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.redirect_to_home_view, name="go_home"),
