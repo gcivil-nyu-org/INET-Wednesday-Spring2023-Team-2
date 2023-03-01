@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', 'showofhands-dev.us-east-1.elasticbeanstalk.com']
 
 
 # Application definition
@@ -89,17 +89,31 @@ WSGI_APPLICATION = 'showofhands.wsgi.application'
 #     }
 # }
 
-#postgres
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('POSTGRES_DB_NAME'), 
-        'USER': os.getenv('POSTGRES_USER_NAME'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': os.getenv('POSTGRES_HOST'), 
-        'PORT': os.getenv('POSTGRES_PORT'),
+
+
+#postgres eb if available or local:
+if 'RDS_DB_NAME' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ['RDS_DB_NAME'],
+            'USER': os.environ['RDS_USERNAME'],
+            'PASSWORD': os.environ['RDS_PASSWORD'],
+            'HOST': os.environ['RDS_HOSTNAME'],
+            'PORT': os.environ['RDS_PORT'],
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.getenv('POSTGRES_DB_NAME'), 
+            'USER': os.getenv('POSTGRES_USER_NAME'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
+            'HOST': os.getenv('POSTGRES_HOST'), 
+            'PORT': os.getenv('POSTGRES_PORT'),
+        }
+    }
 
 
 #Email Settings
