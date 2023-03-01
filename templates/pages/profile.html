@@ -1,0 +1,53 @@
+{% include 'includes/messages.html' %}
+
+{% load static %}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}" />
+</head>
+
+<div class="container {{ class_ }}" id="container">
+	<div class="form-container sign-up-container">
+		<form action="." method = "POST">
+			<h1>Edit Profile</h1><a></a>
+			<input type="password" placeholder="Current Password" name ="password1" required/>
+            <input type="password" placeholder="New Password" name ="password2" required/>
+			<input type="password" placeholder="Confirm New Password" name ="password2" required/>
+			<button type = "submit" value="Sign Up" name="access_info">Confirm</button>
+		</form>
+	</div>
+	<div class="form-container sign-in-container">
+		<form action="." method = "POST">
+			{% csrf_token %}
+		
+			<div class="image-container">
+				<img class="image" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="Image">
+			</div>
+			<a></a>
+			<!--add change picture option-->
+			<button type="submit" value="" name="">Change Picture</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<button class="ghost" id="signIn">Back</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Profile Information</h1><a></a>
+				{% if request.user.is_authenticated %}
+				Username<input type="text" value="{{ request.user.username }}" readonly>
+				<a></a>
+				Email<input type="text" value="{{ request.user.email }}" readonly>
+				{% endif %}
+				<a></a>
+				<!--change here-->
+				<button class="ghost" id="signUp">Edit Profile</button>
+				</a>
+				<!--this js script must be placed at the end of the file AFTER buttons-->
+				<script type="text/javascript" src="{% static '../static/js/login.js' %}"></script>
+			</div>
+		</div>
+	</div>
+</div>
+
