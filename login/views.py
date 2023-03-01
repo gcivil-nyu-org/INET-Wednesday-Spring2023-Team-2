@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.hashers import make_password
 
 from .forms import LoginForm
 from .forms import RegisterForm
@@ -39,6 +40,11 @@ def password_reset_view(request, uid, token):
             password_reset_form = PasswordResetForm(request.POST)
 
             if password_reset_form.is_valid():
+                if make_password(password_reset_form.cleaned_data["password1"]) == user_.password:
+                    messages.error(request, "New Password cannot be the same as old one!")
+                    contents = {'form': password_reset_form}
+                    return render(request, "pages/password_reset.html", contents)
+                
                 user_.set_password(password_reset_form.cleaned_data["password1"])
                 user_.save()
 
@@ -208,7 +214,14 @@ def profile_view(request):
         
         if password_change_form.is_valid():
             old_password = password_change_form.cleaned_data["old_password"]
+            
             if authenticate(request, username=request.user.username, password=old_password):
+                
+                if old_password == password_change_form.cleaned_data["password1"]:
+                    messages.error(request, "New Password cannot be the same as old one!")
+                    contents['class_'] = "right-panel-active"
+                    return render(request, 'pages/profile.html', contents)
+                
                 request.user.set_password(password_change_form.cleaned_data["password1"])
                 request.user.save()
                 messages.success(request, "Password Changed Successfully!")
