@@ -24,7 +24,7 @@
               </svg>
             </button>
                     <ul class="nav__wrapper">
-                        <li class="nav__item"><a href="#">Home</a></li>
+                        <li class="nav__item"><a href="{% url 'posts:home_page' %}">Home</a></li>
                         {% if not user.is_authenticated %}
                         <li class="nav__item"><a href="#">Profile</a></li>
                         {% elif user.is_authenticated %}
@@ -39,11 +39,11 @@
                         {% endif %}
                     </ul>
                 </nav>
-                <a href="#" class="brand">Show Of Hands</a>
+                <a href="{% url 'posts:home_page' %}" class="brand">Show Of Hands</a>
             </div>
             <div class="site-header__middle">
                 <ul class="sub-nav">
-                    <li class=""><a href="#">Home</a></li>
+                    <li class=""><a href="{% url 'posts:home_page' %}">Home</a></li>
                     <!-- <li class=""><a href="#">Profile</a></li> -->
                     {% if not user.is_authenticated %}
                     <li class=""><a href="#">Profile</a></li>
@@ -78,7 +78,9 @@
     </header>
     <!-- Header End -->
 
-      
+    {% block content %}
+
+    {% endblock %}
 
     <script src="{% static 'js/header.js' %}"></script>
 </body>

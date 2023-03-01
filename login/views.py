@@ -13,6 +13,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .forms import LoginForm
 from .forms import RegisterForm
 from .forms import PasswordResetForm
+from .forms import PasswordChangeForm
 from .forms import PasswordResetConfirmationForm
 from .tokens import account_activation_token, password_reset_token
 from .models import Custom_User
@@ -196,5 +197,30 @@ def register_view(request, login_form, register_form):
     contents = {'login_form': login_form, 'register_form': register_form, 'class_': "right-panel-active"}
     return render(request, "pages/login.html", contents)
 
+
+
+
 def profile_view(request):
-    return render(request, "pages/profile.html")
+    password_change_form = PasswordChangeForm()
+    contents = {'password_change_form': password_change_form,  'class_': ""}
+    if request.method == 'POST':
+        password_change_form = PasswordChangeForm(request.POST)
+        
+        if password_change_form.is_valid():
+            old_password = password_change_form.cleaned_data["old_password"]
+            if authenticate(request, username=request.user.username, password=old_password):
+                request.user.set_password(password_change_form.cleaned_data["password1"])
+                request.user.save()
+                messages.success(request, "Password Changed Successfully!")
+                login(request, request.user)
+                contents = {'password_change_form': password_change_form,  'class_': ""}
+                return render(request, 'pages/profile.html', contents)
+            else:
+                messages.error(request, f"Current Password is wrong")
+                contents['class_'] = "right-panel-active"
+        else:
+            for err in list(password_change_form.errors.values()):
+                messages.error(request, err)
+            contents['class_'] = "right-panel-active"
+
+    return render(request, 'pages/profile.html', contents)

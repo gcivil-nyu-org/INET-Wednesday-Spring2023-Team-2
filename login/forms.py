@@ -5,6 +5,12 @@ from django.core.exceptions import ValidationError
 from .models import Custom_User
 
 
+class PasswordChangeForm(UserCreationForm):
+    old_password = forms.CharField(widget = forms.PasswordInput)
+    class Meta:
+        model = Custom_User
+        fields = ['password1', 'password2']
+
 
 class PasswordResetConfirmationForm(forms.Form):
     username_or_email = forms.CharField()
