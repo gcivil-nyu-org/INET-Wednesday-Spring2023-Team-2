@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'login',
     'posts',
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -62,7 +63,10 @@ ROOT_URLCONF = 'showofhands.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'login', 'templates'), 
+                 os.path.join(BASE_DIR, 'posts', 'templates'),
+                 os.path.join(BASE_DIR, 'showofhands', 'templates'),
+                 ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -162,7 +166,10 @@ USE_TZ = True
 STATIC_ROOT = ''
 STATIC_URL = '/static/'
 STATICFILES_DIRS = (
-    str(BASE_DIR) + '/static/',
+    str(BASE_DIR) + '/login/static/',
+    str(BASE_DIR) + '/posts/static/',
+    str(BASE_DIR) + '/showofhands/static/',
+
 )
 
 # Default primary key field type

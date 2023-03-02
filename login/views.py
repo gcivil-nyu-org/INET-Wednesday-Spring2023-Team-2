@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password, check_password
 
 from .forms import LoginForm
 from .forms import RegisterForm
