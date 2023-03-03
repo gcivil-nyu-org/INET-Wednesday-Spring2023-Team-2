@@ -1,88 +1,139 @@
+
+{% include 'includes/messages.html' %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
-    
 <head>
-    <meta charset="UTF-8" />
-    <title>ShowOfHands</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="stylesheet" type="text/css" href="{% static '../static/css/reset.min.css' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static '../static/css/headerstyle.css' %}"/>
-    <link rel="stylesheet" type="text/css" href="{% static '../static/css/header.css' %}" />
-</head> 
-
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!----======== CSS ======== -->
+    <link rel="stylesheet" href="{% static '../static/css/header.css' %}">
+    
+    <!----===== Boxicons CSS ===== -->
+    <link href='https://unpkg.com/boxicons@2.1.1/css/boxicons.min.css' rel='stylesheet'>
+    
+    <title>Dashboard Sidebar Menu</title> 
+</head>
 <body>
-    <!-- Header Start -->
-    <header class="site-header">
-        <div class="wrapper site-header__wrapper">
-            <div class="site-header__start">
-                <nav class="nav">
-                    <button class="nav__toggle" aria-expanded="false" type="button">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-              </svg>
-            </button>
-                    <ul class="nav__wrapper">
-                        <li class="nav__item"><a href="{% url 'posts:home_page' %}">Home</a></li>
-                        {% if not user.is_authenticated %}
-                        <li class="nav__item"><a href="#">Profile</a></li>
-                        {% elif user.is_authenticated %}
-                        <li class="nav__item"><a href={% url 'account:profile_page' %}>Profile</a></li>
-                        {% endif %}
-                        <li class="nav__item"><a href="#">Friends</a></li>
-                        <li class="nav__item"><a href="#">Party!</a></li>
-                        {% if not user.is_authenticated %}
-                            <li class="nav__item"><a href={% url 'account:login_page' %}>Log In</a></li>
-                        {% elif user.is_authenticated %}
-                            <li class="nav__item" ><a href={% url 'account:logout_page' %}>Log Out</a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
-                <a href="{% url 'posts:home_page' %}" class="brand">Show Of Hands</a>
-            </div>
-            <div class="site-header__middle">
-                <ul class="sub-nav">
-                    <li class=""><a href="{% url 'posts:home_page' %}">Home</a></li>
-                    <!-- <li class=""><a href="#">Profile</a></li> -->
-                    {% if not user.is_authenticated %}
-                    <li class=""><a href="#">Profile</a></li>
-                    {% elif user.is_authenticated %}
-                    <li class=""><a href={% url 'account:profile_page' %}>Profile</a></li>
-                    {% endif %}
-                    <li class=""><a href="#">Party!</a></li>
-                    <li class=""><a href="#">About</a></li>
-                </ul>
-            </div>
-            <div class="site-header__end">
+    <nav class="sidebar close" id="nav__toggle">
+        <header>
+            <div class="image-text">
+                
+
                 {% if not user.is_authenticated %}
-                    <a href="{% url 'account:login_page' %}" class="button button--icon" >Sign In</a>
+                <div class="text logo-text">
+                    <span class="name">Show of Hands</span>
+                </div>
                 {% elif user.is_authenticated %}
-                    <a href="{% url 'account:logout_page' %}" class="button button--icon" >Sign Out</a>
+                <div class="text logo-text">
+                    <span class="name">{{ request.user }}</span>
+                 
+                </div>
                 {% endif %}
-                    <!-- <svg version="1.1" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"> -->
-              <g>
-                <path
-                  d="m83.898 77.398c-2.3984-13-13.699-22.5-26.898-22.5h-13.699c-13.5 0-24.898 9.8008-27.102 23.102-1.1016 6.6992 4.1016 12.699 10.801 12.699h46.199c6.8008 0 12-6.1992 10.801-12.898z"
-                />
-                <path
-                  d="m36.102 44.199c7.8008 7.8008 20.398 8 28.398 0.39844l0.19922-0.19922c6.8984-6.6016 7.6016-17.301 1.5-24.699-8.3008-10-23.699-9.8008-31.699 0.39844-5.6016 7.1992-5 17.5 1.5 24z"
-                />
-              </g>
-            </svg>
+            </div>
+
+            <i class='bx bx-chevron-right toggle'id='arrow'></i>
+        </header>
+
+        <div class="menu-bar">
+            <div class="menu">
+
+                <li class="search-box">
+                    <i class='bx bx-search icon'></i>
+                    <input type="text" placeholder="Search...">
+                </li>
+
+                <ul class="menu-links">
+                    <li class="nav-link">
+                        <a href="#">
+                            <i class='bx bx-home-alt icon' ></i>
+                            <span class="text nav-text">Polls</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-link">
+                        {% if user.is_authenticated %}
+                        <a href={% url 'account:profile_page' %}>
+                            <i class='bx bx-bell icon'></i>
+                            <span class="text nav-text">Profile</span>
+                        </a>
+                        {% endif %}
+                    </li>
+
+                    <li class="nav-link">
+                        <a href="#">
+                            <i class='bx bx-bell icon'></i>
+                            <span class="text nav-text">Notifications</span>
+                        </a>
+                    </li>
+
+                 
+
+                    <li class="nav-link">
+                        <a href="#">
+                            <i class='bx bx-bell icon'></i>
+                            <span class="text nav-text">Chat</span>
+                        </a>
+                    </li>
+
+                   
+
+
+                    <li class="nav-link">
+                        <a href="#">
+                            <i class='bx bx-pie-chart-alt icon' ></i>
+                            <span class="text nav-text">Analytics</span>
+                        </a>
+                    </li>
 
                     
-                </a>
+
+                   
+                </ul>
+            </div>
+
+            <div class="bottom-content">
+                <li class="">
+                    {% if not user.is_authenticated %}
+                    <a href={% url 'account:login_page' %}>
+                        <i class='bx bx-log-out icon' ></i>
+                        <span class="text nav-text">Login</span>
+                    </a>
+                    {% elif user.is_authenticated %}
+                    <a href={% url 'account:logout_page' %}>
+                        <i class='bx bx-log-out icon' ></i>
+                        <span class="text nav-text">Logout</span>
+                    </a>
+                    {% endif %}
+                </li>
+
+                <li class="mode">
+                    <div class="sun-moon">
+                        <i class='bx bx-moon icon moon'></i>
+                        <i class='bx bx-sun icon sun'></i>
+                    </div>
+                    <span class="mode-text text">Dark mode</span>
+
+                    <div class="toggle-switch">
+                        <span class="switch"></span>
+                    </div>
+                    
+                </li>
+                <script type="text/javascript" src="{% static 'js/header.js' %}"></script>
             </div>
         </div>
-    </header>
-    <!-- Header End -->
 
-    {% block content %}
+    </nav>
 
-    {% endblock %}
+    <section class="home">
+        <div class="text">Dashboard Sidebar</div>
 
-    <script src="{% static 'js/header.js' %}"></script>
+    </section>
+
+
+    
+
 </body>
-
 </html>
