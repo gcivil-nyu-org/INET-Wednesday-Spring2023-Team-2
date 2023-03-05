@@ -28,6 +28,7 @@ body{
     min-height: 100vh;
     background-color: var(--body-color);
     transition: var(--tran-05);
+    /* --logo: url(../../static/images/logo.svg) no-repeat; */
 }
 
 ::selection{
@@ -36,12 +37,14 @@ body{
 }
 
 body.dark{
+    /* --body-color: #18191a; */
     --body-color: #18191a;
     --sidebar-color: #242526;
     --primary-color: #3a3b3c;
     --primary-color-light: #3a3b3c;
     --toggle-color: #fff;
     --text-color: #ccc;
+    /* --logo: url(../../static/images/logo-white.svg) no-repeat; */
 }
 
 /* ===== Sidebar ===== */
@@ -66,7 +69,9 @@ body.dark{
     list-style: none;
     display: flex;
     align-items: center;
-    margin-top: 10px;
+    /* sidebar menu gap */
+    margin-top: 5px;
+    /* margin-top: 0px; */
 }
 
 .sidebar header .image,
@@ -104,6 +109,7 @@ body.dark{
 
 .sidebar header{
     position: relative;
+    margin-top: 5px;
 }
 
 .sidebar header .image-text{
@@ -116,6 +122,7 @@ body.dark{
 }
 header .image-text .name {
     margin-top: 2px;
+    margin-left: 20px;
     font-size: 18px;
     font-weight: 600;
 }
@@ -173,8 +180,13 @@ body.dark .sidebar header .toggle{
 }
 
 .sidebar .menu{
-    margin-top: 40px;
+    margin-top: 20px;
 }
+.sidebar .bottom-content{
+    margin-bottom: 60px;
+
+}
+
 
 .sidebar li.search-box{
     border-radius: 6px;
@@ -226,6 +238,7 @@ body.dark .sidebar li a:hover .text{
 }
 
 .sidebar .menu-bar{
+    /* height: calc(100% - 55px); */
     height: calc(100% - 55px);
     display: flex;
     flex-direction: column;
@@ -323,8 +336,19 @@ body.dark .switch::before{
     padding: 12px 60px;
 }
 .logo {
-    padding:  0px 25px;
-}
+    /* padding:  0px 25px; */ 
+    display: block;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    /* background: var(--logo); */
+    /* background-size: 110px; */
+    /* right logo */
+    height: 70px;
+    margin: 20px 30px;
+    /* padding-top: 120px;
+    /* padding-left: 120px;*/
+} 
+
 
 .sidebar.close ~ .home{
     left: 78px;
@@ -334,3 +358,8 @@ body.dark .switch::before{
 body.dark .home .text{
     color: var(--text-color);
 }
+
+/* cannot change the logo color in dark mode*/
+/* body.dark {
+    --logo: url(../../static/images/logo-white.svg) no-repeat;
+} */
