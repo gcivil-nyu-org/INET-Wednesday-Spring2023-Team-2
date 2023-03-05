@@ -9,12 +9,13 @@
 
 :root{
     /* ===== Colors ===== */
-    --body-color: #E4E9F7;
-    --sidebar-color: #FFF;
-    --primary-color: #695CFE;
+    --body-color: #F6F5FF;
+    --sidebar-color: #FE654F;
+    --primary-color: #F6F5FF;
     --primary-color-light: #F6F5FF;
     --toggle-color: #DDD;
-    --text-color: #707070;
+    --text-color: #F6F5FF;
+    --mode-text-color: #8e8d90;
 
     /* ====== Transition ====== */
     --tran-03: all 0.2s ease;
@@ -125,6 +126,15 @@ header .image-text .profession{
     display: block;
 }
 
+/* set dark mode text color */
+.bottom-content .mode-text{
+
+    color: var(--mode-text-color);
+ 
+}
+
+
+
 .sidebar header .image{
     display: flex;
     align-items: center;
@@ -173,13 +183,18 @@ body.dark .sidebar header .toggle{
     transition: var(--tran-05);
 }
 
+/* set the search icon color */
+.sidebar li.search-box i.icon{
+    color: var(--mode-text-color);
+}
+
 .sidebar li.search-box input{
     height: 100%;
     width: 100%;
     outline: none;
     border: none;
     background-color: var(--primary-color-light);
-    color: var(--text-color);
+    color: var(--mode-text-color);
     border-radius: 6px;
     font-size: 17px;
     font-weight: 500;
@@ -230,6 +245,7 @@ body.dark .sidebar li a:hover .text{
 .menu-bar .mode .sun-moon{
     height: 50px;
     width: 60px;
+   
 }
 
 .mode .sun-moon i{
@@ -237,12 +253,20 @@ body.dark .sidebar li a:hover .text{
 }
 .mode .sun-moon i.sun{
     opacity: 0;
+    color: var(--mode-text-color)
 }
+.mode .sun-moon i.moon{
+    opacity: 1;
+    color: var(--mode-text-color)
+}
+
 body.dark .mode .sun-moon i.sun{
     opacity: 1;
 }
 body.dark .mode .sun-moon i.moon{
     opacity: 0;
+    color: var(--mode-text-color)
+  
 }
 
 .menu-bar .bottom-content .toggle-switch{
@@ -295,8 +319,11 @@ body.dark .switch::before{
 .home .text{
     font-size: 30px;
     font-weight: 500;
-    color: var(--text-color);
+    color: var(--mode-text-color);
     padding: 12px 60px;
+}
+.logo {
+    padding:  0px 25px;
 }
 
 .sidebar.close ~ .home{
