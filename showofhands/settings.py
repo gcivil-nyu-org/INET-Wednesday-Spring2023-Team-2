@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'showofhands-dev.us-east-1.elasticbeanstalk.com']
+ALLOWED_HOSTS = ALLOWED_HOSTS = ['showofhands-dev.us-east-1.elasticbeanstalk.com', 'www.showofhands-dev.us-east-1.elasticbeanstalk.com', '127.0.0.1']
 
 
 # Application definition
