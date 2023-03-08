@@ -1,0 +1,34 @@
+language: python
+
+python:
+  - "3.8"
+
+
+install:
+   - pip install -r requirements.txt
+
+# after_script:
+  # - coveralls
+
+script:
+  # Run Black formatter
+  - black --check .
+
+  # Run Flake8 linter
+  - flake8 --extend-ignore E501,F401,F811,E711,F541,E722,E265,E266
+  # Run Django tests
+  # - coverage run manage.py test
+
+
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $ACCESS_KEY_ID
+  secret_access_key: $ACCESS_KEY
+  region: "us-east-1"
+  app: "ShowOfHands"
+  env: "ShowOfHands-dev"
+  bucket_name: "elasticbeanstalk-us-east-1-754415205510"
+  bucket_path: "ShowOfHands/"
+  on:
+    repo: gcivil-nyu-org/INET-Wednesday-Spring2023-Team-2
+    branch: develop

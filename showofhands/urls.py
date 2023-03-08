@@ -20,12 +20,11 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic import RedirectView
 
 
-
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', views.redirect_to_home_view, name="go_home"),
-    path('posts/', include('posts.urls')),
-    path('account/', include('login.urls')),
+    path("admin/", admin.site.urls),
+    path("", views.redirect_to_home_view, name="go_home"),
+    path("posts/", include("posts.urls")),
+    path("account/", include("login.urls")),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

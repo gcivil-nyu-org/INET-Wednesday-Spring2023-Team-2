@@ -6,10 +6,11 @@ from .models import Custom_User
 
 
 class PasswordChangeForm(UserCreationForm):
-    old_password = forms.CharField(widget = forms.PasswordInput)
+    old_password = forms.CharField(widget=forms.PasswordInput)
+
     class Meta:
         model = Custom_User
-        fields = ['password1', 'password2']
+        fields = ["password1", "password2"]
 
 
 class PasswordResetConfirmationForm(forms.Form):
@@ -24,13 +25,13 @@ class PasswordResetForm(UserCreationForm):
 
 class LoginForm(forms.Form):
     username = forms.CharField()
-    password = forms.CharField(widget = forms.PasswordInput)
+    password = forms.CharField(widget=forms.PasswordInput)
 
 
 class RegisterForm(UserCreationForm):
     class Meta:
         model = Custom_User
-        fields = ['username', 'email', 'password1', 'password2']
+        fields = ["username", "email", "password1", "password2"]
         # widgets = {
         #     'password1': forms.PasswordInput(attrs={'placeholder': 'Password'}),
         #     'password2': forms.PasswordInput(attrs={'placeholder': 'Confirm Password'}),
@@ -46,10 +47,9 @@ class RegisterForm(UserCreationForm):
     #     self.fields['password1'].widget.attrs['placeholder'] = 'Password'
     #     self.fields['password2'].widget.attrs['placeholder'] = 'Confirm Password'
     #     self.fields['email'].widget.attrs['placeholder'] = 'Email'
-        
 
     def clean_email(self):
-        email = self.cleaned_data['email']
+        email = self.cleaned_data["email"]
         if Custom_User.objects.filter(email=email).exists():
             raise ValidationError("Email already exists")
         return email
