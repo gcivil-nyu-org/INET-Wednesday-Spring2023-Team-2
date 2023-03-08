@@ -25,3 +25,22 @@ let currentPoll = 1;
     const currentPollContainer = document.getElementById(`poll${currentPoll}`);
     currentPollContainer.style.display = 'block';
   }
+
+
+  function chBackcolor(id) {
+    if(document.getElementById("yolo1")){
+      document.getElementById("yolo1").style.backgroundColor = "#f2f2f2";
+    }
+    if(document.getElementById("yolo2")){
+      document.getElementById("yolo2").style.backgroundColor = "#f2f2f2";
+    }
+    if(document.getElementById("yolo3")){
+      document.getElementById("yolo3").style.backgroundColor = "#f2f2f2";
+    }
+    if(document.getElementById("yolo4")){
+      document.getElementById("yolo4").style.backgroundColor = "#f2f2f2";
+    }
+    document.getElementById(id).style.backgroundColor = "#555";
+ }
+
+

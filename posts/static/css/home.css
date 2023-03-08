@@ -90,6 +90,10 @@ label:hover {
   cursor: pointer;
 }
 
+/* label:focus{
+  background-color: cyan;
+} */
+
 input:checked + label {
   color: #555;
   border: 1px solid #ddd;
@@ -146,28 +150,15 @@ input:checked + label {
     margin-bottom: 10px;
     cursor: pointer;
   }
+
+  /* #option1:checked + label{
+    background-color:red;
+  } */
   
   .button:hover {
     background-color: #e2e2e2;
   }
   
-  .button input[type="radio"] {
-    display: none;
-  }
-  
-  .button input[type="radio"]:checked + span {
-    background-color: #4CAF50;
-    color: white;
-  }
-  
-  .button input[type="radio"]:checked + span:hover {
-    background-color: #3e8e41;
-  }
-  
-  .button span {
-    display: inline-block;
-    vertical-align: middle;
-  }
   
   .arrow {
     display: inline-block;
@@ -259,5 +250,3 @@ button:active {
   .question {
     font-size: 24px;
   }
-
-  

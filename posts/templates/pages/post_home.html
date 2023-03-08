@@ -50,28 +50,43 @@
     <a href="#" class="previous round">&#8249;</a>
   </div>
   <div style="text-align: center;">
-    <form>
-      <p class="question">Which is your favorite color?</p>
+    {% if not display_result %}
+    
+    <form action="." method="post">
+      {% csrf_token %}
+      <p class="question">{{ post.question_text }}</p>
       <div class="button-group">
-        <label class="button">
-          <input type="radio" name="color" value="red">
-          <span>Red</span>
+        
+        {% for option in options %}
+        <label class="button" id="yolo{{ forloop.counter }}">
+          <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" onclick="chBackcolor('yolo{{ forloop.counter }}');">
+          <span>{{ option.choice_text }}</span>
         </label>
-        <label class="button">
-          <input type="radio" name="color" value="blue">
-          <span>Blue</span>
-        </label>
-        <label class="button">
-          <input type="radio" name="color" value="green">
-          <span>Green</span>
-        </label>
-        <label class="button">
-          <input type="radio" name="color" value="purple">
-          <span>Purple</span>
-        </label>
+        {% endfor %}
+
       </div>
       <button type="submit" value="Submit" name="access_info">Submit</button>
     </form>
+    
+    {% else %}
+
+    <form>
+      <p class="question">{{ post.question_text }}</p>
+      <div class="button-group">
+        
+        {% for option in options %}
+        <label class="button">
+          <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+          <span>{{ option.choice_text }} : {{ option.votes }}</span>
+        </label>
+        {% endfor %}
+
+      </div>
+    </form>
+
+    {% endif %}
+
+
     <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
   </div>
   <div class="arrow-container-right">
