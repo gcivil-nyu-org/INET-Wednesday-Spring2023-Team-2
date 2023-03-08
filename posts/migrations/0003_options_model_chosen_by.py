@@ -5,16 +5,17 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('posts', '0002_alter_post_model_viewed_by'),
+        ("posts", "0002_alter_post_model_viewed_by"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='options_model',
-            name='chosen_by',
-            field=models.ManyToManyField(blank=True, related_name='user_option', to=settings.AUTH_USER_MODEL),
+            model_name="options_model",
+            name="chosen_by",
+            field=models.ManyToManyField(
+                blank=True, related_name="user_option", to=settings.AUTH_USER_MODEL
+            ),
         ),
     ]
