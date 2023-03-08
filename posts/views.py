@@ -23,10 +23,14 @@ def home_view(request):
     #     user_posts_viewed = request.user.posts_viewed.all()
     #     pids = pids.difference(user_posts_viewed)
 
-    pid = random.choice(list(pids))
-    pid = pid.pk
+    try:
+        pid = random.choice(list(pids))
+        pid = pid.pk
 
-    return redirect(reverse("posts:post_generation_page", kwargs={"pid": pid}))
+        return redirect(reverse("posts:post_generation_page", kwargs={"pid": pid}))
+    
+    except:
+        return render(request, "pages/home.html")
 
 
 def posts_view(request, pid):
