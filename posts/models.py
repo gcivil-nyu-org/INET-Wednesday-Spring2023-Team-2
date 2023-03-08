@@ -6,7 +6,8 @@ from login.models import Custom_User
 
 class Post_Model(models.Model):
     question_text = models.CharField(max_length=200)
-    created_by = models.ForeignKey(Custom_User, related_name='posts_created')
+    created_by = models.ForeignKey(Custom_User, related_name='posts_created', on_delete=models.CASCADE)
+    viewed_by = models.ManyToManyField(Custom_User, related_name='posts_viewed')
 
     def __str__(self):
         return self.question_text
