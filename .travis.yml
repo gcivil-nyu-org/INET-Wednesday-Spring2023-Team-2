@@ -12,7 +12,7 @@ install:
 
 script:
   # Run Black formatter
-  - black .
+  - black --check .
 
   # Run Flake8 linter
   - flake8 --extend-ignore E501,F401,F811,E711,F541,E722,E265,E266

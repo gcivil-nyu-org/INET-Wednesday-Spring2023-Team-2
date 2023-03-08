@@ -28,7 +28,7 @@ def home_view(request):
         pid = pid.pk
 
         return redirect(reverse("posts:post_generation_page", kwargs={"pid": pid}))
-    
+
     except:
         return render(request, "pages/home.html")
 
