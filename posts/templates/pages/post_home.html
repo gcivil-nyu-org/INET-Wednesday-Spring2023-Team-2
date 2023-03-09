@@ -54,6 +54,11 @@ height: 100vh;">
     <a href="#" class="previous round">&#8249;</a>
   </div>
   <div style="text-align: center;">
+
+    
+    <div class="comment-content mt-5" data-url="{% url 'posts:test1' %}"></div>
+
+
     {% if not display_result %}
     
     <form action="." method="post">
@@ -91,8 +96,39 @@ height: 100vh;">
     {% endif %}
 
 
+    </div>
+
+
     <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
   </div>
   <div class="arrow-container-right">
     <a href="#" class="next round">&#8250;</a>
   </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
+
+{% block scripts %}
+<script>
+
+    function getPosts(){
+        $.ajax({
+            url: $(".comment-content").data('url'),
+            type: "GET",
+            success: function(resp){
+                $(".comment-content").html(resp);
+            },
+            error: function(resp){
+                console.log("something went wrong");
+            }
+        });
+    }
+
+    function jsfunc(){
+      getPosts();
+    }
+    
+
+</script>
+{% endblock scripts %}
