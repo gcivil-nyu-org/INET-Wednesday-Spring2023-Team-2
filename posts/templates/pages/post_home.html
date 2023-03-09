@@ -55,45 +55,9 @@ height: 100vh;">
   </div>
   <div style="text-align: center;">
 
-    
-    <div class="comment-content mt-5" data-url="{% url 'posts:test1' %}"></div>
 
+    <div class="comment-content mt-5" data-url="{% url 'posts:show_curr_post_api' pid %}"></div>
 
-    {% if not display_result %}
-    
-    <form action="." method="post">
-      {% csrf_token %}
-      <p class="question">{{ post.question_text }}</p>
-      <div class="button-group">
-        
-        {% for option in options %}
-        <label class="button" id="yolo{{ forloop.counter }}">
-          <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" onclick="chBackcolor('yolo{{ forloop.counter }}');">
-          <span>{{ option.choice_text }}</span>
-        </label>
-        {% endfor %}
-
-      </div>
-      <button type="submit" value="Submit" name="access_info">Submit</button>
-    </form>
-    
-    {% else %}
-
-    <form>
-      <p class="question">{{ post.question_text }}</p>
-      <div class="button-group">
-        
-        {% for option in options %}
-        <label class="button">
-          <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
-          <span>{{ option.choice_text }} : {{ option.votes }}</span>
-        </label>
-        {% endfor %}
-
-      </div>
-    </form>
-
-    {% endif %}
 
 
     </div>
@@ -128,7 +92,56 @@ height: 100vh;">
     function jsfunc(){
       getPosts();
     }
+
+
+
+    function getCurrPost(){
+        $.ajax({
+            url: $(".comment-content").data('url'),
+            type: "GET",
+            success: function(resp){
+                $(".comment-content").html(resp);
+            },
+            error: function(resp){
+                console.log("something went wrong");
+            }
+        });
+    }
+
+    getCurrPost();
+
+
     
+    
+    $("#post_disp_form").on("submit", function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var $this = $(this);
+        var valid = true;
+    
+        if(valid){
+            //ajax
+            $.ajax({
+                url: $this.attr('action'),
+                type: "POST",
+                dataType: 'json',
+                success: function(resp){
+                    if(resp.voting === 'success'){
+                        getCurrPost();
+                    // }else{
+                    //     alert(resp.voting);
+                    }
+
+                },
+                error: function(resp){
+                    console.log('something went wrong');
+                }
+            });
+        }
+        return false;
+    });
+
+
 
 </script>
 {% endblock scripts %}

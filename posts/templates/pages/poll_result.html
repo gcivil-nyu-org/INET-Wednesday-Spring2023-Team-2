@@ -1,0 +1,17 @@
+<div>
+
+    <form>
+        <p class="question">{{ post.question_text }}</p>
+        <div class="button-group">
+          
+          {% for option in options %}
+          <label class="button">
+            <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+            <span>{{ option.choice_text }} : {{ option.votes }}</span>
+          </label>
+          {% endfor %}
+  
+        </div>
+    </form>
+
+</div>
