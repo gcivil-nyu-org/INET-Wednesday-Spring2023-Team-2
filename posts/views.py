@@ -3,12 +3,18 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib import messages
+from django.http import JsonResponse
+from django.template import loader
 import random
+
 
 
 from .models import Post_Model, Options_Model
 from login.models import Custom_User
 
+
+
+#make an api return func to give polls and once next or home ot polls is clicked, ajax calls this func to get the next poll
 
 # Create your views here.
 
@@ -73,3 +79,18 @@ def results_view(request, pid):
     contents = {"post": post_, "options": options_, "display_result": True}
 
     return render(request, "pages/post_home.html", contents)
+
+
+
+
+
+def test1_view(request):
+    # return JsonResponse({'hello': 'world'})
+    template = loader.get_template("pages/test1.html")
+    post_ = Post_Model.objects.all()
+    contents = {
+        "posts": post_
+    }
+    return HttpResponse(template.render(contents, request))
+
+
