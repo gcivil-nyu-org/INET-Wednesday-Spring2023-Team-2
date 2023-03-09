@@ -1,0 +1,19 @@
+<div>
+    
+  <form action="." method="post" id="post_disp_form">
+    {% csrf_token %}
+    <p class="question">{{ post.question_text }}</p>
+    <div class="button-group">
+      
+      {% for option in options %}
+      <label class="button" id="yolo{{ forloop.counter }}">
+        <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" onclick="chBackcolor('yolo{{ forloop.counter }}');">
+        <span>{{ option.choice_text }}</span>
+      </label>
+      {% endfor %}
+
+    </div>
+    <button type="submit" value="Submit" name="access_info">Submit</button>
+  </form>
+
+</div>
