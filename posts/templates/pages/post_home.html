@@ -54,45 +54,142 @@ height: 100vh;">
     <a href="#" class="previous round">&#8249;</a>
   </div>
   <div style="text-align: center;">
-    {% if not display_result %}
-    
-    <form action="." method="post">
-      {% csrf_token %}
-      <p class="question">{{ post.question_text }}</p>
-      <div class="button-group">
-        
-        {% for option in options %}
-        <label class="button" id="yolo{{ forloop.counter }}">
-          <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" onclick="chBackcolor('yolo{{ forloop.counter }}');">
-          <span>{{ option.choice_text }}</span>
-        </label>
-        {% endfor %}
 
-      </div>
-      <button type="submit" value="Submit" name="access_info">Submit</button>
-    </form>
-    
-    {% else %}
 
-    <form>
-      <p class="question">{{ post.question_text }}</p>
-      <div class="button-group">
-        
-        {% for option in options %}
-        <label class="button">
-          <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
-          <span>{{ option.choice_text }} : {{ option.votes }}</span>
-        </label>
-        {% endfor %}
+    <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
 
-      </div>
+
+
+
+    <form action="." method="post" id="postDispForm">
+      
     </form>
 
-    {% endif %}
+
+
+
+    </div>
 
 
     <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
   </div>
   <div class="arrow-container-right">
-    <a href="#" class="next round">&#8250;</a>
+    <a class="next round" onclick="getNextPost();">&#8250;</a>
   </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
+
+{% block scripts %}
+<script>
+
+    function getPosts(){
+        $.ajax({
+            url: $(".post-content").data('url'),
+            type: "GET",
+            success: function(resp){
+                $("#postDispForm").html(resp);
+            },
+            error: function(resp){
+                console.log("something went wrong");
+            }
+        });
+    }
+
+
+
+    function getCurrPost(){
+        $.ajax({
+            url: $(".post-content").data('url'),
+            type: "GET",
+            success: function(resp){
+                $("#postDispForm").html(resp);
+                var url= $(".post-content").data('url');
+                // console.log(url);
+            },
+            error: function(resp){
+                console.log("error");
+            }
+        });
+    }
+
+    getCurrPost();
+
+
+    
+    
+    // $("#postDispForm").on("submit", function(e){
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    $('#postDispForm').submit(function(){
+        var $this = $(this);
+        var valid = true;
+    
+        if(valid){
+            //ajax
+            $.ajax({
+                url: $this.attr('action'),
+                type: "POST",
+                data: $(this).serialize(),
+                // data: {
+                //     "csrfmiddlewaretoken": "{{ csrf_token }}",
+                //     "option": 1,
+                // },
+                dataType: 'json',
+                success: function(resp){
+                    if(resp.voting === 'success'){
+                        getCurrPost();
+                    }else{
+                        alert(resp.voting);
+                    }
+
+                },
+                error: function(resp){
+                    console.log("error");
+                }
+            });
+        }
+        return false;
+    });
+
+
+
+    function getNextPost(){
+        $.ajax({
+            url:"{% url 'posts:show_next_post_api' %}",
+            type:"GET",
+            success: function(resp){
+                $("#postDispForm").html(resp);
+                changeurl();
+                // changeurl("res");
+                // console.log("meow:{{ post_.id }}")
+            },
+            error: function(resp){
+              console.log("error")
+            }
+        });
+    }
+
+
+
+  // eg: changeurl("res");
+  function changeurl(url)
+  {
+    $.ajax({
+            url:"{% url 'posts:get_current_url_api' %}",
+            type:"GET",
+            success: function(resp){
+                var new_url=resp.current_url;
+                window.history.pushState("data","Title",new_url);
+                // console.log(new_url)
+            },
+            error: function(resp){
+              console.log("error")
+            }
+        });
+  }
+
+
+</script>
+{% endblock scripts %}
