@@ -1,20 +1,3 @@
-{% include 'includes/header.html' %}
-<!-- <div class="container center-screen" id="container">
-    <h1>
-        Welcome, {{ request.user }}
-    </h1>
-    {% if not user.is_authenticated %}
-    <h1>
-        Click SignIn and check out our User Resgistration Setup! (so far)
-    </h1>
-    {% elif user.is_authenticated %}
-    <h1>
-        No Polls to view just yet! Come back next week for more interesting updates :)
-    </h1>
-    {% endif %}
-</div> -->
-
-
 {% include 'includes/messages.html' %}
 
 {% load static %}
@@ -23,90 +6,50 @@
     <link rel="stylesheet" type="text/css" href="{% static '../static/css/home.css' %}" />
 </head>
 
-<div id="MainDiv">
 
-<main style="width: calc(100% - 250px); position: absolute;
-top: 0;
-top: 0;
-left: 250px;
-height: 100vh;">
-  
-  <input id="tab1" type="radio" name="tabs" checked>
-  <label for="tab1">All</label>
-    
-  <input id="tab2" type="radio" name="tabs">
-  <label for="tab2">Category 1</label>
-    
-  <input id="tab3" type="radio" name="tabs">
-  <label for="tab3">Category 2</label>
-    
-  <input id="tab4" type="radio" name="tabs">
-  <label for="tab4">Category 3</label>
-    
-  <section id="content1">
-  </section>
-    
-  <section id="content2">
-  </section>
-    
-  <section id="content3">
-  </section>
-    
-  <section id="content4">
-  </section>
+<div class="container" id="container">   
 
-  <div class="arrow-container-left">
-    <a href="#" class="previous round">&#8249;</a>
-  </div>
-  <div style="text-align: center;">
+    <input id="tab1" type="radio" name="tabs" checked>
+    <label for="tab1">All</label>
+        
+    <input id="tab2" type="radio" name="tabs">
+    <label for="tab2">Category 1</label>
+        
+    <input id="tab3" type="radio" name="tabs">
+    <label for="tab3">Category 2</label>
+        
+    <input id="tab4" type="radio" name="tabs">
+    <label for="tab4">Category 3</label>
+        
+    <section id="content1">
+    </section>
+        
+    <section id="content2">
+    </section>
+        
+    <section id="content3">
+    </section>
+        
+    <section id="content4">
+    </section>
 
-
-    <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
-
-
-
-
-    <form action="." method="post" id="postDispForm">
-      
-    </form>
-
-
-
-
+    <!-- <div class="arrow-container-left">
+        <a href="#" class="previous round">&#8249;</a>
     </div>
+    <div style="text-align: center;">
+        <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
+            <form action="." method="post" id="postDispForm"></form>
+        </div>
 
-
-    <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
-  </div>
-
- 
- 
- 
- 
-  <form action="{% url 'posts:show_comments_api' %}" method="post" id="commentTextDisp">
-  </form>
-
-
-  <br>
-
-
-  <div id="commentDisp">
-
-  </div>
-
-
-
-
-
-
-  <div class="arrow-container-right">
-    <a class="next round" onclick="getNextPost();">&#8250;</a>
-  </div>
-
-
+        <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
+    </div>
+  
+    <div class="arrow-container-right">
+        <a class="next round" onclick="getNextPost();">&#8250;</a>
+    </div>
+  
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script> -->
 </div>
-
-
 
 {% block scripts %}
 

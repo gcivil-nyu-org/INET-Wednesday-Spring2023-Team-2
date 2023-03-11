@@ -1,0 +1,162 @@
+{% include 'includes/messages.html' %}
+{% include 'includes/header.html' %}
+{% load static %}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}"/>
+</head>
+
+<div class="container {{ class_ }}" id="container">
+    <div class="form-container sign-in-container">
+		<form action="." method = "POST">
+			{% csrf_token %}
+            <div style="text-align: center;">
+                <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
+                    <form action="." method="post" id="postDispForm"></form>
+                </div>
+        
+                <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
+            </div>
+			<!--add change picture option-->
+			<button type="submit" value="" name="">Vote</button>
+		</form>
+	</div>
+	<div class="form-container sign-up-container">
+		<form action="." method = "POST">
+			{% csrf_token %}
+			<h1>Edit Profile</h1><a></a>
+			<input type="password" placeholder="Current Password" name ="old_password" required/>
+            <input type="password" placeholder="New Password" name ="password1" required/>
+			<input type="password" placeholder="Confirm New Password" name ="password2" required/>
+			<button type = "submit" value="Confirm" name="account_info">Confirm</button>
+		</form>
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+			<div class="overlay-panel overlay-left">
+				<button class="ghost" id="signIn">Back</button>
+			</div>
+			<div class="overlay-panel overlay-right">
+				<h1>Profile Information</h1><a></a>
+				{% if request.user.is_authenticated %}
+				Username<input type="text" value="{{ request.user.username }}" readonly>
+				<a></a>
+				Email<input type="text" value="{{ request.user.email }}" readonly>
+				{% endif %}
+				<a></a>
+				<!--change here-->
+				<button class="ghost" id="signUp">Edit Profile</button>
+				</a>
+				<!--this js script must be placed at the end of the file AFTER buttons-->
+				<script type="text/javascript" src="{% static '../static/js/login.js' %}"></script>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% block scripts %}
+<script>
+
+    function getPosts(){
+        $.ajax({
+            url: $(".post-content").data('url'),
+            type: "GET",
+            success: function(resp){
+                $("#postDispForm").html(resp);
+            },
+            error: function(resp){
+                console.log("something went wrong");
+            }
+        });
+    }
+
+
+    function getCurrPost(){
+        $.ajax({
+            url: $(".post-content").data('url'),
+            type: "GET",
+            success: function(resp){
+                $("#postDispForm").html(resp);
+                var url= $(".post-content").data('url');
+                // console.log(url);
+            },
+            error: function(resp){
+                console.log("error");
+            }
+        });
+    }
+
+    getCurrPost();
+
+
+    // $("#postDispForm").on("submit", function(e){
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    $('#postDispForm').submit(function(){
+        var $this = $(this);
+        var valid = true;
+    
+        if(valid){
+            //ajax
+            $.ajax({
+                url: $this.attr('action'),
+                type: "POST",
+                data: $(this).serialize(),
+                // data: {
+                //     "csrfmiddlewaretoken": "{{ csrf_token }}",
+                //     "option": 1,
+                // },
+                dataType: 'json',
+                success: function(resp){
+                    if(resp.voting === 'success'){
+                        getCurrPost();
+                    }else{
+                        alert(resp.voting);
+                    }
+
+                },
+                error: function(resp){
+                    console.log("error");
+                }
+            });
+        }
+        return false;
+    });
+
+
+
+    function getNextPost(){
+        $.ajax({
+            url:"{% url 'posts:show_next_post_api' %}",
+            type:"GET",
+            success: function(resp){
+                $("#postDispForm").html(resp);
+                changeurl();
+                // changeurl("res");
+                // console.log("meow:{{ post_.id }}")
+            },
+            error: function(resp){
+              console.log("error")
+            }
+        });
+    }
+
+
+  // eg: changeurl("res");
+  function changeurl(url)
+  {
+    $.ajax({
+            url:"{% url 'posts:get_current_url_api' %}",
+            type:"GET",
+            success: function(resp){
+                var new_url=resp.current_url;
+                window.history.pushState("data","Title",new_url);
+                // console.log(new_url)
+            },
+            error: function(resp){
+              console.log("error")
+            }
+        });
+  }
+</script>
+{% endblock scripts %}
