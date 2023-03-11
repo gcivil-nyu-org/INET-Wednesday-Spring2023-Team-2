@@ -1,6 +1,5 @@
 <div>
     
-  <form action="." method="post" id="post_disp_form">
     {% csrf_token %}
     <p class="question">{{ post.question_text }}</p>
     <div class="button-group">
@@ -14,6 +13,6 @@
 
     </div>
     <button type="submit" value="Submit" name="access_info">Submit</button>
-  </form>
+
 
 </div>

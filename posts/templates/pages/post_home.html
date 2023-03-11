@@ -56,7 +56,15 @@ height: 100vh;">
   <div style="text-align: center;">
 
 
-    <div class="comment-content mt-5" data-url="{% url 'posts:show_curr_post_api' pid %}"></div>
+    <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' pid %}">
+
+
+
+
+    <form action="." method="post" id="postDispForm">
+      
+    </form>
+
 
 
 
@@ -66,7 +74,7 @@ height: 100vh;">
     <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
   </div>
   <div class="arrow-container-right">
-    <a href="#" class="next round">&#8250;</a>
+    <a class="next round" onclick="getNextPost();">&#8250;</a>
   </div>
 
 
@@ -78,10 +86,10 @@ height: 100vh;">
 
     function getPosts(){
         $.ajax({
-            url: $(".comment-content").data('url'),
+            url: $(".post-content").data('url'),
             type: "GET",
             success: function(resp){
-                $(".comment-content").html(resp);
+                $("#postDispForm").html(resp);
             },
             error: function(resp){
                 console.log("something went wrong");
@@ -89,21 +97,17 @@ height: 100vh;">
         });
     }
 
-    function jsfunc(){
-      getPosts();
-    }
-
 
 
     function getCurrPost(){
         $.ajax({
-            url: $(".comment-content").data('url'),
+            url: $(".post-content").data('url'),
             type: "GET",
             success: function(resp){
-                $(".comment-content").html(resp);
+                $("#postDispForm").html(resp);
             },
             error: function(resp){
-                console.log("something went wrong");
+                console.log("error");
             }
         });
     }
@@ -113,9 +117,10 @@ height: 100vh;">
 
     
     
-    $("#post_disp_form").on("submit", function(e){
-        e.preventDefault();
-        e.stopPropagation();
+    // $("#postDispForm").on("submit", function(e){
+    //     e.preventDefault();
+    //     e.stopPropagation();
+    $('#postDispForm').submit(function(){
         var $this = $(this);
         var valid = true;
     
@@ -124,23 +129,53 @@ height: 100vh;">
             $.ajax({
                 url: $this.attr('action'),
                 type: "POST",
+                data: $(this).serialize(),
+                // data: {
+                //     "csrfmiddlewaretoken": "{{ csrf_token }}",
+                //     "option": 1,
+                // },
                 dataType: 'json',
                 success: function(resp){
                     if(resp.voting === 'success'){
                         getCurrPost();
-                    // }else{
-                    //     alert(resp.voting);
+                    }else{
+                        alert(resp.voting);
                     }
 
                 },
                 error: function(resp){
-                    console.log('something went wrong');
+                    console.log("error");
                 }
             });
         }
         return false;
     });
 
+
+
+    function getNextPost(){
+        $.ajax({
+            url:"{% url 'posts:show_next_post_api' %}",
+            type:"GET",
+            success: function(resp){
+                $("#postDispForm").html(resp);
+                // changeurl("res");
+                // console.log("meow:{{ post_.id }}")
+            },
+            error: function(resp){
+              console.log("error")
+            }
+        });
+    }
+
+
+
+  // eg: changeurl("res");
+  function changeurl(url)
+  {
+    var new_url="http://localhost:8000/posts/"+url;
+    window.history.pushState("data","Title",new_url);
+  }
 
 
 </script>
