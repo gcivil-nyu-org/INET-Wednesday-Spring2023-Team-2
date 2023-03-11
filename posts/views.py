@@ -17,7 +17,7 @@ from login.models import Custom_User
 
 
 
-
+#restrict api urls from being accessed
 #make an api return func to give polls and once next or home ot polls is clicked, ajax calls this func to get the next poll
 
 # Create your views here.
