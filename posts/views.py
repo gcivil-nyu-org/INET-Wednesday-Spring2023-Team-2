@@ -23,6 +23,8 @@ from login.models import Custom_User
 # Create your views here.
 
 
+current_pid = None
+
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
@@ -40,8 +42,6 @@ def get_random_pid():
         pid = random.choice(list(pids))
         pid = pid.pk
 
-        print(pid, list(pids))
-
         return (pid, True)
 
     except:
@@ -53,9 +53,12 @@ def get_random_pid():
 # home page - will generate random post id that user hasn't interacted with to display for user - will change to empty later in urls
 # generate id and redirect/reverse with that parameter
 def home_view(request):
+    global current_pid
+
     pid, truth = get_random_pid()
 
     if truth:
+        current_pid = pid
         return redirect(reverse("posts:post_generation_page", kwargs={"pid": pid}))
     else:
         return render(request, "pages/home.html")
@@ -144,8 +147,10 @@ def results_view(request, pid):
 
 
 
-def show_curr_post_api_view(request, pid):
-    print("kk")
+def show_curr_post_api_view(request):
+    global current_pid
+
+    pid = current_pid
     post_view_class = PostsView()
     if request.method == 'GET':
         return post_view_class.get(request=request, pid=pid, call="api")
@@ -254,10 +259,12 @@ class PostsView(View):
 
 
 def show_next_post_api_view(request):
+    global current_pid
     pid, truth = get_random_pid()
 
     if truth:
         post_view_class = PostsView()
+        current_pid = pid
         if request.method == 'GET':
             return post_view_class.get(request=request, pid=pid, call="api")
         return post_view_class.post(request=request, pid=pid, call="api")
@@ -265,3 +272,12 @@ def show_next_post_api_view(request):
     else:
         ## need to implement an empty template to say you have reached the end! and pass a httpresponse here
         pass
+
+
+
+def get_current_url_api_view(request):
+    if request.method == 'GET':
+        pid = current_pid
+        current_url = request.build_absolute_uri(reverse("posts:post_generation_page", kwargs={"pid": pid}))
+        return JsonResponse({'current_url': current_url})
+
