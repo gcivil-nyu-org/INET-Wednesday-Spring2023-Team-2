@@ -16,7 +16,7 @@ from .models import Post_Model, Options_Model
 from login.models import Custom_User
 
 
-
+#use rest-framework.APIView
 #restrict api urls from being accessed
 #need to do ajax implementation for other urls (notification, profile, chat)
 #comment revealed after result voting
