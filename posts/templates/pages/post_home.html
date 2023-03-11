@@ -56,7 +56,7 @@ height: 100vh;">
   <div style="text-align: center;">
 
 
-    <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' pid %}">
+    <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
 
 
 
@@ -105,6 +105,8 @@ height: 100vh;">
             type: "GET",
             success: function(resp){
                 $("#postDispForm").html(resp);
+                var url= $(".post-content").data('url');
+                // console.log(url);
             },
             error: function(resp){
                 console.log("error");
@@ -159,6 +161,7 @@ height: 100vh;">
             type:"GET",
             success: function(resp){
                 $("#postDispForm").html(resp);
+                changeurl();
                 // changeurl("res");
                 // console.log("meow:{{ post_.id }}")
             },
@@ -173,8 +176,18 @@ height: 100vh;">
   // eg: changeurl("res");
   function changeurl(url)
   {
-    var new_url="http://localhost:8000/posts/"+url;
-    window.history.pushState("data","Title",new_url);
+    $.ajax({
+            url:"{% url 'posts:get_current_url_api' %}",
+            type:"GET",
+            success: function(resp){
+                var new_url=resp.current_url;
+                window.history.pushState("data","Title",new_url);
+                // console.log(new_url)
+            },
+            error: function(resp){
+              console.log("error")
+            }
+        });
   }
 
 
