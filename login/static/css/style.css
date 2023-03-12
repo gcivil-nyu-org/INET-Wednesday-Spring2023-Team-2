@@ -34,8 +34,8 @@ p {
 }
 
 span {
-	font-size: 12px;
-}
+	font-size: 30px;
+} 
 
 a {
 	color: #333;
@@ -98,7 +98,7 @@ input {
 			0 10px 10px rgba(0,0,0,0.22);
 	position: relative;
 	overflow: hidden;
-	width: 60%;
+	width: 55%;
 	max-width: 100%;
 	min-height: 75%;
 }

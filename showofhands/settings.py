@@ -36,7 +36,7 @@ DEBUG = True
 ALLOWED_HOSTS = ALLOWED_HOSTS = [
     "showofhands-dev.us-east-1.elasticbeanstalk.com",
     "www.showofhands-dev.us-east-1.elasticbeanstalk.com",
-    "localhost",
+    "localhost", "127.0.0.1",
 ]
 
 

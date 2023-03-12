@@ -109,7 +109,7 @@ def home_view(request):
         return results_view(request, pid)
 
     contents = {"post": post_, "options": options_, "display_result": False}
-    return render(request, "pages/post_home.html", contents)
+    return render(request, "pages/posts_home.html", contents)
 
     # template = loader.get_template("pages/poll_disp.html")
     # post_ = Post_Model.objects.get(pk=pid)
@@ -169,7 +169,7 @@ class PostsView(View):
 
         if call == "noapi":
             contents = {"post": post_, "options": options_, 'pid': pid}
-            return render(request, "pages/post_home.html", contents)
+            return render(request, "pages/posts_home.html", contents)
         
         if post_.viewed_by.filter(username=request.user.username).exists():
             #display results

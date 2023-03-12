@@ -41,7 +41,7 @@ main_poll {
     padding: 50px;
     margin: 0 auto;
     background: #fff;
-  }
+}
 
 section {
   display: none;
@@ -86,18 +86,18 @@ label[for*='4']:before {
 }
 
 label:hover {
-  color: #888;
+  color: #582707;
   cursor: pointer;
 }
 
-/* label:focus{
+label:focus{
   background-color: cyan;
-} */
+}
 
 input:checked + label {
   color: #555;
   border: 1px solid #ddd;
-  border-top: 2px solid orange;
+  border-top: 2px solid #FED18C;
   border-bottom: 1px solid #fff;
 }
 
@@ -124,61 +124,61 @@ input:checked + label {
   }
 }
   
-  .poll {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    display: none;
-  }
-  
-  .poll:first-child {
-    display: block;
-  }
-  
-  .button-group {
-    display: block;
-    margin: 10px 0;
-  }
-  
-  .button {
-    display: block;
-    padding: 20px;
-    font-size: 24px;
-    background-color: #f2f2f2;
-    border-radius: 20px;
-    margin-bottom: 10px;
-    cursor: pointer;
-  }
+.poll {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: none;
+}
 
-  /* #option1:checked + label{
-    background-color:red;
-  } */
-  
-  .button:hover {
-    background-color: #e2e2e2;
-  }
-  
-  
-  .arrow {
-    display: inline-block;
-    background-color: #ffffff;
-    border: none;
-    color: #000000;
-    font-size: 24px;
-    margin: 0 10px;
-    padding: 5px 10px;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-  }
+.poll:first-child {
+  display: block;
+}
+
+.button-group {
+  display: block;
+  margin: 10px 0;
+}
+
+.button {
+  display: block;
+  padding: 10px;
+  font-size: 20em;
+  background-color: #f2f2f2;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+/* #option1:checked + label{
+  background-color:red;
+} */
+
+.button:hover {
+  background-color: #e2e2e2;
+}
+
+
+.arrow {
+  display: inline-block;
+  background-color: #ffffff;
+  border: none;
+  color: #000000;
+  font-size: 24px;
+  margin: 0 10px;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
 
 button {
 	border-radius: 20px;
 	border: 1px solid #FED18C;
 	background-color: #ffb20f;
 	color: #FFFFFF;
-	font-size: 12px;
+	font-size: 24px;
 	font-weight: bold;
 	padding: 12px 45px;
 	letter-spacing: 1px;
@@ -192,61 +192,65 @@ button:active {
 	transform: scale(0.95);
 }
   
-  input[type=submit]:hover {
-    background-color: #3e8e41;
-  }
+input[type=submit]:hover {
+  background-color: #3e8e41;
+}
 
-  a {
-    text-decoration: none;
-    display: inline-block;
-    padding: 8px 16px;
-  }
-  
-  a:hover {
-    background-color: #ddd;
-    color: black;
-  }
-  
-  .previous {
-    background-color: #04AA6D;
-    color: black;
-    top: 50%;
-    /* left: auto; */
-    /* right: -50px; */
-    /* position: absolute; */
-  }
-  
-  .next {
-    background-color: #04AA6D;
-    color: rgb(0, 0, 0);
-    top: 50%;
-  }
-  
-  .round {
-    border-radius: 50%;
-  }
+a {
+  text-decoration: none;
+  display: inline-block;
+  padding: 8px 16px;
+}
 
-  .arrow-container {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 1;
-  }
+a:hover {
+  background-color: #ddd;
+  color: black;
+}
 
-  .arrow-container-left {
-    position: absolute;
-    left: 0;
-  }
+.previous {
+  background-color: #582707;
+  color: black;
+  top: 50%;
+  /* left: auto; */
+  /* right: -50px; */
+  /* position: absolute; */
+}
 
-  .arrow-container-right {
-    position: absolute;
-    right: 0;
-  }
-  
-  .arrow-container:first-child {
-    float: left;
-  }
+.next {
+  background-color: #582707;
+  color: rgb(0, 0, 0);
+  top: 50%;
+}
 
-  .question {
-    font-size: 24px;
-  }
+.round {
+  border-radius: 50%;
+}
+
+.arrow-container {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+}
+
+.arrow-container-left {
+  position: absolute;
+  left: 0;
+}
+
+.arrow-container-right {
+  position: absolute;
+  right: 0;
+}
+
+.arrow-container:first-child {
+  float: left;
+}
+
+.question {
+  font-size: 24px;
+}
+
+span {
+  font-size: 20px;
+} 
