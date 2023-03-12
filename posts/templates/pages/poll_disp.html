@@ -1,18 +1,38 @@
+{% load static %}
+<head>
+  <link rel="stylesheet" type="text/css" href="{% static '../static/css/radio.css' %}"/>
+</head>
+
 <div>
-    
-    {% csrf_token %}
-    <p class="question">{{ post.question_text }}</p>
-    <div class="button-group">
-      
-      {% for option in options %}
-      <label class="button" id="yolo{{ forloop.counter }}">
-        <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" onclick="chBackcolor('yolo{{ forloop.counter }}');">
-        <span>{{ option.choice_text }}</span>
-      </label>
-      {% endfor %}
+  {% csrf_token %}
+   <!-- Question -->
+  <br></br>
+  <h1 class="question">{{ post.question_text }}</h1>
+  <br></br>
 
-    </div>
-    <button type="submit" value="Submit" name="access_info">Submit</button>
+  <!-- Options -->
+  <div class="section over-hide z-bigger">
+    <input class="checkbox" type="checkbox" name="general" id="general">
+    <div class="section over-hide z-bigger">
+      <div class="checkcontain pb-5">
+        <div class="row justify-content-center pb-5">
+          <div class="col-12 pb-5">
+            {% for option in options %}
+            
+            <!-- TO DO: fix the coloring & formating to match -->
+            <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+            <label class="for-checkbox-tools" for="option{{ forloop.counter }}">
+              <i class='uil'></i>
+              {{ option.choice_text }}
+            </label>
 
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div> 
+  </div>     
+ 
+  <button type="submit" value="Submit" name="access_info">Submit</button>
 
 </div>
