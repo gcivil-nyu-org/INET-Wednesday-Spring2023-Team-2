@@ -35,7 +35,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS = [
     "showofhands-dev.us-east-1.elasticbeanstalk.com",
-    "www.showofhands-dev.us-east-1.elasticbeanstalk.com",
     "localhost",
 ]
 
@@ -52,6 +51,7 @@ INSTALLED_APPS = [
     "login",
     "posts",
     "users",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -184,3 +184,14 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 AUTH_USER_MODEL = "login.Custom_User"
+
+
+
+
+# REST_FRAMEWORK = {
+#     # Use Django's standard `django.contrib.auth` permissions,
+#     # or allow read-only access for unauthenticated users.
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+#     ]
+# }
