@@ -7,6 +7,11 @@ from django.http import JsonResponse
 from django.template import loader
 from django.views import View
 
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import authentication, permissions
+
 
 import random
 
@@ -277,9 +282,33 @@ def show_next_post_api_view(request):
 
 
 
-def get_current_url_api_view(request):
-    if request.method == 'GET':
+# def get_current_url_api_view(request):
+#     if request.method == 'GET':
+#         pid = current_pid
+#         current_url = request.build_absolute_uri(reverse("posts:post_generation_page", kwargs={"pid": pid}))
+#         return JsonResponse({'current_url': current_url})
+
+
+
+
+
+
+class CurrentPostURL(APIView):
+    # renderer_classes = [TemplateHTMLRenderer]
+    # template_name = 'profile_list.html'
+
+    renderer_classes = [JSONRenderer]
+    # permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request):
         pid = current_pid
         current_url = request.build_absolute_uri(reverse("posts:post_generation_page", kwargs={"pid": pid}))
-        return JsonResponse({'current_url': current_url})
+        content = {'current_url': current_url}
+        return Response(content)
+    
 
+
+
+def show_comments_api_view(request):
+    pid = current_pid
+    

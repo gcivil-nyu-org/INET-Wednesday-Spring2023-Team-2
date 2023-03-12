@@ -73,12 +73,22 @@ height: 100vh;">
 
     <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
   </div>
+
+  <div>
+    Hello
+  </div>
+
   <div class="arrow-container-right">
     <a class="next round" onclick="getNextPost();">&#8250;</a>
   </div>
 
 
   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
+
+
+
+
 
 
 {% block scripts %}
@@ -174,10 +184,10 @@ height: 100vh;">
 
 
   // eg: changeurl("res");
-  function changeurl(url)
+  function changeurl()
   {
     $.ajax({
-            url:"{% url 'posts:get_current_url_api' %}",
+            url:"{% url 'posts:get_current_post_url_api' %}",
             type:"GET",
             success: function(resp){
                 var new_url=resp.current_url;
