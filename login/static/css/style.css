@@ -19,6 +19,7 @@ body {
 h1 {
 	font-weight: bold;
 	margin: 0;
+	color:#222;
 }
 
 h2 {
@@ -101,6 +102,7 @@ input {
 	width: 55%;
 	max-width: 100%;
 	min-height: 75%;
+	color:#222;
 }
 
 .form-container {

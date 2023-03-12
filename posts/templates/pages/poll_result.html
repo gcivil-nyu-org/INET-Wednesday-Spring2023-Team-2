@@ -1,15 +1,34 @@
+{% load static %}
+<head>
+  <link rel="stylesheet" type="text/css" href="{% static '../static/css/radio.css' %}"/>
+</head>
+
 <div>
+  <!-- Question -->
+  <br></br>
+  <h1 class="question">{{ post.question_text }}</h1>
+  <br></br>
 
-        <p class="question">{{ post.question_text }}</p>
-        <div class="button-group">
-          
-          {% for option in options %}
-          <label class="button">
-            <input type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
-            <span>{{ option.choice_text }} : {{ option.votes }}</span>
-          </label>
-          {% endfor %}
-  
+  <!-- Results -->
+  <div class="section over-hide z-bigger">
+    <input class="checkbox" type="checkbox" name="general" id="general">
+    <div class="section over-hide z-bigger">
+      <div class="checkcontain pb-5">
+        <div class="row justify-content-center pb-5">
+          <div class="col-12 pb-5">
+            {% for option in options %}
+            
+            <!-- TO DO: fix to check the selection the user made -->
+            <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+            <label class="for-checkbox-tools" for="option{{ forloop.counter }}">
+              <i class='uil uil-vector-square'></i>
+              {{ option.choice_text }}
+            </label>
+
+            {% endfor %}
+          </div>
         </div>
-
+      </div>
+    </div> 
+  </div>     
 </div>

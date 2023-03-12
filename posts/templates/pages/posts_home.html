@@ -6,54 +6,16 @@
     <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}"/>
 </head>
 
-<div class="container {{ class_ }}" id="container">
-    <div class="form-container sign-in-container">
-		<form action="." method = "POST">
-			{% csrf_token %}
-            <div style="text-align: center;">
-                <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
-                    <form action="." method="post" id="postDispForm"></form>
-                </div>
-        
-                <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
-            </div>
-			<!--add change picture option-->
-			<button type="submit" value="" name="">Vote</button>
-		</form>
-	</div>
-	<div class="form-container sign-up-container">
-		<form action="." method = "POST">
-			{% csrf_token %}
-			<h1>Edit Profile</h1><a></a>
-			<input type="password" placeholder="Current Password" name ="old_password" required/>
-            <input type="password" placeholder="New Password" name ="password1" required/>
-			<input type="password" placeholder="Confirm New Password" name ="password2" required/>
-			<button type = "submit" value="Confirm" name="account_info">Confirm</button>
-		</form>
-	</div>
-	<div class="overlay-container">
-		<div class="overlay">
-			<div class="overlay-panel overlay-left">
-				<button class="ghost" id="signIn">Back</button>
-			</div>
-			<div class="overlay-panel overlay-right">
-				<h1>Profile Information</h1><a></a>
-				{% if request.user.is_authenticated %}
-				Username<input type="text" value="{{ request.user.username }}" readonly>
-				<a></a>
-				Email<input type="text" value="{{ request.user.email }}" readonly>
-				{% endif %}
-				<a></a>
-				<!--change here-->
-				<button class="ghost" id="signUp">Edit Profile</button>
-				</a>
-				<!--this js script must be placed at the end of the file AFTER buttons-->
-				<script type="text/javascript" src="{% static '../static/js/login.js' %}"></script>
-			</div>
-		</div>
-	</div>
+<div class="container" id="container">
+
+        <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
+            <form action="." method="post" id="postDispForm"></form>
+        </div>
+        <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
+
 </div>
 
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 {% block scripts %}
 <script>
 

@@ -38,7 +38,6 @@ def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 
-
 def get_random_pid():
     pids = Post_Model.objects.all()
 
@@ -57,8 +56,6 @@ def get_random_pid():
         return (None, False)
 
 
-
-
 # home page - will generate random post id that user hasn't interacted with to display for user - will change to empty later in urls
 # generate id and redirect/reverse with that parameter
 def home_view(request):
@@ -70,60 +67,59 @@ def home_view(request):
         current_pid = pid
         return redirect(reverse("posts:post_generation_page", kwargs={"pid": pid}))
     else:
-        return render(request, "pages/home.html")
+        return render(request, "pages/posts_home.html")
 
 
 # def posts_view(request, pid, call="noapi"):
-    post_ = Post_Model.objects.get(pk=pid)
-    options_ = post_.options_model_set.all()
+    # post_ = Post_Model.objects.get(pk=pid)
+    # options_ = post_.options_model_set.all()
 
-    ##to directly show results if user has already voted!
-    ## Remove later as user should not even see posts that has already been interacted with
-    # if post_.viewed_by.filter(username=request.user.username).exists():
-    #     #display results
+    # ##to directly show results if user has already voted!
+    # ## Remove later as user should not even see posts that has already been interacted with
+    # # if post_.viewed_by.filter(username=request.user.username).exists():
+    # #     #display results
+    # #     return results_view(request, pid)
+
+    # if request.method == "POST":
+    #     try:
+    #         selected_choice = post_.options_model_set.get(pk=request.POST["option"])
+    #     except (KeyError, Options_Model.DoesNotExist):
+    #         print("error")
+    #         messages.error(request, "Select an option to submit!")
+            
+    #         template = loader.get_template("pages/poll_disp.html")
+    #         post_ = Post_Model.objects.get(pk=pid)
+    #         options_ = post_.options_model_set.all()
+    #         contents = {"post": post_, "options": options_, "display_result": False}
+    #         return HttpResponse(template.render(contents, request))
+            
+    #         # else:
+    #         #     template = loader.get_template("pages/poll_disp.html")
+    #         #     post_ = Post_Model.objects.get(pk=pid)
+    #         #     options_ = post_.options_model_set.all()
+    #         #     contents = {"post": post_, "options": options_, "display_result": False}
+    #         #     return HttpResponse(template.render(contents, request))
+    #         #     # contents = {"post": post_, "options": options_, "display_result": False}
+    #         #     # return render(request, "pages/posts_home.html", contents)
+
+    #     selected_choice.votes += 1
+    #     selected_choice.chosen_by.add(request.user)
+    #     selected_choice.save()
+
+    #     post_.viewed_by.add(request.user)
+    #     post_.save()
+
+    #     # display results
     #     return results_view(request, pid)
 
-    if request.method == "POST":
-        try:
-            selected_choice = post_.options_model_set.get(pk=request.POST["option"])
-        except (KeyError, Options_Model.DoesNotExist):
-            print("error")
-            messages.error(request, "Select an option to submit!")
-            
-            template = loader.get_template("pages/poll_disp.html")
-            post_ = Post_Model.objects.get(pk=pid)
-            options_ = post_.options_model_set.all()
-            contents = {"post": post_, "options": options_, "display_result": False}
-            return HttpResponse(template.render(contents, request))
-            
-            # else:
-            #     template = loader.get_template("pages/poll_disp.html")
-            #     post_ = Post_Model.objects.get(pk=pid)
-            #     options_ = post_.options_model_set.all()
-            #     contents = {"post": post_, "options": options_, "display_result": False}
-            #     return HttpResponse(template.render(contents, request))
-            #     # contents = {"post": post_, "options": options_, "display_result": False}
-            #     # return render(request, "pages/post_home.html", contents)
-
-        selected_choice.votes += 1
-        selected_choice.chosen_by.add(request.user)
-        selected_choice.save()
-
-        post_.viewed_by.add(request.user)
-        post_.save()
-
-        # display results
-        return results_view(request, pid)
-
-    contents = {"post": post_, "options": options_, "display_result": False}
-    return render(request, "pages/posts_home.html", contents)
+    # contents = {"post": post_, "options": options_, "display_result": False}
+    # return render(request, "pages/posts_home.html", contents)
 
     # template = loader.get_template("pages/poll_disp.html")
     # post_ = Post_Model.objects.get(pk=pid)
     # options_ = post_.options_model_set.all()
     # contents = {"post": post_, "options": options_, "display_result": False}
     # return HttpResponse(template.render(contents, request))
-
 
 
 ##need a json response here as post method automatically returns whatever is in this function and renders it!
@@ -142,9 +138,7 @@ def results_view(request, pid):
     return HttpResponse(template.render(contents, request))
 
 
-    # return render(request, "pages/post_home.html", contents)
-
-
+    # return render(request, "pages/posts_home.html", contents)
 
 
 ##api view
@@ -152,16 +146,15 @@ def results_view(request, pid):
 # def test1_view(request):
     # return JsonResponse({'hello': 'world'})
     # print(request, request.GET['hello'])
-    template = loader.get_template("pages/poll_disp.html")
+    # template = loader.get_template("pages/poll_disp.html")
     # post_ = Post_Model.objects.all()
-    post_ = Post_Model.objects.get(pk=1)
-    options_ = post_.options_model_set.all()
-    contents = {"post": post_, "options": options_, "display_result": False}
-    return HttpResponse(template.render(contents, request))
+    # post_ = Post_Model.objects.get(pk=1)
+    # options_ = post_.options_model_set.all()
+    # contents = {"post": post_, "options": options_, "display_result": False}
+    # return HttpResponse(template.render(contents, request))
 
-
-
-
+# shows whether you have voted or not
+# if voted, then results. if not, poll
 def show_curr_post_api_view(request):
     global current_pid
 
@@ -171,7 +164,6 @@ def show_curr_post_api_view(request):
         return post_view_class.get(request=request, pid=pid, call="api")
     return post_view_class.post(request=request, pid=pid, call="api")
     
-
 
 #put ajax in poll_disp.html
 
@@ -214,11 +206,6 @@ class PostsView(View):
             post_.save()
             return JsonResponse({'voting': 'success'})
         return JsonResponse({'voting': 'Wrong request tt'})
-
-
-
-
-
 
 
 # def posts_view(request, pid, call="noapi"):
@@ -269,11 +256,6 @@ class PostsView(View):
 #     template = loader.get_template("pages/poll_disp.html")
 #     contents = {"post": post_, "options": options_, 'pid': pid}
 #     return HttpResponse(template.render(contents, request))
-
-
-
-
-
 
 
 def show_next_post_api_view(request):
