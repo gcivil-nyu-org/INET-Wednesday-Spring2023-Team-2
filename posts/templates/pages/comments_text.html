@@ -1,5 +1,8 @@
 <div>
+    {% csrf_token %}
     {% if show_comments_text %}
-    <input type="text" placeholder = "Username" name = "username" value="{{ comments_form.comment_text }}"> 
+    <p>Worked!</p>
+    <input type="text" placeholder = "Comment" name = "comment_text">
+    <button type="submit">Comment</button>
     {% endif %}
 </div>
