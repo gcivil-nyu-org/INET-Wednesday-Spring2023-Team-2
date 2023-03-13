@@ -52,7 +52,15 @@
 
                     </li>
 
-                    <!-- <li class="nav-link" id="ProfilePageNavB" onclick="getProfileInfo();"> -->
+                    {% if user.is_authenticated %}  
+
+                    <li class="nav-link">
+                        <a href={% url 'posts:create_page' %}>
+                            <i class='bx bx-plus-circle icon'></i>
+                            <span class="text nav-text">New Poll</span>
+                        </a>
+                    </li>
+
                     <li class="nav-link" id="ProfilePageNavB">
                         <a href={% url 'account:profile_page' request.user %}>
                             <i class='bx bx-user icon'></i>
@@ -66,7 +74,6 @@
                             <span class="text nav-text">Notifications</span>
                         </a>
                     </li>
-
                  
 
                     <li class="nav-link">
@@ -85,7 +92,7 @@
                             <span class="text nav-text">Analytics</span>
                         </a>
                     </li>
-                   
+                    {% endif %}
                 </ul>
             </div>
 
