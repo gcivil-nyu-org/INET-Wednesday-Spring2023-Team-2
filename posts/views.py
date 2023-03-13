@@ -17,7 +17,8 @@ import random
 
 
 
-from .models import Post_Model, Options_Model
+from .models import Post_Model, Options_Model, Comments_Model
+from .forms import CommentsForm
 from login.models import Custom_User
 
 
@@ -309,6 +310,48 @@ class CurrentPostURL(APIView):
 
 
 
-def show_comments_api_view(request):
+##to show comments
+class CommentsView(View):
     pid = current_pid
+    post_ = Post_Model.objects.get(pk=pid)
+    comments_ = post_.comments_model_set.all()
+    comments_form = CommentsForm()
+
+    def post(self, request):
+        comments_form_ = self.comments_form(request.POST)
+        if comments_form_.is_valid():
+            self.comments_.add(comments_form_.comment_text)
+            return JsonResponse({'save': 'success'})
+        
+            # comment_text = request.POST["comment_text"].cleaned_data()
+
+    def get(self, request):
+        template = loader.get_template("pages/comments.html")
+        contents = {'comments': self.comments_, 'show_comments_text': False}
+        if self.post_.viewed_by.filter(username=request.user.username).exists():
+            contents['show_comments_text'] = True
+        return HttpResponse(template.render(contents, request))
+    
+
+
+def show_comments_text_api(request):
+    if request.method == "GET":
+        pid = current_pid
+        post_ = Post_Model.objects.get(pk=pid)
+        comments_form = CommentsForm()
+        if post_.viewed_by.filter(username=request.user.username).exists():
+            contents = {'comments_form': comments_form, 'show_comments_text': True}
+
+        contents = {'comments_form': comments_form, 'show_comments_text': False}
+        template = loader.get_template("pages/comments_text.html")
+        return HttpResponse(template.render(contents, request))
+
+
+
+        
+        
+
+
+
+
     
