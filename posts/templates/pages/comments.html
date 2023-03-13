@@ -1,0 +1,8 @@
+<div>
+    {% if show_comments_text %}
+    {% for comment in comments %}
+        <p>{{ comment.comment_text }}</p>
+        <hr>
+    {% endfor %}
+    {% endif %}
+</div>

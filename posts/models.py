@@ -27,3 +27,10 @@ class Options_Model(models.Model):
 
     def __str__(self):
         return self.question.__str__() + " : " + self.choice_text
+    
+
+
+class Comments_Model(models.Model):
+    question = models.ForeignKey(Post_Model, on_delete=models.CASCADE)
+    comment_text= models.CharField()
+
