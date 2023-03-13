@@ -32,5 +32,5 @@ class Options_Model(models.Model):
 
 class Comments_Model(models.Model):
     question = models.ForeignKey(Post_Model, on_delete=models.CASCADE)
-    comment_text= models.CharField()
+    comment_text= models.CharField(max_length=500)
 
