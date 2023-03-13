@@ -79,7 +79,6 @@ height: 100vh;">
  
  
   <form action="." method="post" id="commentTextDisp">
-    <input type="text" placeholder = "Comment" name = "comment_text" required>
   </form>
 
 
@@ -149,6 +148,7 @@ height: 100vh;">
     // $("#postDispForm").on("submit", function(e){
     //     e.preventDefault();
     //     e.stopPropagation();
+    // to do ajax call from here on submission of postdisp form
     $('#postDispForm').submit(function(){
         var $this = $(this);
         var valid = true;
