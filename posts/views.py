@@ -170,11 +170,15 @@ def show_curr_post_api_view(request):
 
 class PostsView(View):
     def get(self, request, pid, call="noapi"):
+        global current_pid
+
+        current_pid = pid
         post_ = Post_Model.objects.get(pk=pid)
         options_ = post_.options_model_set.all()
 
         if call == "noapi":
             contents = {"post": post_, "options": options_, 'pid': pid}
+            # print(contents)
             return render(request, "pages/post_home.html", contents)
         
         if post_.viewed_by.filter(username=request.user.username).exists():
@@ -203,7 +207,7 @@ class PostsView(View):
             post_.viewed_by.add(request.user)
             post_.save()
             return JsonResponse({'voting': 'success'})
-        return JsonResponse({'voting': 'Wrong request'})
+        return JsonResponse({'voting': 'Wrong request tt'})
 
 
 
