@@ -4,7 +4,7 @@ from .models import Comments_Model
 
 
 
-class CommentsForm(forms.Form):
+class CommentsForm(forms.ModelForm):
     # comment_text = forms.CharField()
     class Meta:
         model = Comments_Model

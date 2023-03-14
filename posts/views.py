@@ -318,20 +318,22 @@ class CurrentPostURL(APIView):
 class CommentsView(View):
 
     def post(self, request):
-        pid = current_pid
-        post_ = Post_Model.objects.get(pk=pid)
-        comments_ = post_.comments_model_set.all()
-        comments_form = CommentsForm()
-        comments_form_ = comments_form(request.POST)
-        if comments_form_.is_valid():
-            self.comments_.add(comments_form_.comment_text)
-            return JsonResponse({'save': 'success'})
+        if is_ajax(request):
+            pid = current_pid
+            post_ = Post_Model.objects.get(pk=pid)
+            comments_form = CommentsForm(request.POST)
+            if comments_form.is_valid():
+                comments_ = comments_form.save(commit=False)
+                comments_.question = post_
+                comments_.save()
+                return JsonResponse({'commment': 'success'})
         
             # comment_text = request.POST["comment_text"].cleaned_data()
 
     def get(self, request):
         pid = current_pid
         post_ = Post_Model.objects.get(pk=pid)
+        # comments_ = post_.comments_model_set.get(pk=pid)
         comments_ = post_.comments_model_set.all()
         template = loader.get_template("pages/comments.html")
         contents = {'comments': comments_, 'show_comments_text': False}

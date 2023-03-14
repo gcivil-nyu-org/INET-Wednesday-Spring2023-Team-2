@@ -78,7 +78,7 @@ height: 100vh;">
  
  
  
-  <form action="." method="post" id="commentTextDisp">
+  <form action="{% url 'posts:show_comments_api' %}" method="post" id="commentTextDisp">
   </form>
 
 
@@ -148,7 +148,7 @@ height: 100vh;">
     // $("#postDispForm").on("submit", function(e){
     //     e.preventDefault();
     //     e.stopPropagation();
-    // to do ajax call from here on submission of postdisp form
+    // ajax call from frontend on submission of postdisp form
     $('#postDispForm').submit(function(){
         var $this = $(this);
         var valid = true;
@@ -183,7 +183,7 @@ height: 100vh;">
     });
 
 
-
+    // change this to call getCurrPost() to keep it linear, return json in views.py
     function getNextPost(){
         $.ajax({
             url:"{% url 'posts:show_next_post_api' %}",
@@ -193,6 +193,8 @@ height: 100vh;">
                 changeurl();
                 // changeurl("res");
                 // console.log("meow:{{ post_.id }}")
+                getCommentsText();
+                getComments();
             },
             error: function(resp){
               console.log("getnextpost error")
@@ -252,6 +254,43 @@ height: 100vh;">
 
   getCommentsText();
   getComments();
+
+
+
+  // ajax call from frontend on submission of commentTextDisp form
+  $('#commentTextDisp').submit(function(){
+        var $this = $(this);
+        var valid = true;
+    
+        if(valid){
+            //ajax
+            $.ajax({
+                url: $this.attr('action'),
+                type: "POST",
+                data: $(this).serialize(),
+                // data: {
+                //     "csrfmiddlewaretoken": "{{ csrf_token }}",
+                //     "option": 1,
+                // },
+                dataType: 'json',
+                success: function(resp){
+                    if(resp.commment === 'success'){
+                        // getCurrPost();
+                        getCommentsText();
+                        getComments();
+                    }else{
+                        alert(resp.voting);
+                    }
+
+                },
+                error: function(resp){
+                    console.log("comment submission error");
+                }
+            });
+        }
+        return false;
+    });
+
 
 
 </script>
