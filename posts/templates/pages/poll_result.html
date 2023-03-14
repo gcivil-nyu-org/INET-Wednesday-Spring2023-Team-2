@@ -4,31 +4,44 @@
 </head>
 
 <div>
-  <!-- Question -->
-  <br></br>
-  <h1 class="question">{{ post.question_text }}</h1>
-  <br></br>
+  {% csrf_token %}
 
-  <!-- Results -->
-  <div class="section over-hide z-bigger">
-    <input class="checkbox" type="checkbox" name="general" id="general">
-    <div class="section over-hide z-bigger">
-      <div class="checkcontain pb-5">
-        <div class="row justify-content-center pb-5">
-          <div class="col-12 pb-5">
-            {% for option in options %}
-            
-            <!-- TO DO: fix to check the selection the user made -->
-            <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
-            <label class="for-checkbox-tools" for="option{{ forloop.counter }}">
-              <i class='uil uil-vector-square'></i>
-              {{ option.choice_text }}
-            </label>
+  <!-- 2R: Comments -->
+	<div class="form-container sign-up-container">
+		
+	</div>
 
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </div> 
-  </div>     
-</div>
+	<div class="overlay-container">
+		<div class="overlay">
+      <!-- 2L: Selected -->
+			<div class="overlay-panel overlay-left">
+        <h2 class="question">{{ post.question_text }}</h2>
+
+
+        <div class="section over-hide z-bigger">
+          <input class="checkbox" type="checkbox" name="general" id="general">
+          <div class="section over-hide z-bigger">
+            <div class="checkcontain pb-5">
+              <div class="row justify-content-center pb-5">
+                <div class="col-12 pb-5">
+                  {% for option in options %}
+                  
+                  <!-- TO DO: fix to check the selection the user made -->
+                  <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+                  <label class="for-checkbox-tools" for="option{{ forloop.counter }}">
+                    <i class='uil uil-vector-square'></i>
+                    {{ option.choice_text }}
+                  </label>
+      
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div> 
+        </div>     
+
+			</div>
+
+		</div>
+	</div>
+</div>  

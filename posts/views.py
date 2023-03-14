@@ -31,7 +31,6 @@ from login.models import Custom_User
 
 # Create your views here.
 
-
 current_pid = None
 
 def is_ajax(request):
@@ -40,6 +39,7 @@ def is_ajax(request):
 
 def get_random_pid():
     pids = Post_Model.objects.all()
+
 
     ##to check if user has alread seen/ interaacted with the post
     # if request.user.is_authenticated:

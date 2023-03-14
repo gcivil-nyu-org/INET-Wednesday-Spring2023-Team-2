@@ -17,13 +17,15 @@ let currentPoll = 1;
     showCurrentPoll();
   }
 
+
   function showCurrentPoll() {
-    const pollContainers = document.getElementsByClassName('poll-container');
+    const pollContainers = document.getElementsByClassName('container');
     for (let i = 0; i < pollContainers.length; i++) {
       pollContainers[i].style.display = 'none';
     }
     const currentPollContainer = document.getElementById(`poll${currentPoll}`);
     currentPollContainer.style.display = 'block';
+    pollContainers.classList.add("right-panel-active");
   }
 
 
@@ -42,3 +44,12 @@ let currentPoll = 1;
     }
     document.getElementById(id).style.backgroundColor = "#555";
  }
+
+
+// const voteSubmit = document.getElementById('voteSubmit');
+// const container = document.getElementById('container');
+
+
+// voteSubmit.addEventListener('click', () => {
+// 	container.classList.add("right-panel-active");
+// });

@@ -5,34 +5,47 @@
 
 <div>
   {% csrf_token %}
-   <!-- Question -->
-  <br></br>
-  <h1 class="question">{{ post.question_text }}</h1>
-  <br></br>
+  <!-- 1L -->
+  <div class="form-container sign-in-container">
+    <!-- Question -->
+    <h2 class="question">{{ post.question_text }}</h2>
+	</div>
 
-  <!-- Options -->
-  <div class="section over-hide z-bigger">
-    <input class="checkbox" type="checkbox" name="general" id="general">
-    <div class="section over-hide z-bigger">
-      <div class="checkcontain pb-5">
-        <div class="row justify-content-center pb-5">
-          <div class="col-12 pb-5">
-            {% for option in options %}
-            
-            <!-- TO DO: fix the coloring & formating to match -->
-            <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
-            <label class="for-checkbox-tools" for="option{{ forloop.counter }}">
-              <i class='uil'></i>
-              {{ option.choice_text }}
-            </label>
+	<div class="overlay-container">
+		<div class="overlay">
+      
+      <!-- 1R: Options -->
+			<div class="overlay-panel overlay-right">
+        
+        <div class="section over-hide z-bigger">
+          <input class="checkbox" type="checkbox" name="general" id="general">
+          <div class="section over-hide z-bigger">
+            <div class="checkcontain pb-5">
+              <div class="row justify-content-center pb-5">
+                <div class="col-12 pb-5">
+                  {% for option in options %}
+                  
+                  <!-- TO DO: fix the coloring & formating to match -->
+                  <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+                  <label class="for-checkbox-tools" for="option{{ forloop.counter }}">
+                    <i class='uil'></i>
+                    {{ option.choice_text }}
+                  </label>
+      
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div> 
+        </div>     
+       
+        <button type="submit" value="Submit" name="access_info" id="voteSubmit">Submit</button>
+        
+				<!-- <button class="ghost" id="signUp">Edit Profile</button> -->
 
-            {% endfor %}
-          </div>
-        </div>
-      </div>
-    </div> 
-  </div>     
- 
-  <button type="submit" value="Submit" name="access_info">Submit</button>
+			</div>
+
+		</div>
+	</div>
 
 </div>

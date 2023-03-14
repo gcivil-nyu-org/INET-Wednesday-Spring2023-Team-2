@@ -6,14 +6,24 @@
     <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}"/>
 </head>
 
+
 <div class="container" id="container">
 
-        <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
-            <form action="." method="post" id="postDispForm"></form>
-        </div>
-        <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
+    <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
+        <form action="." method="post" id="postDispForm"></form>
+    </div>
+    <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
+
+    <div class="arrow-container-left">
+        <a href="#" class="previous round">&#8249;</a>
+    </div>
+
+    <div class="arrow-container-right">
+        <a class="next round" onclick="getNextPost();">&#8250;</a>
+    </div>
 
 </div>
+
 
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 {% block scripts %}
@@ -57,6 +67,7 @@
     $('#postDispForm').submit(function(){
         var $this = $(this);
         var valid = true;
+        var containerState = localStorage.getItem('containerState');
     
         if(valid){
             //ajax
@@ -71,6 +82,7 @@
                 dataType: 'json',
                 success: function(resp){
                     if(resp.voting === 'success'){
+                        container.classList.add("right-panel-active");
                         getCurrPost();
                     }else{
                         alert(resp.voting);
@@ -85,6 +97,12 @@
         return false;
     });
 
+
+    // function vote() {
+    //     // perform the vote
+    //     $('#container').addClass('right-panel-active');
+    //     localStorage.setItem('containerState', 'right-panel-active');
+    // }
 
 
     function getNextPost(){
