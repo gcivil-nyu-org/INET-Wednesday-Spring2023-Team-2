@@ -42,7 +42,7 @@ section {
 }
 
 input {
-  display: none;
+  display: block;
 }
 
 label {

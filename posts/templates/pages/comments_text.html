@@ -2,7 +2,7 @@
     {% csrf_token %}
     {% if show_comments_text %}
     <p>Worked!</p>
-    <input type="text" placeholder = "Comment" name = "comment_text">
+    <input type="text" placeholder = "Comment" name = "comment_text" required>
     <button type="submit">Comment</button>
     {% endif %}
 </div>

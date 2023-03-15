@@ -131,6 +131,12 @@ def results_view(request, pid):
     options_ = post_.options_model_set.all()
     contents = {"post": post_, "options": options_, 'pid': pid}
     template = loader.get_template("pages/poll_result.html")
+
+
+    ##use this to get user's choice and color code the username in comments to match the choice!
+    # user_choice = post_.options_model_set.get(chosen_by=request.user)
+    # user_color = user_choice.color
+    # print(user_choice, user_color)
     
     return HttpResponse(template.render(contents, request))
 
@@ -325,6 +331,7 @@ class CommentsView(View):
             if comments_form.is_valid():
                 comments_ = comments_form.save(commit=False)
                 comments_.question = post_
+                comments_.commented_by = request.user
                 comments_.save()
                 return JsonResponse({'commment': 'success'})
         
