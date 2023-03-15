@@ -55,18 +55,11 @@
 
                     </li>
 
-                    <li class="nav-link">
-                        {% if user.is_authenticated %}
-                        <a href={% url 'account:profile_page' %}>
+                    <li class="nav-link" id="ProfilePageNavB" onclick="getProfileInfo();">
+                        <a>
                             <i class='bx bx-user icon'></i>
                             <span class="text nav-text">Profile</span>
                         </a>
-                        {% elif not user.is_authenticated %}
-                        <a href={% url 'account:login_page' %}>
-                            <i class='bx bx-user icon'></i>
-                            <span class="text nav-text">Profile</span>
-                        </a>
-                        {% endif %}
                     </li>
 
                     <li class="nav-link" id="testy" onclick="getPosts();">
