@@ -337,6 +337,7 @@ class CommentsView(View):
         
             # comment_text = request.POST["comment_text"].cleaned_data()
 
+    ## Maybe sort and feed here
     def get(self, request):
         pid = current_pid
         post_ = Post_Model.objects.get(pk=pid)
