@@ -13,6 +13,6 @@ urlpatterns = [
     path("show_comments_text/", views.show_comments_text_api, name="show_comments_text_api"),
     path("show_comments/", views.CommentsView.as_view(), name="show_comments_api"),
     # path("get_current_url/", views.get_current_url_api_view, name="get_current_url_api")
-    path("get_current_url/", views.get_current_url_api_view, name="get_current_url_api"),
+    # path("get_current_url/", views.get_current_url_api_view, name="get_current_url_api"),
     path("create_poll/", views.create_poll, name="create_poll"),
 ]
