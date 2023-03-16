@@ -36,6 +36,13 @@ function openTab(evt, tabName) {
     evt.currentTarget.className += " active";
 
 
+    if (tabName === "nav-profile") {
+      document.getElementsByClassName("profile-info-container")[0].style.display = "flex";
+  } else {
+      document.getElementsByClassName("profile-info-container")[0].style.display = "none";
+  }
+
+
   }
 
 
