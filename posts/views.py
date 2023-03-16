@@ -11,6 +11,7 @@ from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import authentication, permissions
+from rest_framework.decorators import api_view
 
 
 import random
@@ -363,6 +364,14 @@ def show_comments_text_api(request):
 
         template = loader.get_template("pages/comments_text.html")
         return HttpResponse(template.render(contents, request))
+    
+
+
+
+# @api_view(["GET"])
+# def get_user_history(request):
+#     if is_ajax(request):
+#         return
 
 
 

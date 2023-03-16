@@ -20,6 +20,19 @@ from .tokens import account_activation_token, password_reset_token
 from .models import Custom_User
 
 
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import authentication, permissions
+from rest_framework.decorators import api_view
+
+
+
+
+
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
 # Create your views here.
 
 # put token generator in a single function and call it function
@@ -253,9 +266,23 @@ def profile_view(request):
 
 
 
+## Change all classes to smthng like this and pass a parameter and render post_home.html and check in html to render the right page
+class UserHistory(APIView):
+    # renderer_classes = [TemplateHTMLRenderer]
+    # template_name = 'profile_list.html'
 
+    renderer_classes = [TemplateHTMLRenderer]
+    # permission_classes = [permissions.IsAdminUser]
 
-
-
-# def profile_view(request):
-#     return render(request, 'pages/profile.html')
+    def get(self, request):
+        if is_ajax(request):
+            print("ajax request")
+            username_ = request.user.username
+        else:
+            print("url request")
+            # print(request.GET.get('userpop'))
+            username_ = request.GET.get('name')
+        
+        user_ = Custom_User.objects.get(username=username_)
+        content = user_.posts_viewed.all().order_by('-view_time')
+        return Response({'posts': content}, template_name='pages/profile.html')

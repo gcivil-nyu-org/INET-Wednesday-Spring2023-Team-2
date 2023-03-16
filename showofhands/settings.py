@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+from django.shortcuts import redirect
+from django.urls import reverse
 
 # import environ
 from dotenv import load_dotenv
@@ -184,6 +186,13 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 AUTH_USER_MODEL = "login.Custom_User"
+
+
+# LOGIN_URL = redirect(reverse("login:login_page"))
+
+LOGIN_URL = "/account/login"
+
+LOGOUT_REDIRECT_URL = "/home"
 
 
 

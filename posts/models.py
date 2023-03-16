@@ -24,6 +24,8 @@ class Post_Model(models.Model):
         Custom_User, related_name="posts_viewed", blank=True
     )
 
+    view_time = models.DateTimeField(auto_now_add=True, blank=True)
+
     category_list = [('sports', 'Sports'), ('entertainment', 'Entertainment'), ('misc', 'Misc')]
     category = models.CharField(max_length = 20, choices = category_list, default = 'misc')
 
