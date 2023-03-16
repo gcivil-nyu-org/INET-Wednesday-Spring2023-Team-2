@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}" />
 </head>
 
-<div class="container {{ class_ }}" id="container">
+<div class="container {{ class_ }}" id="poll-form">
     <div class="create-container">
         <form method = "POST" enctype="multipart/form-data">
             {% csrf_token %}
