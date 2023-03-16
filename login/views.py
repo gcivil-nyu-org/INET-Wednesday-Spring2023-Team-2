@@ -250,3 +250,12 @@ def profile_view(request):
             contents["class_"] = "right-panel-active"
 
     return render(request, "pages/profile.html", contents)
+
+
+
+
+
+
+
+# def profile_view(request):
+#     return render(request, 'pages/profile.html')
