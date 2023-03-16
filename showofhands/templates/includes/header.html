@@ -55,8 +55,9 @@
 
                     </li>
 
-                    <li class="nav-link" id="ProfilePageNavB" onclick="getProfileInfo();">
-                        <a>
+                    <!-- <li class="nav-link" id="ProfilePageNavB" onclick="getProfileInfo();"> -->
+                    <li class="nav-link" id="ProfilePageNavB">
+                        <a href="{% url 'account:profile_page' request.user.username %}">
                             <i class='bx bx-user icon'></i>
                             <span class="text nav-text">Profile</span>
                         </a>

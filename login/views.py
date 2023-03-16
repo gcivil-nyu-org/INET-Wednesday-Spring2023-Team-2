@@ -27,6 +27,8 @@ from rest_framework import authentication, permissions
 from rest_framework.decorators import api_view
 
 
+from django.contrib.auth.decorators import login_required
+
 
 
 
@@ -188,7 +190,12 @@ def login_view(request, login_form, register_form):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect(reverse("posts:home_page"))
+            print(request.GET)
+            try:
+                redirect_url = request.GET.get('next')
+                return redirect(request.build_absolute_uri(redirect_url))
+            except:
+                return redirect(reverse("posts:home_page"))
     else:
         messages.error(request, f"Username or password is wrong.")
 
@@ -227,10 +234,11 @@ def register_view(request, login_form, register_form):
     return render(request, "pages/login.html", contents)
 
 
-def profile_view(request):
+@login_required
+def profile_view(request, username_):
     password_change_form = PasswordChangeForm()
     contents = {"password_change_form": password_change_form, "class_": ""}
-    if request.method == "POST":
+    if request.user.username == username_ and request.method == "POST":
         password_change_form = PasswordChangeForm(request.POST)
 
         if password_change_form.is_valid():
@@ -261,6 +269,15 @@ def profile_view(request):
             for err in list(password_change_form.errors.values()):
                 messages.error(request, err)
             contents["class_"] = "right-panel-active"
+
+    if request.user.username == username_:
+        contents['username'] = request.user.username
+        contents['email'] = request.user.email
+        return render(request, "pages/profile.html", contents)
+    
+    requested_user_details = Custom_User.objects.get(username = username_)
+    contents['username'] = requested_user_details.username
+    contents['email'] = requested_user_details.email
 
     return render(request, "pages/profile.html", contents)
 
