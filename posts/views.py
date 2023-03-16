@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.template import loader
 from django.views import View
+from .forms import PollForm
 
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
@@ -363,3 +364,54 @@ def show_comments_text_api(request):
 
 
     
+        return JsonResponse({'current_url': current_url})
+
+
+def create_poll(request):
+    if request.method == 'POST':
+        form= PollForm(request.POST)
+        if form.is_valid():
+            p = form.cleaned_data['prefix']
+            p = p[:-2]
+            q = form.cleaned_data['question']
+            q = q[0].lower() + q[1:]
+            question_text= p + ' ' + q
+            post = Post_Model.objects.create(
+                question_text=question_text, created_by=request.user)
+            for i in range(1, 3):
+                option_text = form.cleaned_data['choice' + str(i)]
+                option = Options_Model.objects.create(question=post, choice_text=option_text)
+            post_id = post.id
+            print(post_id)
+
+            return redirect(reverse('posts:create_poll'))
+        else:
+            print(form.errors)
+            # prefix = form.cleaned_data['prefix']
+            # question_text = form.cleaned_data['question']
+            # choice1 = form.cleaned_data['choice1']
+            # choice2 = form.cleaned_data['choice2']
+            # # choice3 = form.cleaned_data['choice3']
+            # # choice4 = form.cleaned_data['choice4']
+            # delay = form.cleaned_data['delay']
+            # categories = form.cleaned_data('categories')
+        
+            # # Create Post_Model object
+            # post = Post_Model(question_text=question_text, created_by=request.user)
+            # post.save()
+
+            # # Create Options_Model objects
+            # option1 = Options_Model(question=post, choice_text=choice1)
+            # option2 = Options_Model.objects.create(question=post,
+            #                                        choice_text=choice2)
+
+            # # Add categories to Post_Model object
+
+            # # Redirect to a success page
+            # return HttpResponse("Poll created successfully!")
+
+    else:
+        form = PollForm()
+
+    context = {'form': form}
+    return render(request, 'pages/poll_create.html', context)
