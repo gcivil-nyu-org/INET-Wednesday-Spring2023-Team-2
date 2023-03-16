@@ -46,10 +46,8 @@ let currentPoll = 1;
  }
 
 
-// const voteSubmit = document.getElementById('voteSubmit');
-// const container = document.getElementById('container');
-
-
-// voteSubmit.addEventListener('click', () => {
-// 	container.classList.add("right-panel-active");
-// });
+ $('.round').click(function(e) {
+  e.preventDefault();
+  e.stopPropagation();
+  $('.arrow').toggleClass('bounceAlpha');
+});
