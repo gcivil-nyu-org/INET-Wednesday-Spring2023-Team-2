@@ -14,7 +14,9 @@
 <div class="container" id="container">
 	<div class="nav-tabs" id="profile-tabs">
 		<a href="#nav-profile" class="nav-tab activate" id="nav-profile-tab" onclick="openTab(event, 'nav-profile')">Profile</a>
+
 		<a href="#nav-edit" class="nav-tab" id="nav-edit-tab"  onclick="openTab(event, 'nav-edit')">Edit Profile</a>
+
 		<a href="#nav-history" class="nav-tab" id="nav-hsitory-tab"  onclick="openTab(event, 'nav-history')">History</a>
 		
 	</div>
@@ -29,6 +31,8 @@
 			<button type = "submit" value="Confirm" name="account_info">Confirm</button>
 		</form>
 	</div>
+
+
 	<div class="form-container profile-container tabcontent" id="nav-profile">
 		<div class="profile-pic-container">
 		<form action="." method = "POST">
@@ -44,9 +48,9 @@
 		<div class="profile-container tabcontent profile-info-container"> 
 			<h1>Profile Information</h1><a></a>
 				{% if request.user.is_authenticated %}
-				Username<input type="text" value="{{ request.user.username }}" readonly>
+				Username<input type="text" value="{{ username }}" readonly>
 				<a></a>
-				Email<input type="text" value="{{ request.user.email }}" readonly>
+				Email<input type="text" value="{{ email }}" readonly>
 				{% endif %}
 				<a></a>
 				<!--change here-->

@@ -7,7 +7,7 @@
 
 function getProfileInfo(){
         $.ajax({
-            url: "{% url 'account:profile_page' %}",
+            url: "{% url 'account:profile_page' request.user %}",
             type: "GET",
             success: function(resp){
                 $("#MainDiv").html(resp);
