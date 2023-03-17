@@ -25,7 +25,7 @@
               <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
               <label class="for-checkbox-tools" for="option{{ forloop.counter }}">
                 <i class='uil uil-vector-square'></i>
-                {{ option.choice_text }}
+                {{ option.choice_text }} : {{ option.votes }}
               </label>
   
               {% endfor %}

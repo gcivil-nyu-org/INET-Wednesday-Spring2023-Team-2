@@ -14,13 +14,14 @@
 <div class="container" id="container">
 	<div class="nav-tabs" id="profile-tabs">
 		<a href="#nav-profile" class="nav-tab activate" id="nav-profile-tab" onclick="openTab(event, 'nav-profile')">Profile</a>
-
+		{% if edit_access %}
 		<a href="#nav-edit" class="nav-tab" id="nav-edit-tab"  onclick="openTab(event, 'nav-edit')">Edit Profile</a>
-
+		{% endif %}
 		<a href="#nav-history" class="nav-tab" id="nav-hsitory-tab"  onclick="openTab(event, 'nav-history')">History</a>
 		
 	</div>
 
+	{% if edit_access %}
 	<div class="form-container profile-edit-container tabcontent" id="nav-edit" style="display: none;">
 		<form action="." method = "POST">
 			{% csrf_token %}
@@ -31,7 +32,8 @@
 			<button type = "submit" value="Confirm" name="account_info">Confirm</button>
 		</form>
 	</div>
-
+	
+	{% endif %}
 
 	<div class="form-container profile-container tabcontent" id="nav-profile">
 		<div class="profile-pic-container">

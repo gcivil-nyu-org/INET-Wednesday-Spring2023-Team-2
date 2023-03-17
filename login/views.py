@@ -170,6 +170,9 @@ def access_view(request):
     login_form = LoginForm()
     register_form = RegisterForm()
 
+    # print(request.POST.get('next'))
+    # print("kk:", request.GET.get('next'))
+
     access_info_d = {"Sign In": login_view, "Sign Up": register_view}
 
     if request.method == "POST":
@@ -190,12 +193,12 @@ def login_view(request, login_form, register_form):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            print(request.GET)
+            # print(request.POST.get("next"))
             # try:
             #     redirect_url = request.GET.get('next')
             #     return redirect(request.build_absolute_uri(redirect_url))
             # except:
-            #     return redirect(reverse("posts:home_page"))
+            return redirect(reverse("posts:home_page"))
     else:
         messages.error(request, f"Username or password is wrong.")
 
@@ -234,54 +237,54 @@ def register_view(request, login_form, register_form):
     return render(request, "pages/login.html", contents)
 
 
-# @login_required
-# def profile_view(request, username_):
-#     password_change_form = PasswordChangeForm()
-#     contents = {"password_change_form": password_change_form, "class_": ""}
-#     if request.user.username == username_ and request.method == "POST":
-#         password_change_form = PasswordChangeForm(request.POST)
+@login_required
+def profile_view(request, username_):
+    password_change_form = PasswordChangeForm()
+    contents = {"password_change_form": password_change_form, "class_": ""}
+    if request.user.username == username_ and request.method == "POST":
+        password_change_form = PasswordChangeForm(request.POST)
 
-#         if password_change_form.is_valid():
-#             old_password = password_change_form.cleaned_data["old_password"]
+        if password_change_form.is_valid():
+            old_password = password_change_form.cleaned_data["old_password"]
 
-#             if authenticate(
-#                 request, username=request.user.username, password=old_password
-#             ):
-#                 if old_password == password_change_form.cleaned_data["password1"]:
-#                     messages.error(
-#                         request, "New Password cannot be the same as old one!"
-#                     )
-#                     contents["class_"] = "right-panel-active"
-#                     return render(request, "pages/profile.html", contents)
+            if authenticate(
+                request, username=request.user.username, password=old_password
+            ):
+                if old_password == password_change_form.cleaned_data["password1"]:
+                    messages.error(
+                        request, "New Password cannot be the same as old one!"
+                    )
+                    contents["class_"] = "right-panel-active"
+                    return render(request, "pages/profile.html", contents)
 
-#                 request.user.set_password(
-#                     password_change_form.cleaned_data["password1"]
-#                 )
-#                 request.user.save()
-#                 messages.success(request, "Password Changed Successfully!")
-#                 login(request, request.user)
-#                 contents = {"password_change_form": password_change_form, "class_": ""}
-#                 return render(request, "pages/profile.html", contents)
-#             else:
-#                 messages.error(request, f"Current Password is wrong")
-#                 contents["class_"] = "right-panel-active"
-#         else:
-#             for err in list(password_change_form.errors.values()):
-#                 messages.error(request, err)
-#             contents["class_"] = "right-panel-active"
+                request.user.set_password(
+                    password_change_form.cleaned_data["password1"]
+                )
+                request.user.save()
+                messages.success(request, "Password Changed Successfully!")
+                login(request, request.user)
+                contents = {"password_change_form": password_change_form, "class_": ""}
+                return render(request, "pages/profile.html", contents)
+            else:
+                messages.error(request, f"Current Password is wrong")
+                contents["class_"] = "right-panel-active"
+        else:
+            for err in list(password_change_form.errors.values()):
+                messages.error(request, err)
+            contents["class_"] = "right-panel-active"
 
-#     if request.user.username == username_:
-#         contents['username'] = request.user.username
-#         contents['email'] = request.user.email
-#         contents['edit_access'] = True
-#         return render(request, "pages/profile.html", contents)
+    if request.user.username == username_:
+        contents['username'] = request.user.username
+        contents['email'] = request.user.email
+        contents['edit_access'] = True
+        return render(request, "pages/profile.html", contents)
     
-#     requested_user_details = Custom_User.objects.get(username = username_)
-#     contents['username'] = requested_user_details.username
-#     contents['email'] = requested_user_details.email
-#     contents['edit_access'] = False
+    requested_user_details = Custom_User.objects.get(username = username_)
+    contents['username'] = requested_user_details.username
+    contents['email'] = requested_user_details.email
+    contents['edit_access'] = False
 
-#     return render(request, "pages/profile.html", contents)
+    return render(request, "pages/profile.html", contents)
 
 
 
@@ -310,6 +313,6 @@ class UserHistory(APIView):
 
 
 
-
-def profile_view(request, username_):
-    return render(request, "pages/profile.html")
+# @login_required
+# def profile_view(request, username_):
+#     return render(request, "pages/profile.html")
