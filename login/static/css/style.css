@@ -326,14 +326,39 @@ select {
     font-weight: bold;
     cursor: pointer;
 	/* justify-content: space-evenly; */
+	padding: 8px 50px;
+
+	transition: background-color 0.3s, color 0.3s;
+	
+	height: 100%;
+	align-items: center;
+	display: flex;
+	line-height: 24px;
 }
 
-.nav-tab:hover {
+.tab-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/* .nav-tab:hover {
     text-decoration: underline;
+	background-color: #ddd;
+} */
+.nav-tab:hover {
+    background-color: #FED99B;
+    color: #ccc;
+    border-radius: 5px;
 }
 
+.nav-tab.active {
+    /* background-color: #FED99B; */
+    color: #ccc;
 
-
+}
 
 .user-history-container {
     /* background: linear-gradient(to bottom, #FED18C, #fe9c6e); */

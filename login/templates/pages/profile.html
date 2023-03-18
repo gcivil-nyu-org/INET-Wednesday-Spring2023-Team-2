@@ -13,12 +13,15 @@
 
 <div class="container" id="container">
 	<div class="nav-tabs" id="profile-tabs">
+		<div class="tab-wrapper" onclick="openTab(event, 'nav-profile')">
 		<a class="nav-tab activate" id="nav-profile-tab" onclick="openTab(event, 'nav-profile')">Profile</a>
-		{% if edit_access %}
+		</div>
+		<div class="tab-wrapper">
 		<a class="nav-tab" id="nav-edit-tab"  onclick="openTab(event, 'nav-edit')">Edit Profile</a>
-		{% endif %}
-		<a class="nav-tab" id="nav-hsitory-tab"  onclick="getProfileHistory();">History</a>
-		
+	 	</div>
+		<div class="tab-wrapper">
+		<a  class="nav-tab" id="nav-hsitory-tab"   onclick="getProfileHistory();">History</a>
+		</div>
 	</div>
 
 	{% if edit_access %}
@@ -48,14 +51,16 @@
 		</form>
 		</div>
 		<div class="profile-container tabcontent profile-info-container"> 
+
 			<h1>Profile Information</h1><a></a>
 				{% if request.user.is_authenticated %}
-				Username<input type="text" value="{{ username }}" readonly>
+				Username<input type="text" value="{{ request.user.username }}" readonly>
 				<a></a>
-				Email<input type="text" value="{{ email }}" readonly>
+				Email<input type="text" value="{{ request.user.email }}" readonly>
 				{% endif %}
 				<a></a>
 				<!--change here-->
+
 				<button class="ghost" id="editProfile">Edit Profile</button>
 				</a>
 				<!--this js script must be placed at the end of the file AFTER buttons-->

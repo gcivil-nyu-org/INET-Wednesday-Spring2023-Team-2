@@ -24,13 +24,13 @@ class Post_Model(models.Model):
         Custom_User, related_name="posts_viewed", blank=True
     )
 
-    view_time = models.DateTimeField(auto_now_add=True, blank=True)
+    view_time = models.DateTimeField(default=datetime.now, blank=True)
 
     category_list = [('sports', 'Sports'), ('entertainment', 'Entertainment'), ('misc', 'Misc')]
     category = models.CharField(max_length = 20, choices = category_list, default = 'misc')
 
     # created_time = models.DateTimeField(auto_now_add=True, blank=True)
-    created_time = models.DateTimeField(default = datetime.now, editable = False, blank=True)
+    # created_time = models.DateTimeField(default = datetime.now, editable = False, blank=True)
     result_reveal_time = models.DateTimeField(default = resut_reveal_time_function)
 
     def __str__(self):
