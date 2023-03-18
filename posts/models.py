@@ -30,7 +30,7 @@ class Post_Model(models.Model):
     category = models.CharField(max_length = 20, choices = category_list, default = 'misc')
 
     # created_time = models.DateTimeField(auto_now_add=True, blank=True)
-    # created_time = models.DateTimeField(default = datetime.now, editable = False, blank=True)
+    created_time = models.DateTimeField(default = datetime.now, editable = False, blank=True)
     result_reveal_time = models.DateTimeField(default = resut_reveal_time_function)
 
     def __str__(self):

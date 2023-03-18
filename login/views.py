@@ -242,6 +242,17 @@ def register_view(request, login_form, register_form):
 def profile_view(request, username_):
     password_change_form = PasswordChangeForm()
     contents = {"password_change_form": password_change_form, "class_": ""}
+   
+    if request.user.username == username_:
+        contents['username'] = request.user.username
+        contents['email'] = request.user.email
+        contents['edit_access'] = True
+    else:
+        requested_user_details = Custom_User.objects.get(username = username_)
+        contents['username'] = requested_user_details.username
+        contents['email'] = requested_user_details.email
+        contents['edit_access'] = False
+
     if request.user.username == username_ and request.method == "POST":
         password_change_form = PasswordChangeForm(request.POST)
 
@@ -264,7 +275,10 @@ def profile_view(request, username_):
                 request.user.save()
                 messages.success(request, "Password Changed Successfully!")
                 login(request, request.user)
-                contents = {"password_change_form": password_change_form, "class_": ""}
+                # contents = {"password_change_form": password_change_form, "class_": ""}
+                # contents['username'] = request.user.username
+                # contents['email'] = request.user.email
+                # contents['edit_access'] = True
                 return render(request, "pages/profile.html", contents)
             else:
                 messages.error(request, f"Current Password is wrong")
@@ -273,17 +287,6 @@ def profile_view(request, username_):
             for err in list(password_change_form.errors.values()):
                 messages.error(request, err)
             contents["class_"] = "right-panel-active"
-
-    if request.user.username == username_:
-        contents['username'] = request.user.username
-        contents['email'] = request.user.email
-        contents['edit_access'] = True
-        return render(request, "pages/profile.html", contents)
-    
-    requested_user_details = Custom_User.objects.get(username = username_)
-    contents['username'] = requested_user_details.username
-    contents['email'] = requested_user_details.email
-    contents['edit_access'] = False
 
     return render(request, "pages/profile.html", contents)
 
