@@ -3,8 +3,18 @@
 
 <div>
     <li><a href="{% url 'posts:post_generation_page' post.id %}">{{ post }}</a></li>
- </div>
+</div>
 
 {% endfor %}
+
+
+<!-- Test, remove later -->
+{% with ''|center:20 as range %}
+{% for _ in range %}
+
+<li>Test: {{ forloop.counter }}</li>
+
+{% endfor %}
+{% endwith %}
 
 </div>
