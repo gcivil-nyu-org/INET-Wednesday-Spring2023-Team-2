@@ -193,6 +193,7 @@ def login_view(request, login_form, register_form):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            print("here:", reverse("posts:home_page"))
             # print(request.POST.get("next"))
             # try:
             #     redirect_url = request.GET.get('next')

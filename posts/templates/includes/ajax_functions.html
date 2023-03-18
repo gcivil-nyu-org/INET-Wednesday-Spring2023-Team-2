@@ -48,7 +48,7 @@ function getProfileInfo(){
         });
     }
 
-    getCurrPost();
+    // getCurrPost();
 
 
     
@@ -160,8 +160,8 @@ function getProfileInfo(){
     })
   }
 
-  getCommentsText();
-  getComments();
+//   getCommentsText();
+//   getComments();
 
 
 
@@ -173,7 +173,8 @@ function getProfileInfo(){
         if(valid){
             //ajax
             $.ajax({
-                url: $this.attr('action'),
+                // url: $this.attr('action'),
+                url: "{% url 'posts:show_comments_api' %}",
                 type: "POST",
                 data: $(this).serialize(),
                 // data: {

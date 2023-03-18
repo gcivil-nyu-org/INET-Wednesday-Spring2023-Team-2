@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 app_name = "account"
 
 urlpatterns = [
-    re_path(r"^login", views.access_view, name="login_page"),
+    path("login/", views.access_view, name="login_page"),
     # path('register/', views.register_view, name="register_page"),
     path("logout/", views.logout_view, name="logout_page"),
     path("activate/<uid>/<token>/", views.activate_view, name="activate_page"),
