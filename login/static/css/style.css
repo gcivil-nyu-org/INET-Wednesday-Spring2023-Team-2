@@ -329,7 +329,7 @@ select {
 	padding: 8px 50px;
 
 	transition: background-color 0.3s, color 0.3s;
-	
+
 	height: 100%;
 	align-items: center;
 	display: flex;
@@ -374,7 +374,8 @@ select {
 
 }
 .history-content{
-	height:300px;
+	/* height:300px; */
+	height:90%;
     overflow:auto;
 }
 
