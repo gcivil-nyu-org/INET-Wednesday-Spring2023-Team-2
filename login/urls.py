@@ -22,6 +22,7 @@ urlpatterns = [
         name="passwordreset_page",
     ),
     path("profile/<str:username_>/", views.profile_view, name="profile_page"),
+    path("profile/<str:username_>/history", login_required(views.UserHistory.as_view()), name="profile_history_page")
     # re_path("^profile/(?:name=(?P<username_>\w+))/$", views.UserHistory.as_view(), name="profile_page"),
     # re_path("profile/", login_required(views.UserHistory.as_view()), name="profile_page"),
 

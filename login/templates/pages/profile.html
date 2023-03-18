@@ -13,17 +13,17 @@
 
 <div class="container" id="container">
 	<div class="nav-tabs" id="profile-tabs">
-		<a href="#nav-profile" class="nav-tab activate" id="nav-profile-tab" onclick="openTab(event, 'nav-profile')">Profile</a>
+		<a class="nav-tab activate" id="nav-profile-tab" onclick="openTab(event, 'nav-profile')">Profile</a>
 		{% if edit_access %}
-		<a href="#nav-edit" class="nav-tab" id="nav-edit-tab"  onclick="openTab(event, 'nav-edit')">Edit Profile</a>
+		<a class="nav-tab" id="nav-edit-tab"  onclick="openTab(event, 'nav-edit')">Edit Profile</a>
 		{% endif %}
-		<a href="#nav-history" class="nav-tab" id="nav-hsitory-tab"  onclick="openTab(event, 'nav-history')">History</a>
+		<a class="nav-tab" id="nav-hsitory-tab"  onclick="getProfileHistory();">History</a>
 		
 	</div>
 
 	{% if edit_access %}
 	<div class="form-container profile-edit-container tabcontent" id="nav-edit" style="display: none;">
-		<form action="." method = "POST">
+		<form action="{% url 'account:profile_page' username %}" method = "POST">
 			{% csrf_token %}
 			<h1>Edit Profile</h1><a></a>
 			<input type="password" placeholder="Current Password" name ="old_password" required/>
@@ -69,51 +69,11 @@
         <h2>User History</h2>
 		<div class="history-content">
 			<ul>
-				<div>
-					<li><a href="#">History 1</a></li>
-				 </div>
-				<div>
-					<li><a href="#">History 2</a></li>
+				<!-- this div will contain the profile history of user, called from ajax -->
+				<div id="profileHistory">
+
 				</div>
-				<div>
-					<li><a href="#">History 3</a></li>
-				</div>
-				<div>
-					<li><a href="#">History 1</a></li>
-				 </div>
-				<div>
-					<li><a href="#">History 2</a></li>
-				</div>
-				<div>
-					<li><a href="#">History 3</a></li>
-				</div>
-				<div>
-					<li><a href="#">History 1</a></li>
-				 </div>
-				<div>
-					<li><a href="#">History 2</a></li>
-				</div>
-				<div>
-					<li><a href="#">History 3</a></li>
-				</div>
-				<div>
-					<li><a href="#">History 1</a></li>
-				 </div>
-				<div>
-					<li><a href="#">History 2</a></li>
-				</div>
-				<div>
-					<li><a href="#">History 3</a></li>
-				</div>
-				<div>
-					<li><a href="#">History 1</a></li>
-				 </div>
-				<div>
-					<li><a href="#">History 2</a></li>
-				</div>
-				<div>
-					<li><a href="#">History 3</a></li>
-				</div>
+				
 			</ul>
 
 		</div>
@@ -122,3 +82,32 @@
 </div>
 
 <script type="text/javascript" src="{% static '../static/js/profile.js' %}"></script>
+
+
+
+{% block scripts %}
+
+{% include "includes/ajax_functions.html" %}
+
+{% endblock scripts %}
+
+<script>
+
+function getProfileHistory(){
+		openTab(event, 'nav-history');
+        $.ajax({
+            url: "{% url 'account:profile_history_page' username %}",
+            type: "GET",
+            success: function(resp){
+                $("#profileHistory").html(resp);
+				// implement change_profile_url
+            },
+            error: function(resp){
+                console.log("getProfileInfo error");
+            }
+        });
+    }
+
+
+
+</script>

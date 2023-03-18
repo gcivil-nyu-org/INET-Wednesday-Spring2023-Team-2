@@ -4,20 +4,6 @@
 
 <script>
 
-
-function getProfileInfo(){
-        $.ajax({
-            url: "{% url 'account:profile_page' request.user %}",
-            type: "GET",
-            success: function(resp){
-                $("#MainDiv").html(resp);
-            },
-            error: function(resp){
-                console.log("getProfileInfo error");
-            }
-        });
-    }
-
     function getPosts(){
         $.ajax({
             url: $(".post-content").data('url'),

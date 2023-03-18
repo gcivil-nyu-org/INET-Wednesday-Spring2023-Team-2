@@ -297,18 +297,18 @@ class UserHistory(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     # permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request):
+    def get(self, request, username_):
         if is_ajax(request):
             print("ajax request")
-            username_ = request.user.username
+            # username_ = request.user.username
         else:
             print("url request")
             # print(request.GET.get('userpop'))
-            username_ = request.GET.get('name')
+            # username_ = request.GET.get('name')
         
         user_ = Custom_User.objects.get(username=username_)
         content = user_.posts_viewed.all().order_by('-view_time')
-        return Response({'posts': content}, template_name='pages/profile.html')
+        return Response({'posts': content}, template_name='pages/profile_history.html')
 
 
 
