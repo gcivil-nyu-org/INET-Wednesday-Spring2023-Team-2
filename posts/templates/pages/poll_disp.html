@@ -1,7 +1,8 @@
 <div>
   {% csrf_token %}
   <!-- 1L -->
-  <div class="form-container sign-in-container">
+
+  <div class="form-container sign-in-container">   
     <!-- Question -->
     <br><br><br><br>
     <h2 class="question">{{ post.question_text }}</h2>
@@ -37,7 +38,7 @@
 	<div class="overlay-container">
 		<div class="overlay">
       
-			<div class="overlay-panel overlay-right">
+			<div class="overlay-panel overlay-right comment-content">
         {% if request.user.is_authenticated %}
 				<p>Vote to see the comments!</p>
         {% elif not request.user.is_authenticated %}
