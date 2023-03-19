@@ -14,7 +14,7 @@ from django.contrib.auth.hashers import make_password, check_password
 from .forms import LoginForm
 from .forms import RegisterForm
 from .forms import PasswordResetForm
-from .forms import PasswordChangeForm
+from .forms import PasswordChangeForm, ProfilePicForm
 from .forms import PasswordResetConfirmationForm
 from .tokens import account_activation_token, password_reset_token
 from .models import Custom_User
@@ -238,55 +238,92 @@ def register_view(request, login_form, register_form):
     return render(request, "pages/login.html", contents)
 
 
+def profile_picture_change(request, contents):
+    profile_picture_change_form = ProfilePicForm(request.POST, request.FILES)
+
+    if profile_picture_change_form.is_valid():
+        request.user.profile_picture = request.FILES.get('profile_picture')
+        request.user.save()
+
+        messages.success(request, "Profile Picture Changed Successfully!")
+
+        contents['profile'] = request.user
+
+    else:
+        for err in list(profile_picture_change_form.errors.values()):
+            messages.error(request, err)
+    
+    return render(request, "pages/profile.html", contents)
+
+
+
+def password_change(request, contents):
+    password_change_form = PasswordChangeForm(request.POST)
+
+    if password_change_form.is_valid():
+        old_password = password_change_form.cleaned_data["old_password"]
+
+        if authenticate(
+            request, username=request.user.username, password=old_password
+        ):
+            if old_password == password_change_form.cleaned_data["password1"]:
+                messages.error(
+                    request, "New Password cannot be the same as old one!"
+                )
+                contents["class_"] = "right-panel-active"
+                return render(request, "pages/profile.html", contents)
+
+            request.user.set_password(
+                password_change_form.cleaned_data["password1"]
+            )
+            request.user.save()
+            messages.success(request, "Password Changed Successfully!")
+            login(request, request.user)
+            # contents = {"password_change_form": password_change_form, "class_": ""}
+            # contents['username'] = request.user.username
+            # contents['email'] = request.user.email
+            # contents['edit_access'] = True
+            return render(request, "pages/profile.html", contents)
+        else:
+            messages.error(request, f"Current Password is wrong")
+            contents["class_"] = "right-panel-active"
+    else:
+        for err in list(password_change_form.errors.values()):
+            messages.error(request, err)
+        contents["class_"] = "right-panel-active"
+
+    return render(request, "pages/profile.html", contents)
+
+
+
+
+
 @login_required
 def profile_view(request, username_):
     password_change_form = PasswordChangeForm()
-    contents = {"password_change_form": password_change_form, "class_": ""}
+    profile_picture_change_form = ProfilePicForm()
+    contents = {"password_change_form": password_change_form, "profile_picture_change_form": profile_picture_change_form, "class_": ""}
    
     if request.user.username == username_:
-        contents['username'] = request.user.username
-        contents['email'] = request.user.email
+        # my_user_details = Custom_User.objects.get(username = request.user.username)
+        # contents['username'] = request.user.username
+        # contents['email'] = request.user.email
+        contents['profile'] = request.user
         contents['edit_access'] = True
     else:
         requested_user_details = Custom_User.objects.get(username = username_)
-        contents['username'] = requested_user_details.username
-        contents['email'] = requested_user_details.email
+        # contents['username'] = requested_user_details.username
+        # contents['email'] = requested_user_details.email
+        contents['profile'] = requested_user_details
         contents['edit_access'] = False
 
+    print(request.user.profile_picture.url)
     if request.user.username == username_ and request.method == "POST":
-        password_change_form = PasswordChangeForm(request.POST)
-
-        if password_change_form.is_valid():
-            old_password = password_change_form.cleaned_data["old_password"]
-
-            if authenticate(
-                request, username=request.user.username, password=old_password
-            ):
-                if old_password == password_change_form.cleaned_data["password1"]:
-                    messages.error(
-                        request, "New Password cannot be the same as old one!"
-                    )
-                    contents["class_"] = "right-panel-active"
-                    return render(request, "pages/profile.html", contents)
-
-                request.user.set_password(
-                    password_change_form.cleaned_data["password1"]
-                )
-                request.user.save()
-                messages.success(request, "Password Changed Successfully!")
-                login(request, request.user)
-                # contents = {"password_change_form": password_change_form, "class_": ""}
-                # contents['username'] = request.user.username
-                # contents['email'] = request.user.email
-                # contents['edit_access'] = True
-                return render(request, "pages/profile.html", contents)
-            else:
-                messages.error(request, f"Current Password is wrong")
-                contents["class_"] = "right-panel-active"
-        else:
-            for err in list(password_change_form.errors.values()):
-                messages.error(request, err)
-            contents["class_"] = "right-panel-active"
+        func_map = {'profile_pic': profile_picture_change, 'pass_change': password_change}
+        return func_map[request.POST["account_info"]](
+            request, contents
+        )
+        
 
     return render(request, "pages/profile.html", contents)
 
