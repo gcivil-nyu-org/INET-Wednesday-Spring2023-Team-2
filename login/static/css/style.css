@@ -198,8 +198,6 @@ input {
 	width: 50%;
 	transform: translateX(0);
 	transition: transform 0.6s ease-in-out;
-
-	/* overflow-y: scroll; */
 }
 
 .overlay-left {
@@ -214,13 +212,13 @@ input {
 	right: 0;
 	transform: translateX(0);
 
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .container.right-panel-active .overlay-right {
 	transform: translateX(20%);
 
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .social-container {
@@ -438,3 +436,11 @@ select {
 	height:90%;
     overflow:auto;
 }
+
+/* #commentTextDisp {
+	display: block;
+	position: absolute;
+	top: 0;
+	height: 30%;
+
+  } */
