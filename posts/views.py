@@ -19,7 +19,7 @@ import random
 
 
 
-from .models import Post_Model, Options_Model, Comments_Model
+from .models import Post_Model, Options_Model, Comments_Model, UserPostViewTime
 from .forms import CommentsForm
 from login.models import Custom_User
 
@@ -208,6 +208,14 @@ class PostsView(View):
 
             post_.viewed_by.add(request.user)
             post_.save()
+
+            if not request.user.posts_view_time.filter(post=post_).exists():
+                UserPostViewTime.objects.create(user=request.user, post=post_)
+                # user_post_view_time_model.save()
+            
+            # request.user.posts_view_time.post = post_
+            # request.user.posts_view_time.save()
+
             return JsonResponse({'voting': 'success'})
         return JsonResponse({'voting': 'Wrong request tt'})
 

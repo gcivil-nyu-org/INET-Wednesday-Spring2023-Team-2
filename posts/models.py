@@ -24,7 +24,7 @@ class Post_Model(models.Model):
         Custom_User, related_name="posts_viewed", blank=True
     )
 
-    view_time = models.DateTimeField(default=datetime.now, blank=True)
+    # view_time = models.DateTimeField(default=datetime.now, blank=True)
 
     category_list = [('sports', 'Sports'), ('entertainment', 'Entertainment'), ('misc', 'Misc')]
     category = models.CharField(max_length = 20, choices = category_list, default = 'misc')
@@ -62,3 +62,17 @@ class Comments_Model(models.Model):
     def __str__(self):
         return self.question.__str__() + " => " + self.commented_by.__str__() + " : " + self.comment_text
 
+
+
+
+
+class UserPostViewTime(models.Model):
+    user = models.ForeignKey(
+        Custom_User, related_name="posts_view_time", on_delete=models.CASCADE
+    )
+
+    post =  models.ManyToManyField(
+        Post_Model
+    )
+
+    view_time = models.DateTimeField(default=datetime.now, blank=True)
