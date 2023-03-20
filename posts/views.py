@@ -392,7 +392,7 @@ def show_comments_text_api(request):
 
 
     
-        return JsonResponse({'current_url': current_url})
+        # return JsonResponse({'current_url': current_url})
 
 
 def create_poll(request):

@@ -353,6 +353,24 @@ class UserHistory(APIView):
 
 
 
+class UserPostsCreated(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    # permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, username_):
+        if is_ajax(request):
+            print("ajax request")
+            # username_ = request.user.username
+        else:
+            print("url request")
+            ## render entire profile page with active nav id
+            # print(request.GET.get('userpop'))
+            # username_ = request.GET.get('name')
+        
+        user_ = Custom_User.objects.get(username=username_)
+        content = user_.posts_created.all().order_by('-created_time')      #.order_by('-view_time') order by relation field here
+        return Response({'posts': content}, template_name='pages/profile_posts_created.html')
+
 
 # @login_required
 # def profile_view(request, username_):

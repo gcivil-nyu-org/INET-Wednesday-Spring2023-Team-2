@@ -21,6 +21,9 @@
 		<div class="tab-wrapper">
 		<a  class="nav-tab" id="nav-history-tab"   onclick="getProfileHistory();">History</a>
 		</div>
+		<div class="tab-wrapper">
+		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
+		</div>
 	</div>
 
 	{% if edit_access %}
@@ -88,6 +91,24 @@
 		</div>
        
     </div>
+
+	<!-- posts created tab -->
+	<div class="form-container tabcontent user-history-container" id="nav-postscreated" style="display: none;">
+        <h2>Polls Created</h2>
+		<div class="history-content">
+			<ul>
+				<!-- this div will contain the posts created by user, called from ajax -->
+				<div id="postsCreated">
+
+				</div>
+				
+			</ul>
+
+		</div>
+       
+    </div>
+
+
 </div>
 
 <script type="text/javascript" src="{% static '../static/js/profile.js' %}"></script>
@@ -112,11 +133,27 @@ function getProfileHistory(){
 				// implement change_profile_url
             },
             error: function(resp){
-                console.log("getProfileInfo error");
+                console.log("getProfileHistory error");
             }
         });
     }
 
 
+
+
+function getPostsCreated(){
+	openTab(event, 'nav-postscreated');
+        $.ajax({
+            url: "{% url 'account:profile_postscreated_page' profile.username %}",
+            type: "GET",
+            success: function(resp){
+                $("#postsCreated").html(resp);
+				// implement change_profile_url
+            },
+            error: function(resp){
+                console.log("getPostsCreated error");
+            }
+        });
+}
 
 </script>
