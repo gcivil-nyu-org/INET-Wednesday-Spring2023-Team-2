@@ -27,7 +27,7 @@ class PollForm(forms.ModelForm):
         ('own_ques', 'Type your own question ...')
     ]
     prefix = forms.ChoiceField(choices=PREFIX_OPTIONS)
-    question = forms.CharField(max_length=300)
+    question = forms.CharField(max_length=300, required=False)
     DELAY_CHOICES = [
         ('0', 'No Delay'),
         ('8', '8 Hours'),
