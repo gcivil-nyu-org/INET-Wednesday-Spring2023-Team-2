@@ -14,12 +14,15 @@
             <h1>Create Your Own Poll</h1>
             <br>
             <h4>Add Your Question</h4>
-            <input id="prefix" placeholder="Insert Prefix" name="prefix" type="text" list="prefix-choices" required>
-            <datalist id="prefix-choices">
+            
+            <select id="prefix" name="prefix">
                 {% for prefix in form.prefix.field.choices %}
-                <option value="{{ prefix.0 }}"></option>
+                <option value="{{ prefix.0 }}" {% if form.prefix.field.value == prefix.0 %} selected{% endif %}>{{ prefix.1 }}</option>
                 {% endfor %}
-            </datalist>
+            </select>
+
+            <input id="hidden_question_text" placeholder="Type your question" name="question" type="text">
+
             <br>
             <h4>Add Your Poll Options</h4>
             <input id="choice1" placeholder="Insert Option 1" name="choice1" type="text" required style="background-color: #AED9E0;" class="white-placeholder">
@@ -38,3 +41,22 @@
         </form>
     </div>
 </div>
+
+
+
+{% block scripts %}
+
+{% include "includes/ajax_functions.html" %}
+
+{% endblock scripts %}
+
+
+<script>
+    $("#prefix").change(function(){
+    if($(this).val() == 'own_ques'){
+      $("#hidden_question_text").show();
+    }else{
+      $("#hidden_question_text").hide();
+    }
+});
+</script>

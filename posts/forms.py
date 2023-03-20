@@ -24,8 +24,10 @@ class PollForm(forms.ModelForm):
         ('Do you prefer', 'Do you prefer'),
         ('Have you ever', 'Have you ever'),
         ('How important is', 'How important is'),
+        ('own_ques', 'Type your own question ...')
     ]
     prefix = forms.ChoiceField(choices=PREFIX_OPTIONS)
+    question = forms.CharField(max_length=300)
     DELAY_CHOICES = [
         ('0', 'No Delay'),
         ('8', '8 Hours'),
@@ -43,41 +45,41 @@ class PollForm(forms.ModelForm):
         model = Post_Model
         fields = ['prefix',  'category']
 
-    def save(self, commit=True):
-        post = super().save(commit=False)
-        post.question_text = self.cleaned_data['prefix'] + ' ' + self.cleaned_data['question']
-        delay = int(self.cleaned_data['delay'])
-        post.created_time = timezone.now()
-        post.result_reveal_time = post.created_time + timezone.timedelta(hours=delay)
-        post.category = self.cleaned_data['category']
+    # def save(self, commit=True):
+    #     post = super().save(commit=False)
+    #     post.question_text = self.cleaned_data['prefix'] + ' ' + self.cleaned_data['question']
+    #     delay = int(self.cleaned_data['delay'])
+    #     post.created_time = timezone.now()
+    #     post.result_reveal_time = post.created_time + timezone.timedelta(hours=delay)
+    #     post.category = self.cleaned_data['category']
 
-        if commit:
-            post.save()
+    #     if commit:
+    #         post.save()
 
-        choice1 = Options_Model(
-            question=post,
-            choice_text=self.cleaned_data['choice1'],
-        )
-        choice2 = Options_Model(
-            question=post,
-            choice_text=self.cleaned_data['choice2'],
-        )
-        if self.cleaned_data['choice3']:
-            choice3 = Options_Model(
-                question=post,
-                choice_text=self.cleaned_data['choice3'],
-            )
-        if self.cleaned_data['choice4']:
-            choice4 = Options_Model(
-                question=post,
-                choice_text=self.cleaned_data['choice4'],
-            )
+    #     choice1 = Options_Model(
+    #         question=post,
+    #         choice_text=self.cleaned_data['choice1'],
+    #     )
+    #     choice2 = Options_Model(
+    #         question=post,
+    #         choice_text=self.cleaned_data['choice2'],
+    #     )
+    #     if self.cleaned_data['choice3']:
+    #         choice3 = Options_Model(
+    #             question=post,
+    #             choice_text=self.cleaned_data['choice3'],
+    #         )
+    #     if self.cleaned_data['choice4']:
+    #         choice4 = Options_Model(
+    #             question=post,
+    #             choice_text=self.cleaned_data['choice4'],
+    #         )
         
-        for choice in [choice1, choice2, choice3, choice4]:
-            if choice:
-                choice.save()
+    #     for choice in [choice1, choice2, choice3, choice4]:
+    #         if choice:
+    #             choice.save()
 
-        return post
+    #     return post
 
 
 # class PollForm(forms.Form):

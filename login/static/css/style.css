@@ -457,7 +457,6 @@ select {
 
   } */
 
-<<<<<<< HEAD
   /* vertically centered the poll display container */
 .poll-display-container{
 	/* align-items: center;
@@ -508,9 +507,7 @@ select {
 /* html {
     height: 100%;
 } */
-=======
   
 .white-placeholder::placeholder {
 	color: white;
 }
->>>>>>> 193af94 (poll creation draft)

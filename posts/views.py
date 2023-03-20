@@ -359,6 +359,7 @@ class CommentsView(View):
     ## Maybe sort and feed here
     def get(self, request):
         pid = current_pid
+        print('whyyyy:', pid)
         post_ = Post_Model.objects.get(pk=pid)
         # comments_ = post_.comments_model_set.get(pk=pid)
         comments_ = post_.comments_model_set.all()
@@ -413,6 +414,9 @@ def create_poll(request):
             print("form is valid")
             print(form.cleaned_data)
             question_text = form.cleaned_data['prefix']
+            print(question_text)
+            if question_text == 'own_ques':
+                question_text = form.cleaned_data['question']
 
             delay = int(form.cleaned_data['delay'])
             print(delay)
