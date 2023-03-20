@@ -44,5 +44,3 @@ let currentPoll = 1;
     }
     document.getElementById(id).style.backgroundColor = "#555";
  }
-
-

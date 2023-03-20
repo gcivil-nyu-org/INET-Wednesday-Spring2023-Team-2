@@ -5,7 +5,7 @@
   <div class="form-container sign-in-container poll-display-container">   
     <!-- Question -->
     <div class="poll-display-container">
-      <br><br><br><br>
+      <!-- <br><br><br><br> -->
     <h2 class="question">{{ post.question_text }}</h2>
     <br>
 
@@ -19,7 +19,7 @@
               
               <!-- TO DO: fix the coloring & formating to match -->
               <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
-              <label class="for-checkbox-tools" for="option{{ forloop.counter }}">
+              <label class="for-checkbox-tools" for="option{{ forloop.counter }}" style="background-image: linear-gradient(75deg, #ececec 1%, #{{ option.color }})">
                 <i class='uil'></i>
                 {{ option.choice_text }}
               </label>
