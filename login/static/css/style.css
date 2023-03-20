@@ -96,7 +96,7 @@ input {
   	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
 			0 10px 10px rgba(0,0,0,0.22);
 	position: relative;
-	overflow: hidden;
+	overflow: auto;
 	width: 55%;
 	max-width: 100%;
 	/* min-height: 75%; */
@@ -457,6 +457,7 @@ select {
 
   } */
 
+<<<<<<< HEAD
   /* vertically centered the poll display container */
 .poll-display-container{
 	/* align-items: center;
@@ -507,3 +508,9 @@ select {
 /* html {
     height: 100%;
 } */
+=======
+  
+.white-placeholder::placeholder {
+	color: white;
+}
+>>>>>>> 193af94 (poll creation draft)

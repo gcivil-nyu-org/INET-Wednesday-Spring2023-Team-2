@@ -10,43 +10,26 @@
     <div class="create-container">
         <form method = "POST" enctype="multipart/form-data">
             {% csrf_token %}
+            <br>
             <h1>Create Your Own Poll</h1>
+            <h4>Add Your Question</h4>
             <input id="prefix" placeholder="Insert Prefix" name="prefix" type="text" list="prefix-choices" required>
             <datalist id="prefix-choices">
-                <option value="Show of Hands if.."></option>
-                <option value="Would you rather.."></option>
-                <option value="Do you prefer.."></option>
-                <option value="Have you ever.."></option>
-                <option value="How important is.."></option>
+                {% for prefix in form.prefix.field.choices %}
+                <option value="{{ prefix.0 }}"></option>
+                {% endfor %}
             </datalist>
-            <input id="question" placeholder="Insert Question" name="question" type="text" required>
-            <!-- <select id="number-options" name="number-options" required>
-                <option value="" disabled selected="selected">How many choices?</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-            </select> -->
-            <input id="choice1" placeholder="Insert Option 1" name="choice1" type="text" required>
-            <input id="choice2" placeholder="Insert Option 2" name="choice2" type="text" required>
-            <!-- <input id="choice3" placeholder="Insert Option 3" name="choice3" type="text" required>
-            <input id="choice4" placeholder="Insert Option 4" name="choice4" type="text" required> -->
-            <h4>Time Delay:</h4>
-            <div class="delay-class">
-                {% for choice in form.delay %}
-                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
-                {{ choice.tag }}
-                {% endfor %}
-            </div>
-            <div id="checkboxes">
-                <h4>Select categories:</h4>
-                {% for choice in form.categories %}
-                <div class="checkboxgroup">
-                <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
-                {{ choice.tag }}
-                </div>
-                {% endfor %}
-            </div>
+            <h4>Add Your Poll Options</h4>
+            <input id="choice1" placeholder="Insert Option 1" name="choice1" type="text" required style="background-color: #AED9E0;" class="white-placeholder">
+            <input id="choice2" placeholder="Insert Option 2" name="choice2" type="text" required style="background-color: #8CB369;" class="white-placeholder">
+            <input id="choice3" placeholder="Insert Option 3" name="choice3" type="text" style="background-color: #D7A5E4;" class="white-placeholder">
+            <input id="choice4" placeholder="Insert Option 4" name="choice4" type="text" style="background-color: #5D6DD3;" class="white-placeholder">
+            <h4>What's The Fun In Revealing Results Immediately?</h4>
+            {{ form.delay }}
+            <h4>Add Relevant Categories</h4>
+            {{ form.category }}
             <button type="submit" value="submit-poll" name="submit-poll" class="submit">Submit Poll</button>
+            <br>
         </form>
     </div>
 </div>

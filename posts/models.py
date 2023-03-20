@@ -1,6 +1,7 @@
 from django.db import models
 from login.models import Custom_User
 from django.utils import timezone
+from multiselectfield import MultiSelectField
 
 from datetime import datetime, timedelta
 from pytz import timezone
@@ -26,8 +27,8 @@ class Post_Model(models.Model):
 
     # view_time = models.DateTimeField(default=datetime.now, blank=True)
 
-    category_list = [('sports', 'Sports'), ('entertainment', 'Entertainment'), ('misc', 'Misc')]
-    category = models.CharField(max_length = 20, choices = category_list, default = 'misc')
+    category_list = [('misc', 'Misc'), ('sports', 'Sports')]
+    category = MultiSelectField(max_length = 20, choices = category_list, max_choices = 3, default = 'misc')
 
     # created_time = models.DateTimeField(auto_now_add=True, blank=True)
     created_time = models.DateTimeField(default = datetime.now, editable = False, blank=True)

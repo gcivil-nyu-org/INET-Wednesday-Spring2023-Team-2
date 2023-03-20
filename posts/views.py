@@ -1,3 +1,4 @@
+from datetime import timedelta, timezone
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -7,6 +8,7 @@ from django.http import JsonResponse
 from django.template import loader
 from django.views import View
 from .forms import PollForm
+import datetime
 
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
@@ -402,50 +404,43 @@ def show_comments_text_api(request):
 
 
 def create_poll(request):
+    print("create poll")
+    categories = Post_Model.category_list
     if request.method == 'POST':
         form= PollForm(request.POST)
+        print(request.POST)
         if form.is_valid():
-            p = form.cleaned_data['prefix']
-            p = p[:-2]
-            q = form.cleaned_data['question']
-            q = q[0].lower() + q[1:]
-            question_text= p + ' ' + q
+            print("form is valid")
+            print(form.cleaned_data)
+            question_text = form.cleaned_data['prefix']
+
+            delay = int(form.cleaned_data['delay'])
+            print(delay)
+            category = form.cleaned_data['category']
+
             post = Post_Model.objects.create(
-                question_text=question_text, created_by=request.user)
-            for i in range(1, 3):
-                option_text = form.cleaned_data['choice' + str(i)]
-                option = Options_Model.objects.create(question=post, choice_text=option_text)
+                question_text=question_text, created_by=request.user,
+                category=category, created_time=datetime.datetime.now())
+            for i in range(1, 5):
+                option_text = form.cleaned_data.get('choice{}'.format(i))
+                if option_text:
+                    option = Options_Model.objects.create(question=post, choice_text=option_text)
+            
+            result_reveal_time = post.created_time + timedelta(hours=delay)
+            post.result_reveal_time = result_reveal_time
+            post.save()
+            
             post_id = post.id
             print(post_id)
 
             return redirect(reverse('posts:create_poll'))
         else:
+            print("form invalid")
             print(form.errors)
-            # prefix = form.cleaned_data['prefix']
-            # question_text = form.cleaned_data['question']
-            # choice1 = form.cleaned_data['choice1']
-            # choice2 = form.cleaned_data['choice2']
-            # # choice3 = form.cleaned_data['choice3']
-            # # choice4 = form.cleaned_data['choice4']
-            # delay = form.cleaned_data['delay']
-            # categories = form.cleaned_data('categories')
-        
-            # # Create Post_Model object
-            # post = Post_Model(question_text=question_text, created_by=request.user)
-            # post.save()
-
-            # # Create Options_Model objects
-            # option1 = Options_Model(question=post, choice_text=choice1)
-            # option2 = Options_Model.objects.create(question=post,
-            #                                        choice_text=choice2)
-
-            # # Add categories to Post_Model object
-
-            # # Redirect to a success page
-            # return HttpResponse("Poll created successfully!")
 
     else:
+        print("GET request")
         form = PollForm()
 
-    context = {'form': form}
+    context = {'form': form, 'categories': categories}
     return render(request, 'pages/poll_create.html', context)
