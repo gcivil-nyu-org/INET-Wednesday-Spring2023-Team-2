@@ -99,8 +99,8 @@ input {
 	overflow: auto;
 	width: 55%;
 	max-width: 100%;
-	/* min-height: 75%; */
 	min-height: 70%;
+	max-height: 75%;
 	color:#222;
 }
 
