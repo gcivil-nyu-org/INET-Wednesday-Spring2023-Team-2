@@ -18,6 +18,20 @@
     }
 
 
+    function getCategoryBasedPosts(){
+        $.ajax({
+            url: "{% url 'posts:show_categorybased_post_api' 'sports' %}",
+            type: "GET",
+            success: function(resp){
+                $("#postDispForm").html(resp);
+            },
+            error: function(resp){
+                console.log("getpost error");
+            }
+        });
+    }
+
+
 
     function getCurrPost(){
         $.ajax({

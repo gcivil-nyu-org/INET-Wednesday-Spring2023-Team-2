@@ -38,8 +38,11 @@ def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 
-def get_random_pid():
-    pids = Post_Model.objects.all()
+def get_random_pid(category = None):
+    if category:
+        pids = Post_Model.objects.filter(category=category)
+    else:
+        pids = Post_Model.objects.all()
 
 
     ##to check if user has alread seen/ interaacted with the post
@@ -271,7 +274,24 @@ def show_next_post_api_view(request):
         return post_view_class.post(request=request, pid=pid, call="api")
     
     else:
-        ## need to implement an empty template to say you have reached the end! and pass a httpresponse here
+        ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
+        pass
+
+
+
+def show_categorybased_post_api_view(request, category):
+    global current_pid
+    pid, truth = get_random_pid(category=category)
+
+    if truth:
+        post_view_class = PostsView()
+        current_pid = pid
+        if request.method == 'GET':
+            return post_view_class.get(request=request, pid=pid, call="api")
+        return post_view_class.post(request=request, pid=pid, call="api")
+    
+    else:
+        ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
         pass
 
 
