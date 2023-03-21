@@ -99,7 +99,7 @@ input {
 	overflow: auto;
 	width: 55%;
 	max-width: 100%;
-	min-height: 70%;
+	min-height: 75%;
 	max-height: 75%;
 	color:#222;
 }
@@ -320,9 +320,9 @@ select {
 	height: 10%;
 	justify-content: space-evenly;
     padding: 10px 20px;
-    background-color: #fe654f;
-    background: -webkit-linear-gradient(to right, #FED18C, #fe654f);
-    background: linear-gradient(to right, #FED18C, #fe654f);
+    background-color: #ef3417;
+    background: -webkit-linear-gradient(to right, #FED18C, #ffb20f);
+    background: linear-gradient(to right, #FED18C, #ffb20f);
     border-radius: 10px 10px 0 0;
 }
 
@@ -469,8 +469,8 @@ select {
 
 }
 
-.mian-container {
-	background-color: #fff;
+.main-container {
+	background-color: #582707;
 	border-radius: 10px;
 	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
 	  0 10px 10px rgba(0, 0, 0, 0.22);
@@ -478,16 +478,19 @@ select {
 	overflow: hidden;
 	width: 55%;
 	max-width: 100%;
-	min-height: 75vh;
+	min-height: 75%;
+	max-height: 75%;
 	color: #222;
 	display: flex;
 	flex-direction: column;
+	background: -webkit-linear-gradient(to right, #FED18C, #ffb20f);
+    background: linear-gradient(to right, #FED18C, #ffb20f);
   }
   
 #poll-container{
 	position: relative;
     width: 100%;
-    height: 90%;
+    min-height: 90%;
 	/* delete if poll display section and comment section is set scrollable separately */
     overflow: auto;
 }
@@ -495,9 +498,9 @@ select {
     display: flex;
     justify-content: space-evenly;
     padding: 10px 20px;
-    background-color: #fe654f;
-    background: -webkit-linear-gradient(to right, #FED18C, #fe654f);
-    background: linear-gradient(to right, #FED18C, #fe654f);
+    background-color: #582707;
+    background: -webkit-linear-gradient(to right, #FED18C, #ffb20f);
+    background: linear-gradient(to right, #FED18C, #ffb20f);
     border-radius: 10px 10px 0 0;
     height: 10%;
 	/* small width screen cannot show all category tabs */

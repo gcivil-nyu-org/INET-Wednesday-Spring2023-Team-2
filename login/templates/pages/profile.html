@@ -15,9 +15,11 @@
 		<div class="tab-wrapper" onclick="openTab(event, 'nav-profile')">
 		<a class="nav-tab activate" id="nav-profile-tab" onclick="openTab(event, 'nav-profile')">Profile</a>
 		</div>
+		{% if edit_access %}
 		<div class="tab-wrapper">
 		<a class="nav-tab" id="nav-edit-tab"  onclick="openTab(event, 'nav-edit')">Edit Profile</a>
 	 	</div>
+		 {% endif %}
 		<div class="tab-wrapper">
 		<a  class="nav-tab" id="nav-history-tab"   onclick="getProfileHistory();">History</a>
 		</div>
