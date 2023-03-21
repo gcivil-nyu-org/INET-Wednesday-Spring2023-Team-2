@@ -171,7 +171,7 @@
 
 
   // ajax call from frontend on submission of commentTextDisp form
-  $('#commentTextDisp').submit(function(){
+  $('#commentTextDisp2').submit(function(){
         var $this = $(this);
         var valid = true;
     
@@ -190,7 +190,7 @@
                 success: function(resp){
                     if(resp.commment === 'success'){
                         // getCurrPost();
-                        getCommentsText();
+                        // getCommentsText();
                         getComments();
                     }else{
                         alert(resp.voting);

@@ -1,8 +1,32 @@
 <div>
-    {% csrf_token %}
-    {% if show_comments_text %}
-    <p>Worked!</p>
-    <input type="text" placeholder = "Comment" name = "comment_text" required>
-    <button type="submit">Comment</button>
-    {% endif %}
+
+    <form action="{% url 'posts:show_comments_api' %}" method="post" id="commentTextDisp2">
+        {% csrf_token %}
+        {% if show_comments_text %}
+        <p>Worked!</p>
+        <input type="text" placeholder = "Comment" name = "comment_text" required>
+        <button type="submit">Comment</button>
+        {% endif %}
+    </form>
+    
+    
+    <div id="commentDisp">
+        
+    </div>
+    
 </div>
+
+
+
+{% block scripts %}
+
+{% include "includes/ajax_functions.html" %}
+
+{% endblock scripts %}
+
+<script>
+
+// getCommentsText();
+getComments();
+
+</script>

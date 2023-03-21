@@ -367,6 +367,7 @@ class CommentsView(View):
         contents = {'comments': comments_, 'show_comments_text': False}
         if post_.viewed_by.filter(username=request.user.username).exists():
             contents['show_comments_text'] = True
+        contents['post'] = post_
         return HttpResponse(template.render(contents, request))
     
 

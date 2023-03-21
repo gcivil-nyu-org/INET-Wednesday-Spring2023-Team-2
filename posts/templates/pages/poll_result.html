@@ -46,13 +46,13 @@
       <!-- 1R: Comments -->
 			<div class="overlay-panel overlay-right">
         <!-- Comments Text -->
-        <form action="{% url 'posts:show_comments_api' %}" method="post" id="commentTextDisp">
+        
           <!-- Danny, essentially the whatever u put in comments_text.html, it will be replaced here. You dont have to edit this file,
           only comments_text.html and comments.html. But keep in mind that I have invode the form tag here already. So u can't have
         another form tag inside comments_text.html. Alter ur code accordingly. -->
-        </form>
+       
         <!-- Comments -->
-        <div id="commentDisp">
+        <div id="commentTextDisp">
           <!-- Danny, essentially the whatever u put in comments.html, it will be replaced here -->
         </div>
         
@@ -73,6 +73,6 @@
 <script>
 
 getCommentsText();
-getComments();
+// getComments();
 
 </script>
