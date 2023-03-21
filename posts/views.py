@@ -425,10 +425,13 @@ def create_poll(request):
             post = Post_Model.objects.create(
                 question_text=question_text, created_by=request.user,
                 category=category, created_time=datetime.datetime.now())
+            
+            color_list = ['AED9E0', '8CB369', 'D7A5E4', '5D6DD3']
+
             for i in range(1, 5):
                 option_text = form.cleaned_data.get('choice{}'.format(i))
                 if option_text:
-                    option = Options_Model.objects.create(question=post, choice_text=option_text)
+                    option = Options_Model.objects.create(question=post, choice_text=option_text, color=color_list[i-1])
             
             result_reveal_time = post.created_time + timedelta(hours=delay)
             post.result_reveal_time = result_reveal_time
