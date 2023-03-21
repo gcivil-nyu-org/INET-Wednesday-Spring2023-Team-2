@@ -3,6 +3,7 @@
   <!-- 1L -->
   <div class="form-container sign-in-container">
     <!-- Question -->
+    <!-- <br><br><br><br> -->
     <h2 class="question">{{ post.question_text }}</h2>
     <br>
 
@@ -27,6 +28,12 @@
         </div>
       </div> 
     </div>     
+
+    <section class="footer">
+      <div class="text-center">
+        Created by <a href="{% url 'account:profile_page' post.created_by %}"> {{ post.created_by }} </a>
+      </div>
+    </section>
 
 	</div>
 

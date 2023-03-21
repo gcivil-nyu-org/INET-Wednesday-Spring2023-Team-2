@@ -47,7 +47,7 @@ class Options_Model(models.Model):
     )
 
     color_list = [('AED9E0', 'AED9E0'), ('8CB369', '8CB369'), ('D7A5E4', 'D7A5E4'), ('5D6DD3', '5D6DD3')]
-    color = models.CharField(max_length = 6, choices = color_list, default = 'c1')
+    color = models.CharField(max_length = 6, choices = color_list, default = 'AED9E0')
 
     def __str__(self):
         return self.question.__str__() + " : " + self.choice_text

@@ -511,3 +511,17 @@ select {
 .white-placeholder::placeholder {
 	color: white;
 }
+
+
+
+#hidden_question_text {
+	display: none;
+}
+
+
+
+.footer{
+    background-color: #fed18c;
+	color: white;
+	margin-top: auto;
+}
