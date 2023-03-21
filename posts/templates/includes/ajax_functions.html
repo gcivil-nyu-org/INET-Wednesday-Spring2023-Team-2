@@ -35,7 +35,8 @@
 
     function getCurrPost(){
         $.ajax({
-            url: $(".post-content").data('url'),
+            // url: $(".post-content").data('url'),
+            url: "{% url 'posts:show_curr_post_api' %}",
             type: "GET",
             success: function(resp){
                 $("#postDispForm").html(resp);
@@ -57,6 +58,7 @@
     //     e.preventDefault();
     //     e.stopPropagation();
     // ajax call from frontend on submission of postdisp form
+    // $('#postDispForm').unbind('submit');
     $('#postDispForm').submit(function(){
         var $this = $(this);
         var valid = true;
@@ -73,10 +75,12 @@
                 // },
                 dataType: 'json',
                 success: function(resp){
+                    $(self).unbind();
                     if(resp.voting === 'success'){
                         getCurrPost();
-                        getCommentsText();
-                        getComments();
+                        // $(self).unbind();
+                        // getCommentsText();
+                        // getComments();
                     }else{
                         alert(resp.voting);
                     }
@@ -99,10 +103,11 @@
             success: function(resp){
                 $("#postDispForm").html(resp);
                 changeurl();
+                $(self).unbind();
                 // changeurl("res");
                 // console.log("meow:{{ post_.id }}")
-                getCommentsText();
-                getComments();
+                // getCommentsText();
+                // getComments();
             },
             error: function(resp){
               console.log("getnextpost error")

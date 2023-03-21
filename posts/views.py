@@ -162,6 +162,8 @@ def results_view(request, pid):
 def show_curr_post_api_view(request):
     global current_pid
 
+    print("calling")
+
     pid = current_pid
     post_view_class = PostsView()
     if request.method == 'GET':
@@ -210,7 +212,11 @@ class PostsView(View):
             post_.save()
 
             if not request.user.posts_view_time.filter(post=post_).exists():
-                UserPostViewTime.objects.create(user=request.user, post=post_)
+                print(request.user.posts_view_time.all())
+                user_post_view_time_model = UserPostViewTime.objects.create(user=request.user)
+                user_post_view_time_model.post.add(post_)
+                # user_post_view_time_model.save()
+
                 # user_post_view_time_model.save()
             
             # request.user.posts_view_time.post = post_
