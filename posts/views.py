@@ -132,7 +132,8 @@ def home_view(request):
 def results_view(request, pid):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all()
-    contents = {"post": post_, "options": options_, 'pid': pid}
+    user_option = request.user.user_option.get(question=post_)
+    contents = {"post": post_, "options": options_, 'pid': pid, 'user_option': user_option}
     template = loader.get_template("pages/poll_result.html")
 
 
