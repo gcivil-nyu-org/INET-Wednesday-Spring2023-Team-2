@@ -157,7 +157,7 @@ mark{
 }
 .checkbox-tools:checked + label{
 	background-color: transparent;
-	box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+	box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 1);
 }
 .checkbox-tools:not(:checked) + label:hover{
 	box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);

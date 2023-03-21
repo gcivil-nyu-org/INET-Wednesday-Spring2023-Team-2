@@ -17,12 +17,22 @@
               {% for option in options %}
 
               <!-- TO DO: fix to check the selection the user made -->
-              <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+              <!-- <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" disabled>
               <label class="for-checkbox-tools" for="option{{ forloop.counter }}" style="background-image: linear-gradient(75deg, #ececec 1%, #{{ option.color }})">
                 <i class='uil uil-vector-square'></i>
                 {{ option.choice_text }} : {{ option.votes }}
-              </label>
-  
+              </label> -->
+
+              {% if user_option == option %}
+              <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" disabled checked>
+              {% else %}
+              <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" disabled>
+              {% endif %}
+              <label class="for-checkbox-tools" for="option{{ forloop.counter }}" style="background-image: linear-gradient(75deg, #ececec 1%, #{{ option.color }})">
+                <i class='uil uil-vector-square'></i>
+                {{ option.choice_text }} : {{ option.votes }}
+              </label> 
+              
               {% endfor %}
             </div>
           </div>
