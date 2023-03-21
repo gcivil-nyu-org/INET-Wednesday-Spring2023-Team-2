@@ -405,21 +405,21 @@ def show_comments_text_api(request):
 
 
 def create_poll(request):
-    print("create poll")
+    # print("create poll")
     categories = Post_Model.category_list
     if request.method == 'POST':
         form= PollForm(request.POST)
-        print(request.POST)
+        # print(request.POST)
         if form.is_valid():
-            print("form is valid")
-            print(form.cleaned_data)
+            # print("form is valid")
+            # print(form.cleaned_data)
             question_text = form.cleaned_data['prefix']
-            print(question_text)
+            # print(question_text)
             if question_text == 'own_ques':
                 question_text = form.cleaned_data['question']
 
             delay = int(form.cleaned_data['delay'])
-            print(delay)
+            # print(delay)
             category = form.cleaned_data['category']
 
             post = Post_Model.objects.create(
@@ -438,15 +438,17 @@ def create_poll(request):
             post.save()
             
             post_id = post.id
-            print(post_id)
+            messages.success(request, f"Post Created Successfully with ID => {post_id}")
 
             return redirect(reverse('posts:create_poll'))
         else:
-            print("form invalid")
-            print(form.errors)
+            for err in list(form.errors.values()):
+                messages.error(request, err)
+            # print("form invalid")
+            # print(form.errors)
 
     else:
-        print("GET request")
+        # print("GET request")
         form = PollForm()
 
     context = {'form': form, 'categories': categories}
