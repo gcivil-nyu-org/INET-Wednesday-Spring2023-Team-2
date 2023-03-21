@@ -215,8 +215,8 @@ class PostsView(View):
 
             if not request.user.posts_view_time.filter(post=post_).exists():
                 print(request.user.posts_view_time.all())
-                user_post_view_time_model = UserPostViewTime.objects.create(user=request.user)
-                user_post_view_time_model.post.add(post_)
+                user_post_view_time_model = UserPostViewTime.objects.create(user=request.user, post=post_)
+                # user_post_view_time_model.post.add(post_)
                 # user_post_view_time_model.save()
 
                 # user_post_view_time_model.save()
@@ -362,7 +362,7 @@ class CommentsView(View):
         # print('whyyyy:', pid)
         post_ = Post_Model.objects.get(pk=pid)
         # comments_ = post_.comments_model_set.get(pk=pid)
-        comments_ = post_.comments_model_set.all()
+        comments_ = post_.comments_model_set.all().order_by('-commented_time')
         template = loader.get_template("pages/comments.html")
         contents = {'comments': comments_, 'show_comments_text': False}
         if post_.viewed_by.filter(username=request.user.username).exists():

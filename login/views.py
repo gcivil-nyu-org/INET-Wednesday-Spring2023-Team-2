@@ -347,7 +347,8 @@ class UserHistory(APIView):
             # username_ = request.GET.get('name')
         
         user_ = Custom_User.objects.get(username=username_)
-        content = user_.posts_viewed.all()      #.order_by('-view_time') order by relation field here
+        content = user_.posts_view_time.all().order_by('-view_time')     #.order_by('-view_time') order by relation field here
+        print(content)
         return Response({'posts': content}, template_name='pages/profile_history.html')
 
 
@@ -369,6 +370,7 @@ class UserPostsCreated(APIView):
         
         user_ = Custom_User.objects.get(username=username_)
         content = user_.posts_created.all().order_by('-created_time')      #.order_by('-view_time') order by relation field here
+        print(content)
         return Response({'posts': content}, template_name='pages/profile_posts_created.html')
 
 

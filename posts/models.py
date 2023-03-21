@@ -58,6 +58,7 @@ class Comments_Model(models.Model):
     question = models.ForeignKey(Post_Model, on_delete=models.CASCADE)
     commented_by = models.ForeignKey(Custom_User, related_name="comments_created", on_delete=models.CASCADE, default=1)
     comment_text= models.CharField(max_length=500)
+    commented_time = models.DateTimeField(default=datetime.now, blank=True)
 
 
     def __str__(self):
@@ -72,8 +73,8 @@ class UserPostViewTime(models.Model):
         Custom_User, related_name="posts_view_time", on_delete=models.CASCADE
     )
 
-    post =  models.ManyToManyField(
-        Post_Model
+    post =  models.ForeignKey(
+        Post_Model, on_delete=models.CASCADE
     )
 
     view_time = models.DateTimeField(default=datetime.now, blank=True)
