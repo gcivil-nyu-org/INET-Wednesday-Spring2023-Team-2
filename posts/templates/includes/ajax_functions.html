@@ -23,7 +23,7 @@
             url: "{% url 'posts:show_categorybased_post_api' 'sports' %}",
             type: "GET",
             success: function(resp){
-                $("#postDispForm").html(resp);
+                $("#postDispDiv").html(resp);
             },
             error: function(resp){
                 console.log("getpost error");
@@ -39,7 +39,26 @@
             url: "{% url 'posts:show_curr_post_api' %}",
             type: "GET",
             success: function(resp){
-                $("#postDispForm").html(resp);
+                // $("#postDispForm").html(resp);
+                $("#postDispDiv").html(resp);
+                // var url= $(".post-content").data('url');
+                // console.log(url);
+            },
+            error: function(resp){
+                console.log("getcurrpost error");
+            }
+        });
+    }
+
+
+    function getCurrPostInside(){
+        $.ajax({
+            // url: $(".post-content").data('url'),
+            url: "{% url 'posts:show_curr_post_api' %}",
+            type: "GET",
+            success: function(resp){
+                // $("#postDispForm").html(resp);
+                $("#postDispDiv2").html(resp);
                 // var url= $(".post-content").data('url');
                 // console.log(url);
             },
@@ -77,7 +96,7 @@
                 success: function(resp){
                     $(self).unbind();
                     if(resp.voting === 'success'){
-                        getCurrPost();
+                        getCurrPostInside();
                         // $(self).unbind();
                         // getCommentsText();
                         // getComments();
@@ -101,7 +120,7 @@
             url:"{% url 'posts:show_next_post_api' %}",
             type:"GET",
             success: function(resp){
-                $("#postDispForm").html(resp);
+                $("#postDispDiv").html(resp);
                 changeurl();
                 $(self).unbind();
                 // changeurl("res");

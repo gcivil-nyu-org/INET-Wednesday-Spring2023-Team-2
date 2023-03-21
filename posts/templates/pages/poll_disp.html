@@ -1,4 +1,6 @@
-<div>
+<div id = "postDispDiv2">
+
+  <form action="." method="post" id="postDispForm">
   {% csrf_token %}
   <!-- 1L -->
 <!-- <div class="main-container"> -->
@@ -63,5 +65,19 @@
 
 		</div>
 	</div>
-<!-- </div> -->
+</form>
 </div>
+
+
+
+{% block scripts %}
+
+{% include "includes/ajax_functions.html" %}
+
+{% endblock scripts %}
+
+<script>
+
+// getCurrPost();
+
+</script>

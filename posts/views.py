@@ -359,7 +359,7 @@ class CommentsView(View):
     ## Maybe sort and feed here
     def get(self, request):
         pid = current_pid
-        print('whyyyy:', pid)
+        # print('whyyyy:', pid)
         post_ = Post_Model.objects.get(pk=pid)
         # comments_ = post_.comments_model_set.get(pk=pid)
         comments_ = post_.comments_model_set.all()
