@@ -211,4 +211,4 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 # }
 
 
-TIME_ZONE = 'America/New_York'
+TIME_ZONE = "America/New_York"
