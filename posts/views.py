@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.template import loader
 from django.views import View
+from django.db.models import Q
 from .forms import PollForm
 import datetime
 
@@ -46,7 +47,8 @@ def get_random_pid(category=None):
     if category:
         pids = Post_Model.objects.filter(category=category)
     else:
-        pids = Post_Model.objects.all()
+        # pids = Post_Model.objects.all()
+        pids = Post_Model.objects.filter(~Q(id=current_pid))
 
     ##to check if user has alread seen/ interaacted with the post
     # if request.user.is_authenticated:
