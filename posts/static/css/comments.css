@@ -1,0 +1,122 @@
+.comment-section {
+    position:relative;
+    top:1%;
+    /* padding-right: 15px; */
+    align-items: left;
+    width:  100%;
+    max-height: 450px;
+    overflow: auto;
+    background-color: transparent;
+}
+
+.comment-section::-webkit-scrollbar {
+    width: 10px;
+}
+
+.comment-section::-webkit-scrollbar-track {
+    margin-left:5px;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+}
+
+.comment-section::-webkit-scrollbar-thumb {
+    background-color: #a1a1a1;
+    border-radius: 10px;
+}
+
+.comment-section::-webkit-scrollbar-thumb:hover {
+    background-color: #7c7c7c;
+}
+
+.comment-box {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    word-wrap: break-word;
+    word-break: break-all;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 5px;
+    margin-bottom: 10px;
+    width: 100%;
+    min-width: 350px;
+}
+
+.comment {
+    display: flex;
+    align-items: flex-start;
+
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-left: 10px;
+    margin-right: 10px;
+    align-self: center;
+}
+
+.comment-info {
+    flex-grow: 1;
+    font-family: Arial, Helvetica;
+}
+
+.username {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    
+}
+
+.comment-text {
+    font-size: 11px;
+    font-family: Arial, Helvetica;
+}
+
+.comment-info .timestamp {
+    font-size: 9px;
+    color:#5a5a5a;
+    text-align:left;
+}
+p {
+    color:#5a5a5a;
+    text-align:left;
+    font-size: 13px;
+}
+
+
+
+
+.comment-take{
+    margin-top:75%;
+    position: absolute;
+    background-color: transparent;
+    width:70%;
+    height: 50%;
+  }
+.comment-input {
+    margin-top: 10px;
+    overflow:hidden;
+    background-color: #f1f1f1;
+    border: 1px solid #000000; /* Change the border color to black */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Add a black shadow */
+    border-radius: 10px;
+    height:30%;
+    width: 100%;
+    padding: 20px;
+    max-height: 100px;
+}
+
+.submit-btn {
+  background-color: #ff8c00; /* Bold orange background */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-weight: bold; /* Bold text */
+  transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+  background-color: #e86c00; /* Darken orange on hover */
+}
