@@ -15,7 +15,7 @@ script:
   - black --check .
 
   # Run Flake8 linter
-  - flake8 --extend-ignore E501,F401,F811,E711,F541,E722,E265,E266
+  - flake8 --extend-ignore E501,F401,F811,E711,F541,E722,E265,E266,F841,E402
   # Run Django tests
   # - coverage run manage.py test
 

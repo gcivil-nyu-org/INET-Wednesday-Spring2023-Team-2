@@ -21,14 +21,16 @@ def validate_image_extension(value):
             "Only image files with the following extensions are allowed: %s"
             % ", ".join(allowed_extensions)
         )
-    
-
 
 
 class Custom_User(AbstractUser):
     # posts_viewed = models.ManyToManyField(Post_Model, related_name='viewed_by')
 
-    profile_picture = models.ImageField(upload_to="images/", default= "default-profile.jpeg", validators=[validate_image_extension])
+    profile_picture = models.ImageField(
+        upload_to="images/",
+        default="default-profile.jpeg",
+        validators=[validate_image_extension],
+    )
 
     def __str__(self):
         return self.username

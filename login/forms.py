@@ -53,9 +53,9 @@ class RegisterForm(UserCreationForm):
         if Custom_User.objects.filter(email=email).exists():
             raise ValidationError("Email already exists")
         return email
-    
+
 
 class ProfilePicForm(forms.ModelForm):
     class Meta:
         model = Custom_User
-        fields = ['profile_picture']
+        fields = ["profile_picture"]

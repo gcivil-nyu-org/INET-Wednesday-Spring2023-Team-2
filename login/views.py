@@ -30,10 +30,9 @@ from rest_framework.decorators import api_view
 from django.contrib.auth.decorators import login_required
 
 
-
-
 def is_ajax(request):
-    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+    return request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest"
+
 
 # Create your views here.
 
@@ -242,19 +241,18 @@ def profile_picture_change(request, contents):
     profile_picture_change_form = ProfilePicForm(request.POST, request.FILES)
 
     if profile_picture_change_form.is_valid():
-        request.user.profile_picture = request.FILES.get('profile_picture')
+        request.user.profile_picture = request.FILES.get("profile_picture")
         request.user.save()
 
         messages.success(request, "Profile Picture Changed Successfully!")
 
-        contents['profile'] = request.user
+        contents["profile"] = request.user
 
     else:
         for err in list(profile_picture_change_form.errors.values()):
             messages.error(request, err)
-    
-    return render(request, "pages/profile.html", contents)
 
+    return render(request, "pages/profile.html", contents)
 
 
 def password_change(request, contents):
@@ -263,19 +261,13 @@ def password_change(request, contents):
     if password_change_form.is_valid():
         old_password = password_change_form.cleaned_data["old_password"]
 
-        if authenticate(
-            request, username=request.user.username, password=old_password
-        ):
+        if authenticate(request, username=request.user.username, password=old_password):
             if old_password == password_change_form.cleaned_data["password1"]:
-                messages.error(
-                    request, "New Password cannot be the same as old one!"
-                )
+                messages.error(request, "New Password cannot be the same as old one!")
                 contents["class_"] = "right-panel-active"
                 return render(request, "pages/profile.html", contents)
 
-            request.user.set_password(
-                password_change_form.cleaned_data["password1"]
-            )
+            request.user.set_password(password_change_form.cleaned_data["password1"])
             request.user.save()
             messages.success(request, "Password Changed Successfully!")
             login(request, request.user)
@@ -295,38 +287,38 @@ def password_change(request, contents):
     return render(request, "pages/profile.html", contents)
 
 
-
-
-
 @login_required
 def profile_view(request, username_):
     password_change_form = PasswordChangeForm()
     profile_picture_change_form = ProfilePicForm()
-    contents = {"password_change_form": password_change_form, "profile_picture_change_form": profile_picture_change_form, "class_": ""}
-   
+    contents = {
+        "password_change_form": password_change_form,
+        "profile_picture_change_form": profile_picture_change_form,
+        "class_": "",
+    }
+
     if request.user.username == username_:
         # my_user_details = Custom_User.objects.get(username = request.user.username)
         # contents['username'] = request.user.username
         # contents['email'] = request.user.email
-        contents['profile'] = request.user
-        contents['edit_access'] = True
+        contents["profile"] = request.user
+        contents["edit_access"] = True
     else:
-        requested_user_details = Custom_User.objects.get(username = username_)
+        requested_user_details = Custom_User.objects.get(username=username_)
         # contents['username'] = requested_user_details.username
         # contents['email'] = requested_user_details.email
-        contents['profile'] = requested_user_details
-        contents['edit_access'] = False
+        contents["profile"] = requested_user_details
+        contents["edit_access"] = False
 
     print(request.user.profile_picture.url)
     if request.user.username == username_ and request.method == "POST":
-        func_map = {'profile_pic': profile_picture_change, 'pass_change': password_change}
-        return func_map[request.POST["account_info"]](
-            request, contents
-        )
-        
+        func_map = {
+            "profile_pic": profile_picture_change,
+            "pass_change": password_change,
+        }
+        return func_map[request.POST["account_info"]](request, contents)
 
     return render(request, "pages/profile.html", contents)
-
 
 
 ## Change all classes to smthng like this and pass a parameter and render post_home.html and check in html to render the right page
@@ -345,13 +337,13 @@ class UserHistory(APIView):
             print("url request")
             # print(request.GET.get('userpop'))
             # username_ = request.GET.get('name')
-        
+
         user_ = Custom_User.objects.get(username=username_)
-        content = user_.posts_view_time.all().order_by('-view_time')     #.order_by('-view_time') order by relation field here
+        content = user_.posts_view_time.all().order_by(
+            "-view_time"
+        )  # .order_by('-view_time') order by relation field here
         print(content)
-        return Response({'posts': content}, template_name='pages/profile_history.html')
-
-
+        return Response({"posts": content}, template_name="pages/profile_history.html")
 
 
 class UserPostsCreated(APIView):
@@ -367,11 +359,15 @@ class UserPostsCreated(APIView):
             ## render entire profile page with active nav id
             # print(request.GET.get('userpop'))
             # username_ = request.GET.get('name')
-        
+
         user_ = Custom_User.objects.get(username=username_)
-        content = user_.posts_created.all().order_by('-created_time')      #.order_by('-view_time') order by relation field here
+        content = user_.posts_created.all().order_by(
+            "-created_time"
+        )  # .order_by('-view_time') order by relation field here
         print(content)
-        return Response({'posts': content}, template_name='pages/profile_posts_created.html')
+        return Response(
+            {"posts": content}, template_name="pages/profile_posts_created.html"
+        )
 
 
 # @login_required

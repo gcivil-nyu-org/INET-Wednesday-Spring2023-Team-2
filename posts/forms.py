@@ -3,12 +3,12 @@ from django import forms
 from .models import Comments_Model
 
 
-
 class CommentsForm(forms.ModelForm):
     # comment_text = forms.CharField()
     class Meta:
         model = Comments_Model
-        fields = ['comment_text']
+        fields = ["comment_text"]
+
 
 from django import forms
 from .models import Post_Model, Options_Model
@@ -17,21 +17,22 @@ from django import forms
 from django.utils import timezone
 from .models import Post_Model, Options_Model
 
+
 class PollForm(forms.ModelForm):
     PREFIX_OPTIONS = [
-        ('Show of hands if', 'Show of hands if'),
-        ('Would you rather', 'Would you rather'),
-        ('Do you prefer', 'Do you prefer'),
-        ('Have you ever', 'Have you ever'),
-        ('How important is', 'How important is'),
-        ('own_ques', 'Type your own question ...')
+        ("Show of hands if", "Show of hands if"),
+        ("Would you rather", "Would you rather"),
+        ("Do you prefer", "Do you prefer"),
+        ("Have you ever", "Have you ever"),
+        ("How important is", "How important is"),
+        ("own_ques", "Type your own question ..."),
     ]
     prefix = forms.ChoiceField(choices=PREFIX_OPTIONS)
     question = forms.CharField(max_length=300, required=False)
     DELAY_CHOICES = [
-        ('0', 'No Delay'),
-        ('8', '8 Hours'),
-        ('24', '24 Hours'),
+        ("0", "No Delay"),
+        ("8", "8 Hours"),
+        ("24", "24 Hours"),
     ]
     delay = forms.ChoiceField(choices=DELAY_CHOICES)
     category = forms.MultipleChoiceField(choices=Post_Model.category_list)
@@ -43,7 +44,7 @@ class PollForm(forms.ModelForm):
 
     class Meta:
         model = Post_Model
-        fields = ['prefix',  'category']
+        fields = ["prefix", "category"]
 
     # def save(self, commit=True):
     #     post = super().save(commit=False)
@@ -74,7 +75,7 @@ class PollForm(forms.ModelForm):
     #             question=post,
     #             choice_text=self.cleaned_data['choice4'],
     #         )
-        
+
     #     for choice in [choice1, choice2, choice3, choice4]:
     #         if choice:
     #             choice.save()
@@ -92,4 +93,3 @@ class PollForm(forms.ModelForm):
 #     # 'choice4': forms.TextInput(attrs={'placeholder': 'Insert Option 4'}),
 #     delay = forms.ChoiceField(choices=[('no-delay', 'No delay'), ('8-hours', '8 hours'), ('24-hours', '24 hours')], widget=forms.RadioSelect(attrs={'class': 'radio'}))
 #     categories = forms.MultipleChoiceField(choices=[('sports', 'Sports'), ('entertainment', 'Entertainment')], widget=forms.CheckboxSelectMultiple(attrs={'class': 'checkbox'}), required=False)
-	
