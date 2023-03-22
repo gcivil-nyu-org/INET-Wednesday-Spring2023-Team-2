@@ -109,6 +109,7 @@ input {
 	top: 0%;
 	height: 100%;
 	transition: all 0.6s ease-in-out;
+
 }
 
 .sign-in-container {
@@ -248,10 +249,13 @@ footer {
     right: 0;
     text-align: center;
     z-index: 999;
+	margin-bottom: 0;
 }
 
 footer p {
     margin: 10px 0;
+	bottom: 0;
+	position: fixed;
 }
 
 footer i {
@@ -465,7 +469,22 @@ select {
 	flex-direction:column;
   	align-items: center;
   	justify-content: center;
+	/* padding: 20px 20px; */
+	overflow-y: auto;
+}
+
+
+.poll-display-container2{
+	/* align-items: center;
+    justify-content: center; */
+	display: flex;
+	flex-direction:column;
+  	align-items: center;
+  	justify-content: center;
 	padding: 20px 20px;
+	padding-bottom: 10px;
+	overflow-y: auto;
+
 
 }
 
@@ -529,4 +548,14 @@ select {
 	/* color: white; */
 	color: black;
 	margin-top: auto;
+}
+
+.inner-poll-display{
+	overflow-y: auto;
+	position: relative;
+}
+
+.text-center{
+	bottom: 0;
+	position: relative;
 }

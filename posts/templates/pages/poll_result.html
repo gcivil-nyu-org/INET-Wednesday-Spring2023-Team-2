@@ -3,8 +3,9 @@
   <!-- 1L -->
   <div class="form-container sign-in-container poll-display-container">
     <!-- Question -->
-    <div class="poll-display-container">
+    <div class="poll-display-container2">
     <!-- <br><br><br><br> -->
+    <div class="inner-poll-display">
     <h2 class="question">{{ post.question_text }}</h2>
     <br>
 
@@ -38,6 +39,7 @@
       </div>    
     </div>
     </div>
+    </div>
     
     <section class="footer">
       <div class="text-center">
@@ -45,7 +47,7 @@
       Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
       </div>
     </section>
-
+    <!-- <br><br> -->
 	</div>
 
 

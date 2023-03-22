@@ -209,3 +209,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 #         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
 #     ]
 # }
+
+
+TIME_ZONE = "America/New_York"
