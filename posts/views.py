@@ -16,6 +16,8 @@ from rest_framework.views import APIView
 from rest_framework import authentication, permissions
 from rest_framework.decorators import api_view
 
+from django.contrib.auth.decorators import login_required
+
 
 import random
 
@@ -393,6 +395,7 @@ def show_comments_text_api(request):
 # return JsonResponse({'current_url': current_url})
 
 
+@login_required
 def create_poll(request):
     # print("create poll")
     categories = Post_Model.category_list
