@@ -214,3 +214,13 @@ API
 Training
 Blog
 About
+
+
+
+# image
+media/images
+
+
+#cache
+
+__pycache__

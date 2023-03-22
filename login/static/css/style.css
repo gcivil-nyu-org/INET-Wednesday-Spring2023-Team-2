@@ -6,19 +6,18 @@
 }
 
 body {
-	background: #f6f5f7;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
 	font-family: 'Montserrat', sans-serif;
 	height: 100vh;
-	margin: -20px 0 50px;
 }
 
 h1 {
 	font-weight: bold;
 	margin: 0;
+	color:#222;
 }
 
 h2 {
@@ -34,8 +33,8 @@ p {
 }
 
 span {
-	font-size: 12px;
-}
+	font-size: 30px;
+} 
 
 a {
 	color: #333;
@@ -97,20 +96,23 @@ input {
   	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
 			0 10px 10px rgba(0,0,0,0.22);
 	position: relative;
-	overflow: hidden;
-	width: 60%;
+	overflow: auto;
+	width: 55%;
 	max-width: 100%;
 	min-height: 75%;
+	max-height: 75%;
+	color:#222;
 }
 
 .form-container {
 	position: absolute;
-	top: 0;
+	top: 0%;
 	height: 100%;
 	transition: all 0.6s ease-in-out;
 }
 
 .sign-in-container {
+	height: 100%;
 	left: 0;
 	width: 50%;
 	z-index: 2;
@@ -121,11 +123,14 @@ input {
 }
 
 .sign-up-container {
+	height: 100%;
 	left: 0;
 	width: 50%;
 	opacity: 0;
 	z-index: 1;
 }
+
+
 
 .container.right-panel-active .sign-up-container {
 	transform: translateX(100%);
@@ -152,6 +157,7 @@ input {
 	left: 50%;
 	width: 50%;
 	height: 100%;
+	/* height: 90%; */
 	overflow: hidden;
 	transition: transform 0.6s ease-in-out;
 	z-index: 100;
@@ -207,10 +213,14 @@ input {
 .overlay-right {
 	right: 0;
 	transform: translateX(0);
+
+	overflow-y: auto;
 }
 
 .container.right-panel-active .overlay-right {
 	transform: translateX(20%);
+
+	overflow-y: auto;
 }
 
 .social-container {
@@ -262,7 +272,7 @@ select {
 	padding: 12px 15px;
 	margin: 8px 0;
 	width: 100%;
-}
+} 
 
 .label-flex {
 	justify-content: space-between;
@@ -287,4 +297,234 @@ select {
 	width: 100%; /* Make the image take up the full width of the container */
 	height: 100%; /* Make the image take up the full height of the container */
 	object-fit: cover; /* Scale the image while preserving its aspect ratio to cover the entire container */
+}
+
+
+  /* new css for profile page */
+  /* .profile-container{
+	height: 90%;
+	top: 10%;
+	
+} */
+
+.tabcontent{
+	height: 90%;
+	top: 10%;
+	width: 100%;
+	
+}
+
+
+  .nav-tabs {
+    display: flex;
+	height: 10%;
+	justify-content: space-evenly;
+    padding: 10px 20px;
+    background-color: #ef3417;
+    background: -webkit-linear-gradient(to right, #FED18C, #ffb20f);
+    background: linear-gradient(to right, #FED18C, #ffb20f);
+    border-radius: 10px 10px 0 0;
+}
+
+.nav-tab {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+	/* justify-content: space-evenly; */
+	padding: 8px 50px;
+
+	transition: background-color 0.3s, color 0.3s;
+
+	height: 100%;
+	align-items: center;
+	display: flex;
+	line-height: 24px;
+}
+
+.tab-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+/* .nav-tab:hover {
+    text-decoration: underline;
+	background-color: #ddd;
+} */
+.nav-tab:hover {
+    background-color: #FED99B;
+    color: #ccc;
+    border-radius: 5px;
+}
+
+.nav-tab.active {
+    /* background-color: #FED99B; */
+    color: #ccc;
+
+}
+
+.user-history-container {
+    /* background: linear-gradient(to bottom, #FED18C, #fe9c6e); */
+	background-color: #fff;
+    /* border-radius: 10px; */
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+    padding: 20px 50px;
+    width: 100%;
+    max-width: 100%;
+	height: 90%;
+	top: 10%;
+	overflow: auto；
+
+}
+.history-content{
+	/* height:300px; */
+	height:90%;
+    overflow:auto;
+}
+
+.user-history-container h2 {
+    margin-bottom: 20px;
+}
+
+.user-history-container ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.user-history-container li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-history-container li:last-child {
+    border-bottom: none;
+}
+.profile-pic-container {
+	/* height: 100%; */
+	display: flex;
+  	align-items: center;
+  	justify-content: center;
+	position: relative;
+	left: 0;
+	width: 50%;
+	z-index: 2;
+	padding-top: 50px;
+}
+
+.profile-info-container{
+	/* height: 100%; */
+	position: absolute;
+	right: 0;
+	width: 50%;
+	z-index: 2;
+	background-color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 50px 50px;
+	padding-bottom: 50px;
+    text-align: center;
+
+}
+
+.profile-edit-container{
+	padding: 50px 50px;
+}
+
+.post-content{
+	/* height:300px; */
+	height:90%;
+    overflow:auto;
+	top: 10%;
+}
+
+.comment-content{
+	/* height:300px; */
+	height:90%;
+	top: 10%;
+    overflow:auto;
+}
+
+/* #commentTextDisp {
+	display: block;
+	position: absolute;
+	top: 0;
+	height: 30%;
+
+  } */
+
+  /* vertically centered the poll display container */
+.poll-display-container{
+	/* align-items: center;
+    justify-content: center; */
+	display: flex;
+	flex-direction:column;
+  	align-items: center;
+  	justify-content: center;
+	padding: 20px 20px;
+
+}
+
+.main-container {
+	background-color: #582707;
+	border-radius: 10px;
+	box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+	  0 10px 10px rgba(0, 0, 0, 0.22);
+	position: relative;
+	overflow: hidden;
+	width: 55%;
+	max-width: 100%;
+	min-height: 75%;
+	max-height: 75%;
+	color: #222;
+	display: flex;
+	flex-direction: column;
+	background: -webkit-linear-gradient(to right, #FED18C, #ffb20f);
+    background: linear-gradient(to right, #FED18C, #ffb20f);
   }
+  
+#poll-container{
+	position: relative;
+    width: 100%;
+    min-height: 90%;
+	/* delete if poll display section and comment section is set scrollable separately */
+    overflow: auto;
+}
+#category-tabs {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 10px 20px;
+    background-color: #582707;
+    background: -webkit-linear-gradient(to right, #FED18C, #ffb20f);
+    background: linear-gradient(to right, #FED18C, #ffb20f);
+    border-radius: 10px 10px 0 0;
+    height: 10%;
+	/* small width screen cannot show all category tabs */
+	overflow-x: auto;
+}
+
+/* html {
+    height: 100%;
+} */
+  
+.white-placeholder::placeholder {
+	color: white;
+}
+
+
+
+#hidden_question_text {
+	display: none;
+}
+
+
+
+.footer{
+    background-color: #fed18c;
+	color: white;
+	margin-top: auto;
+}

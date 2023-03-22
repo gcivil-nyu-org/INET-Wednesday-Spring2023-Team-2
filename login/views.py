@@ -14,10 +14,24 @@ from django.contrib.auth.hashers import make_password, check_password
 from .forms import LoginForm
 from .forms import RegisterForm
 from .forms import PasswordResetForm
-from .forms import PasswordChangeForm
+from .forms import PasswordChangeForm, ProfilePicForm
 from .forms import PasswordResetConfirmationForm
 from .tokens import account_activation_token, password_reset_token
 from .models import Custom_User
+
+
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import authentication, permissions
+from rest_framework.decorators import api_view
+
+
+from django.contrib.auth.decorators import login_required
+
+
+def is_ajax(request):
+    return request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest"
 
 
 # Create your views here.
@@ -155,6 +169,9 @@ def access_view(request):
     login_form = LoginForm()
     register_form = RegisterForm()
 
+    # print(request.POST.get('next'))
+    # print("kk:", request.GET.get('next'))
+
     access_info_d = {"Sign In": login_view, "Sign Up": register_view}
 
     if request.method == "POST":
@@ -175,6 +192,12 @@ def login_view(request, login_form, register_form):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
+            print("here:", reverse("posts:home_page"))
+            # print(request.POST.get("next"))
+            # try:
+            #     redirect_url = request.GET.get('next')
+            #     return redirect(request.build_absolute_uri(redirect_url))
+            # except:
             return redirect(reverse("posts:home_page"))
     else:
         messages.error(request, f"Username or password is wrong.")
@@ -214,39 +237,139 @@ def register_view(request, login_form, register_form):
     return render(request, "pages/login.html", contents)
 
 
-def profile_view(request):
-    password_change_form = PasswordChangeForm()
-    contents = {"password_change_form": password_change_form, "class_": ""}
-    if request.method == "POST":
-        password_change_form = PasswordChangeForm(request.POST)
+def profile_picture_change(request, contents):
+    profile_picture_change_form = ProfilePicForm(request.POST, request.FILES)
 
-        if password_change_form.is_valid():
-            old_password = password_change_form.cleaned_data["old_password"]
+    if profile_picture_change_form.is_valid():
+        request.user.profile_picture = request.FILES.get("profile_picture")
+        request.user.save()
 
-            if authenticate(
-                request, username=request.user.username, password=old_password
-            ):
-                if old_password == password_change_form.cleaned_data["password1"]:
-                    messages.error(
-                        request, "New Password cannot be the same as old one!"
-                    )
-                    contents["class_"] = "right-panel-active"
-                    return render(request, "pages/profile.html", contents)
+        messages.success(request, "Profile Picture Changed Successfully!")
 
-                request.user.set_password(
-                    password_change_form.cleaned_data["password1"]
-                )
-                request.user.save()
-                messages.success(request, "Password Changed Successfully!")
-                login(request, request.user)
-                contents = {"password_change_form": password_change_form, "class_": ""}
-                return render(request, "pages/profile.html", contents)
-            else:
-                messages.error(request, f"Current Password is wrong")
-                contents["class_"] = "right-panel-active"
-        else:
-            for err in list(password_change_form.errors.values()):
-                messages.error(request, err)
-            contents["class_"] = "right-panel-active"
+        contents["profile"] = request.user
+
+    else:
+        for err in list(profile_picture_change_form.errors.values()):
+            messages.error(request, err)
 
     return render(request, "pages/profile.html", contents)
+
+
+def password_change(request, contents):
+    password_change_form = PasswordChangeForm(request.POST)
+
+    if password_change_form.is_valid():
+        old_password = password_change_form.cleaned_data["old_password"]
+
+        if authenticate(request, username=request.user.username, password=old_password):
+            if old_password == password_change_form.cleaned_data["password1"]:
+                messages.error(request, "New Password cannot be the same as old one!")
+                contents["class_"] = "right-panel-active"
+                return render(request, "pages/profile.html", contents)
+
+            request.user.set_password(password_change_form.cleaned_data["password1"])
+            request.user.save()
+            messages.success(request, "Password Changed Successfully!")
+            login(request, request.user)
+            # contents = {"password_change_form": password_change_form, "class_": ""}
+            # contents['username'] = request.user.username
+            # contents['email'] = request.user.email
+            # contents['edit_access'] = True
+            return render(request, "pages/profile.html", contents)
+        else:
+            messages.error(request, f"Current Password is wrong")
+            contents["class_"] = "right-panel-active"
+    else:
+        for err in list(password_change_form.errors.values()):
+            messages.error(request, err)
+        contents["class_"] = "right-panel-active"
+
+    return render(request, "pages/profile.html", contents)
+
+
+@login_required
+def profile_view(request, username_):
+    password_change_form = PasswordChangeForm()
+    profile_picture_change_form = ProfilePicForm()
+    contents = {
+        "password_change_form": password_change_form,
+        "profile_picture_change_form": profile_picture_change_form,
+        "class_": "",
+    }
+
+    if request.user.username == username_:
+        # my_user_details = Custom_User.objects.get(username = request.user.username)
+        # contents['username'] = request.user.username
+        # contents['email'] = request.user.email
+        contents["profile"] = request.user
+        contents["edit_access"] = True
+    else:
+        requested_user_details = Custom_User.objects.get(username=username_)
+        # contents['username'] = requested_user_details.username
+        # contents['email'] = requested_user_details.email
+        contents["profile"] = requested_user_details
+        contents["edit_access"] = False
+
+    print(request.user.profile_picture.url)
+    if request.user.username == username_ and request.method == "POST":
+        func_map = {
+            "profile_pic": profile_picture_change,
+            "pass_change": password_change,
+        }
+        return func_map[request.POST["account_info"]](request, contents)
+
+    return render(request, "pages/profile.html", contents)
+
+
+## Change all classes to smthng like this and pass a parameter and render post_home.html and check in html to render the right page
+class UserHistory(APIView):
+    # renderer_classes = [TemplateHTMLRenderer]
+    # template_name = 'profile_list.html'
+
+    renderer_classes = [TemplateHTMLRenderer]
+    # permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, username_):
+        if is_ajax(request):
+            print("ajax request")
+            # username_ = request.user.username
+        else:
+            print("url request")
+            # print(request.GET.get('userpop'))
+            # username_ = request.GET.get('name')
+
+        user_ = Custom_User.objects.get(username=username_)
+        content = user_.posts_view_time.all().order_by(
+            "-view_time"
+        )  # .order_by('-view_time') order by relation field here
+        print(content)
+        return Response({"posts": content}, template_name="pages/profile_history.html")
+
+
+class UserPostsCreated(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    # permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, username_):
+        if is_ajax(request):
+            print("ajax request")
+            # username_ = request.user.username
+        else:
+            print("url request")
+            ## render entire profile page with active nav id
+            # print(request.GET.get('userpop'))
+            # username_ = request.GET.get('name')
+
+        user_ = Custom_User.objects.get(username=username_)
+        content = user_.posts_created.all().order_by(
+            "-created_time"
+        )  # .order_by('-view_time') order by relation field here
+        print(content)
+        return Response(
+            {"posts": content}, template_name="pages/profile_posts_created.html"
+        )
+
+
+# @login_required
+# def profile_view(request, username_):
+#     return render(request, "pages/profile.html")

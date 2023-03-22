@@ -1,0 +1,87 @@
+<div id = "postDispDiv2">
+
+  <form action="." method="post" id="postDispForm">
+  {% csrf_token %}
+  <!-- 1L -->
+<!-- <div class="main-container"> -->
+  <div class="form-container sign-in-container poll-display-container">   
+    <!-- Question -->
+    <div class="poll-display-container">
+      <!-- <br><br><br><br> -->
+    <h2 class="question">{{ post.question_text }}</h2>
+    <br>
+
+    <div class="section over-hide z-bigger">
+      <input class="checkbox" type="checkbox" name="general" id="general">
+      <div class="section over-hide z-bigger">
+        <div class="checkcontain pb-5">
+          <div class="row justify-content-center pb-5">
+            <div class="col-12 pb-5">
+              {% for option in options %}
+              
+              <!-- TO DO: fix the coloring & formating to match -->
+              <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+              <label class="for-checkbox-tools" for="option{{ forloop.counter }}" id = "option_{{ forloop.counter }}">
+                <i class='uil'></i>
+                {{ option.choice_text }}
+              </label>
+  
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div> 
+    </div>     
+    <br>
+    <button type="submit" value="Submit" name="access_info" id="voteSubmit">Submit</button>
+
+
+    </div>
+    
+    <section class="footer">
+      <div class="text-center">
+      Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
+      </div>
+    </section>
+
+	</div>
+
+  <!-- 1R: Comments -->
+	<div class="overlay-container">
+		<div class="overlay">
+      
+			<div class="overlay-panel overlay-right comment-content">
+        {% if request.user.is_authenticated %}
+				<p>Vote to see the comments!</p>
+        {% elif not request.user.is_authenticated %}
+        <p>Sign in to vote and see the comments!</p>
+        <p></p>
+        <a href={% url 'account:login_page' %}>
+          <!-- <button class="ghost">Sign In</button> -->
+          Sign In
+        </a>
+        {% endif %}
+			</div>
+
+		</div>
+	</div>
+</form>
+</div>
+
+
+
+{% block scripts %}
+
+{% include "includes/ajax_functions.html" %}
+
+{% endblock scripts %}
+
+
+
+{% for option in options %}
+
+  <script>
+    document.getElementById("option_{{ forloop.counter }}").style.backgroundImage = "linear-gradient(75deg, #ececec 1%, #{{ option.color }})";
+  </script>
+
+{% endfor %}

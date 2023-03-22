@@ -1,0 +1,71 @@
+{% include 'includes/header.html' %}
+{% load static %}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/radio.css' %}"/>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/comments.css' %}"/>
+</head>
+
+
+<div class="main-container">
+    <div class="nav-tabs" id="category-tabs">
+        <div class="tab-wrapper" onclick="openTab(event, 'nav-profile')">
+            <a class="nav-tab activate" id="nav-all-tab" onclick="openTab(event, 'nav-profile')">All</a>
+            </div>
+            <div class="tab-wrapper">
+            <a class="nav-tab" id="nav-sports-tab"  onclick="openTab(event, 'nav-edit')">Sports</a>
+             </div>
+            <div class="tab-wrapper">
+            <a  class="nav-tab" id="nav-entertainment-tab"   onclick="getProfileHistory();">Entertainment</a>
+            </div>
+            <div class="tab-wrapper">
+                <a  class="nav-tab" id="nav-misc-tab"   onclick="getProfileHistory();">Misc</a>
+            </div>
+    </div>
+    <div class="container" id="poll-container">
+    
+        <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}" id="postDispDiv">
+            <!-- <form action="." method="post" id="postDispForm"></form> -->
+        </div>
+        <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>   
+    </div>
+</div>
+
+<!-- <div class="container" id="container">
+    <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
+        <form action="." method="post" id="postDispForm"></form>
+    </div>
+    <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
+
+</div> -->
+
+<!-- <div class="center-con">
+    <div class="round">
+        <div id="cta">
+            <span class="arrow primera prev " onclick="getNextPost();"></span>
+            <span class="arrow segunda prev " onclick="getNextPost();"></span>
+        </div>
+    </div>
+</div> -->
+
+<div class="center-con">
+    <div class="round">
+        <div id="cta">
+            <span class="arrow primera next " onclick="getNextPost();"></span>
+            <span class="arrow segunda next " onclick="getNextPost();"></span>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+
+{% include "includes/ajax_functions.html" %}
+
+{% endblock scripts %}
+
+<script>
+
+getCurrPost();
+
+</script>

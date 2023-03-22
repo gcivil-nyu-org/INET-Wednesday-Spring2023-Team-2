@@ -363,3 +363,23 @@ body.dark .home .text{
 /* body.dark {
     --logo: url(../../static/images/logo-white.svg) no-repeat;
 } */
+
+
+/* Vertical Bar */
+/* Style the header with a grey background and some padding */
+.header {
+    overflow: hidden;
+    padding: 20px 10px;
+  }
+  
+  /* Style the header links */
+  .header a {
+    float: left;
+    color: black;
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 25px;
+    border-radius: 4px;
+  }

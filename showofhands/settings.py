@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+from django.shortcuts import redirect
+from django.urls import reverse
 
 # import environ
 from dotenv import load_dotenv
@@ -34,8 +36,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS = [
-    "showofhands-dev.us-east-1.elasticbeanstalk.com",
-    "www.showofhands-dev.us-east-1.elasticbeanstalk.com",
+    "ShowofHands-dev.us-east-1.elasticbeanstalk.com",
     "localhost",
 ]
 
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
     "login",
     "posts",
     "users",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -184,3 +186,23 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 AUTH_USER_MODEL = "login.Custom_User"
+
+
+# LOGIN_URL = redirect(reverse("login:login_page"))
+
+LOGIN_URL = "/account/login"
+
+LOGOUT_REDIRECT_URL = "/home"
+
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+
+
+# REST_FRAMEWORK = {
+#     # Use Django's standard `django.contrib.auth` permissions,
+#     # or allow read-only access for unauthenticated users.
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+#     ]
+# }

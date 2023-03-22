@@ -1,0 +1,95 @@
+<div>
+
+  <!-- 1L -->
+  <div class="form-container sign-in-container poll-display-container">
+    <!-- Question -->
+    <div class="poll-display-container">
+    <!-- <br><br><br><br> -->
+    <h2 class="question">{{ post.question_text }}</h2>
+    <br>
+
+    <div class="section over-hide z-bigger">
+      <input class="checkbox" type="checkbox" name="general" id="general">
+      <div class="section over-hide z-bigger">
+        <div class="checkcontain pb-5">
+          <div class="row justify-content-center pb-5">
+            <div class="col-12 pb-5">
+              {% for option in options %}
+
+              <!-- TO DO: fix to check the selection the user made -->
+              <!-- <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" disabled>
+              <label class="for-checkbox-tools" for="option{{ forloop.counter }}" style="background-image: linear-gradient(75deg, #ececec 1%, #{{ option.color }})">
+                <i class='uil uil-vector-square'></i>
+                {{ option.choice_text }} : {{ option.votes }}
+              </label> -->
+
+              
+              <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" disabled {% if user_option == option %} checked {% endif %}>
+              
+              <label class="for-checkbox-tools" for="option{{ forloop.counter }}" id = "option_{{ forloop.counter }}">
+                <i class='uil uil-vector-square'></i>
+                {{ option.choice_text }} : {{ option.votes }}
+              </label> 
+              
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>    
+    </div>
+    </div>
+    
+    <section class="footer">
+      <div class="text-center">
+      Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
+      </div>
+    </section>
+
+	</div>
+
+
+  <div class="overlay-container">
+		<div class="overlay">
+      
+      <!-- 1R: Comments -->
+			<div class="overlay-panel overlay-right">
+        <!-- Comments Text -->
+        
+          <!-- Danny, essentially the whatever u put in comments_text.html, it will be replaced here. You dont have to edit this file,
+          only comments_text.html and comments.html. But keep in mind that I have invode the form tag here already. So u can't have
+        another form tag inside comments_text.html. Alter ur code accordingly. -->
+       
+        <!-- Comments -->
+        <div id="commentTextDisp">
+          <!-- Danny, essentially the whatever u put in comments.html, it will be replaced here -->
+        </div>
+        
+			</div>
+
+		</div>
+	</div>
+
+</div>  
+
+
+{% block scripts %}
+
+{% include "includes/ajax_functions.html" %}
+
+{% endblock scripts %}
+
+<script>
+
+getCommentsText();
+// getComments();
+
+</script>
+
+
+{% for option in options %}
+
+  <script>
+    document.getElementById("option_{{ forloop.counter }}").style.backgroundImage = "linear-gradient(75deg, #ececec 1%, #{{ option.color }})";
+  </script>
+
+{% endfor %}

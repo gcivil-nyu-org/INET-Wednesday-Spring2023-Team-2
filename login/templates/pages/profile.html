@@ -1,54 +1,161 @@
-{% include 'includes/messages.html' %}
 {% include 'includes/header.html' %}
 
 {% load static %}
 
 <head>
     <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}" />
+	<!-- <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"> -->
 </head>
 
-<div class="container {{ class_ }}" id="container">
-	<div class="form-container sign-up-container">
-		<form action="." method = "POST">
+
+
+<div class="container" id="profile-container">
+	<div class="nav-tabs" id="profile-tabs">
+		<div class="tab-wrapper" onclick="openTab(event, 'nav-profile')">
+		<a class="nav-tab activate" id="nav-profile-tab" onclick="openTab(event, 'nav-profile')">Profile</a>
+		</div>
+		{% if edit_access %}
+		<div class="tab-wrapper">
+		<a class="nav-tab" id="nav-edit-tab"  onclick="openTab(event, 'nav-edit')">Edit Profile</a>
+	 	</div>
+		 {% endif %}
+		<div class="tab-wrapper">
+		<a  class="nav-tab" id="nav-history-tab"   onclick="getProfileHistory();">History</a>
+		</div>
+		<div class="tab-wrapper">
+		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
+		</div>
+	</div>
+
+	{% if edit_access %}
+	<div class="form-container profile-edit-container tabcontent" id="nav-edit" style="display: none;">
+		<form action="{% url 'account:profile_page' profile.username %}" method = "POST">
 			{% csrf_token %}
 			<h1>Edit Profile</h1><a></a>
 			<input type="password" placeholder="Current Password" name ="old_password" required/>
             <input type="password" placeholder="New Password" name ="password1" required/>
 			<input type="password" placeholder="Confirm New Password" name ="password2" required/>
-			<button type = "submit" value="Confirm" name="account_info">Confirm</button>
+			<button type = "submit" value="pass_change" name="account_info">Confirm</button>
 		</form>
 	</div>
-	<div class="form-container sign-in-container">
-		<form action="." method = "POST">
+	
+	{% endif %}
+
+	<div class="form-container profile-container tabcontent" id="nav-profile">
+		<div class="profile-pic-container">
+		<form action="{% url 'account:profile_page' profile.username %}" method = "POST" enctype="multipart/form-data">
 			{% csrf_token %}
+			<br><br>
 			<div class="image-container">
-				<img class="image" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="Image">
+				<!-- <img class="image" src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg" alt="Image"> -->
+				<img class="image" src="{{ profile.profile_picture.url }}" alt="Image">
 			</div>
 			<a></a>
 			<!--add change picture option-->
-			<button type="submit" value="" name="">Change Picture</button>
+			{% if edit_access %}
+			{{ profile_picture_change_form.profile_picture }}
+			<button type="submit" value="profile_pic" name="account_info">Change Picture</button>
+			{% endif %}
 		</form>
-	</div>
-	<div class="overlay-container">
-		<div class="overlay">
-			<div class="overlay-panel overlay-left">
-				<button class="ghost" id="signIn">Back</button>
-			</div>
-			<div class="overlay-panel overlay-right">
-				<h1>Profile Information</h1><a></a>
+		</div>
+		<div class="profile-container tabcontent profile-info-container"> 
+
+			<h1>Profile Information</h1><a></a>
 				{% if request.user.is_authenticated %}
-				Username<input type="text" value="{{ request.user.username }}" readonly>
+				Username<input type="text" value="{{ profile.username }}" readonly>
 				<a></a>
-				Email<input type="text" value="{{ request.user.email }}" readonly>
+				Email<input type="text" value="{{ profile.email }}" readonly>
 				{% endif %}
 				<a></a>
 				<!--change here-->
-				<button class="ghost" id="signUp">Edit Profile</button>
-				</a>
+
+
+				
 				<!--this js script must be placed at the end of the file AFTER buttons-->
-				<script type="text/javascript" src="{% static '../static/js/login.js' %}"></script>
-			</div>
+
+
 		</div>
 	</div>
+
+
+	<div class="form-container tabcontent user-history-container" id="nav-history" style="display: none;">
+        <h2>User History</h2>
+		<div class="history-content">
+			<ul>
+				<!-- this div will contain the profile history of user, called from ajax -->
+				<div id="profileHistory">
+
+				</div>
+				
+			</ul>
+
+		</div>
+       
+    </div>
+
+	<!-- posts created tab -->
+	<div class="form-container tabcontent user-history-container" id="nav-postscreated" style="display: none;">
+        <h2>Polls Created</h2>
+		<div class="history-content">
+			<ul>
+				<!-- this div will contain the posts created by user, called from ajax -->
+				<div id="postsCreated">
+
+				</div>
+				
+			</ul>
+
+		</div>
+       
+    </div>
+
+
 </div>
 
+<script type="text/javascript" src="{% static '../static/js/profile.js' %}"></script>
+
+
+
+{% block scripts %}
+
+{% include "includes/ajax_functions.html" %}
+
+{% endblock scripts %}
+
+<script>
+
+function getProfileHistory(){
+		openTab(event, 'nav-history');
+        $.ajax({
+            url: "{% url 'account:profile_history_page' profile.username %}",
+            type: "GET",
+            success: function(resp){
+                $("#profileHistory").html(resp);
+				// implement change_profile_url
+            },
+            error: function(resp){
+                console.log("getProfileHistory error");
+            }
+        });
+    }
+
+
+
+
+function getPostsCreated(){
+	openTab(event, 'nav-postscreated');
+        $.ajax({
+            url: "{% url 'account:profile_postscreated_page' profile.username %}",
+            type: "GET",
+            success: function(resp){
+                $("#postsCreated").html(resp);
+				// implement change_profile_url
+            },
+            error: function(resp){
+                console.log("getPostsCreated error");
+            }
+        });
+}
+
+</script>

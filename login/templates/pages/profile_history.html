@@ -1,0 +1,10 @@
+<div>
+{% for post_ in posts %}
+
+<div>
+    <li><a href="{% url 'posts:post_generation_page' post_.post.id %}">{{ post_.post }}</a></li>
+</div>
+
+{% endfor %}
+
+</div>
