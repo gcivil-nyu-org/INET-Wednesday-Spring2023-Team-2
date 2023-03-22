@@ -36,7 +36,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS = [
-    "showofhands-dev.us-east-1.elasticbeanstalk.com",
+    "ShowofHands-dev.us-east-1.elasticbeanstalk.com",
     "localhost",
 ]
 
