@@ -135,7 +135,7 @@ def home_view(request):
 ##need a json response here as post method automatically returns whatever is in this function and renders it!
 def results_view(request, pid):
     post_ = Post_Model.objects.get(pk=pid)
-    options_ = post_.options_model_set.all()
+    options_ = post_.options_model_set.all().order_by('id')
     user_option = request.user.user_option.get(question=post_)
     contents = {
         "post": post_,
@@ -201,7 +201,7 @@ class PostsView(View):
 
         current_pid = pid
         post_ = Post_Model.objects.get(pk=pid)
-        options_ = post_.options_model_set.all()
+        options_ = post_.options_model_set.all().order_by('id')
 
         if call == "noapi":
             contents = {"post": post_, "options": options_, "pid": pid}
