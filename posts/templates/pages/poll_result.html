@@ -28,7 +28,7 @@
               
               <label class="for-checkbox-tools" for="option{{ forloop.counter }}" id = "option_{{ forloop.counter }}">
                 <i class='uil uil-vector-square'></i>
-                {{ option.choice_text }} : {{ option.votes }}
+                {{ option.choice_text }}{% if show_poll_results %} : {{ option.votes }}{% endif %}
               </label> 
               
               {% endfor %}
@@ -41,6 +41,7 @@
     
     <section class="footer">
       <div class="text-center">
+      <p id="resultReveal"></p>
       Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
       </div>
     </section>
@@ -93,3 +94,37 @@ getCommentsText();
   </script>
 
 {% endfor %}
+
+
+
+<script>
+  var countDownDate = new Date("{{ post.result_reveal_time.isoformat }}").getTime();
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+  // Get today's date and time
+  var now = new Date().getTime();
+    
+  // Find the distance between now and the count down date
+  var distance = countDownDate - now;
+    
+  // Time calculations for days, hours, minutes and seconds
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+  // Output the result in an element with id="demo"
+  if (distance > 0){
+  document.getElementById("resultReveal").innerHTML = "Result Reveal in " + days + "d " + hours + "h "
+  + minutes + "m " + seconds + "s ";
+  }
+    
+  // If the count down is over, write some text 
+  // if (distance < 0) {
+  //   clearInterval(x);
+  //   document.getElementById("demo").innerHTML = "EXPIRED";
+  // }
+}, 1000);
+</script>

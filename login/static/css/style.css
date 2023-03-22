@@ -524,7 +524,9 @@ select {
 
 
 .footer{
-    background-color: #fed18c;
-	color: white;
+    /* background-color: #fed18c; */
+	background-color: transparent;
+	/* color: white; */
+	color: black;
 	margin-top: auto;
 }

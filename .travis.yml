@@ -7,8 +7,15 @@ python:
 install:
    - pip install -r requirements.txt
 
-# after_script:
-  # - coveralls
+services:
+    - postgresql
+
+before_script:
+  - sleep 15
+  - psql -c 'create database soh_test;' -U postgres
+
+after_script:
+  - coveralls
 
 script:
   # Run Black formatter
@@ -16,8 +23,9 @@ script:
 
   # Run Flake8 linter
   - flake8 --extend-ignore E501,F401,F811,E711,F541,E722,E265,E266,F841,E402
+  
   # Run Django tests
-  # - coverage run manage.py test
+  - coverage run manage.py test
 
 
 deploy:
@@ -26,9 +34,9 @@ deploy:
   secret_access_key: $ACCESS_KEY
   region: "us-east-1"
   app: "ShowOfHands"
-  env: "ShowOfHands-dev"
+  env: "ShowofHands-dev"
   bucket_name: "elasticbeanstalk-us-east-1-754415205510"
-  bucket_path: "ShowOfHands/"
+  bucket_path: "ShowofHands/"
   on:
     repo: gcivil-nyu-org/INET-Wednesday-Spring2023-Team-2
     branch: develop

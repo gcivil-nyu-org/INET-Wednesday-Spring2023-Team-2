@@ -9,7 +9,8 @@
         <div class="comment-box">
             <div class="comment">
                 <!-- query user model and get profile_picture -->
-                <img src="https://via.placeholder.com/40" alt="User Avatar" class="avatar">
+                <!-- <img src="https://via.placeholder.com/40" alt="User Avatar" class="avatar"> -->
+                <img src="{{ comment.commented_by.profile_picture.url }}" alt="User Avatar" class="avatar">
                 <div class="comment-info">
                     <p class="username"><a href="{% url 'account:profile_page' post.created_by %}">{{ comment.commented_by }}</a></p> 
                     <p class="comment-text">{{ comment.comment_text | linebreaks }}</p>
