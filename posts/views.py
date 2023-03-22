@@ -1,4 +1,4 @@
-from datetime import timedelta, timezone
+from datetime import timedelta, timezone, datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -9,7 +9,7 @@ from django.template import loader
 from django.views import View
 from django.db.models import Q
 from .forms import PollForm
-import datetime
+# import datetime
 
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
@@ -141,6 +141,7 @@ def results_view(request, pid):
         "options": options_,
         "pid": pid,
         "user_option": user_option,
+        "show_poll_results": False
     }
     template = loader.get_template("pages/poll_result.html")
 
@@ -148,6 +149,13 @@ def results_view(request, pid):
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color = user_choice.color
     # print(user_choice, user_color)
+
+    
+    # print(post_.result_reveal_time - timedelta(hours=5), datetime.now())
+
+    ##Need to change timezone to fix this ig...this is temporary fix
+    if post_.result_reveal_time.replace(tzinfo=None) - timedelta(hours=5) < datetime.now():
+        contents['show_poll_results'] = True
 
     return HttpResponse(template.render(contents, request))
 
@@ -413,14 +421,14 @@ def create_poll(request):
                 question_text = form.cleaned_data["question"]
 
             delay = int(form.cleaned_data["delay"])
-            # print(delay)
+            print(delay)
             category = form.cleaned_data["category"]
 
             post = Post_Model.objects.create(
                 question_text=question_text,
                 created_by=request.user,
                 category=category,
-                created_time=datetime.datetime.now(),
+                created_time=datetime.now(),
             )
 
             color_list = ["AED9E0", "8CB369", "D7A5E4", "5D6DD3"]
