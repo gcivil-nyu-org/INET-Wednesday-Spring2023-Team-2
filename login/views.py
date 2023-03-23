@@ -342,7 +342,7 @@ class UserHistory(APIView):
         content = user_.posts_view_time.all().order_by(
             "-view_time"
         )  # .order_by('-view_time') order by relation field here
-        print(content)
+        # print(content)
         return Response({"posts": content}, template_name="pages/profile_history.html")
 
 
@@ -364,12 +364,24 @@ class UserPostsCreated(APIView):
         content = user_.posts_created.all().order_by(
             "-created_time"
         )  # .order_by('-view_time') order by relation field here
-        print(content)
+        # print(content)
         return Response(
             {"posts": content}, template_name="pages/profile_posts_created.html"
         )
 
 
-# @login_required
-# def profile_view(request, username_):
-#     return render(request, "pages/profile.html")
+
+class CurrentProfileURL(APIView):
+
+    renderer_classes = [JSONRenderer]
+    # permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, username, page):
+        url_page_map = {'history': 'account:profile_history_page', 'posts_created': 'account:profile_postscreated_page'}
+        current_url = request.build_absolute_uri(
+            reverse(url_page_map[page], kwargs={"username_": username})
+        )
+        # content = {"current_url": current_url}
+        print(content)
+        return Response(content)
+

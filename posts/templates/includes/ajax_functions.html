@@ -129,7 +129,7 @@ function getCurrentURL () {
         var current_pid = getCurrentURL().toString();
         current_pid = current_pid.split("/").at(-2);
         $.ajax({
-            url:"{% url 'posts:show_next_post_api' current_pid=1%}".replace(/1/, current_pid.toString()),
+            url:"{% url 'posts:show_next_post_api' current_pid=1 %}".replace(/1/, current_pid.toString()),
             type:"GET",
             success: function(resp){
                 // changeurl();
