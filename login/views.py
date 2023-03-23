@@ -381,7 +381,7 @@ class CurrentProfileURL(APIView):
         current_url = request.build_absolute_uri(
             reverse(url_page_map[page], kwargs={"username_": username})
         )
-        # content = {"current_url": current_url}
-        print(content)
+        content = {"current_url": current_url}
+        # print(content)
         return Response(content)
 
