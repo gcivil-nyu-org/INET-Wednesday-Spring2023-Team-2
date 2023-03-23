@@ -13,7 +13,7 @@
 // });
 
 
-document.getElementById("nav-profile").click();
+// document.getElementById("nav-profile").click();
 
 function openTab(evt, tabName) {
     // Declare all variables

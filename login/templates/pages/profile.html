@@ -12,16 +12,16 @@
 
 <div class="container" id="profile-container">
 	<div class="nav-tabs" id="profile-tabs">
-		<div class="tab-wrapper" onclick="openTab(event, 'nav-profile')">
-		<a class="nav-tab activate" id="nav-profile-tab" onclick="openTab(event, 'nav-profile')">Profile</a>
+		<div class="tab-wrapper">
+		<a class="nav-tab activate" id="nav-profile-tab" onclick="getProfileInfo();">Profile</a>
 		</div>
 		{% if edit_access %}
 		<div class="tab-wrapper">
-		<a class="nav-tab" id="nav-edit-tab"  onclick="openTab(event, 'nav-edit')">Edit Profile</a>
+		<a class="nav-tab" id="nav-edit-tab"  onclick="getProfileEditInfo();">Edit Profile</a>
 	 	</div>
 		 {% endif %}
 		<div class="tab-wrapper">
-		<a  class="nav-tab" id="nav-history-tab"   onclick="getProfileHistory();">History</a>
+		<a  class="nav-tab " id="nav-history-tab"   onclick="getProfileHistory();">History</a>
 		</div>
 		<div class="tab-wrapper">
 		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
@@ -121,15 +121,27 @@
 
 <script>
 
+function getProfileInfo(){
+	openTab(event, 'nav-profile');
+	changeurlProfile("profile");
+}
+
+
+function getProfileEditInfo(){
+	openTab(event, 'nav-edit');
+	changeurlProfile("profile");
+}
+
+
 function getProfileHistory(){
 		openTab(event, 'nav-history');
         $.ajax({
             url: "{% url 'account:profile_history_page' profile.username %}",
             type: "GET",
             success: function(resp){
+				changeurlProfile("history");
                 $("#profileHistory").html(resp);
 				// implement change_profile_url
-				changeurlProfile("history");
             },
             error: function(resp){
                 console.log("getProfileHistory error");
@@ -146,9 +158,9 @@ function getPostsCreated(){
             url: "{% url 'account:profile_postscreated_page' profile.username %}",
             type: "GET",
             success: function(resp){
+				changeurlProfile("posts_created");
                 $("#postsCreated").html(resp);
 				// implement change_profile_url
-				changeurlProfile("posts_created");
             },
             error: function(resp){
                 console.log("getPostsCreated error");
@@ -166,7 +178,7 @@ function changeurlProfile(page)
             success: function(resp){
                 var new_url=resp.current_url;
                 window.history.pushState("data","Title",new_url);
-                console.log(new_url)
+                // console.log(new_url)
             },
             error: function(resp){
               console.log("changeurl error")
@@ -175,5 +187,6 @@ function changeurlProfile(page)
   }
 
 
+document.getElementById("{{ tab_to_click }}").click();
 
 </script>
