@@ -104,7 +104,7 @@ function getCurrentURL () {
                 // },
                 dataType: 'json',
                 success: function(resp){
-                    $(self).unbind();
+                    // $(self).unbind();
                     if(resp.voting === 'success'){
                         getCurrPostInside();
                         // $(self).unbind();
@@ -134,7 +134,7 @@ function getCurrentURL () {
             success: function(resp){
                 // changeurl();
                 $("#postDispDiv").html(resp);
-                $(self).unbind();
+                // $(self).unbind();
                 // changeurl("res");
                 // console.log("meow:{{ post_.id }}")
                 // getCommentsText();
