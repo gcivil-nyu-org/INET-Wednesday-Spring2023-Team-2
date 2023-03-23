@@ -69,7 +69,6 @@ def get_random_pid(current_pid=None, category=None):
 # home page - will generate random post id that user hasn't interacted with to display for user - will change to empty later in urls
 # generate id and redirect/reverse with that parameter
 def home_view(request):
-
     pid, truth = get_random_pid()
 
     if truth:
@@ -179,7 +178,6 @@ def results_view(request, pid):
 # shows whether you have voted or not
 # if voted, then results. if not, poll
 def show_curr_post_api_view(request, current_pid):
-
     pid = current_pid
     print("here", pid)
     post_view_class = PostsView()
@@ -193,7 +191,6 @@ def show_curr_post_api_view(request, current_pid):
 
 class PostsView(View):
     def get(self, request, pid, call="noapi"):
-
         post_ = Post_Model.objects.get(pk=pid)
         options_ = post_.options_model_set.all().order_by("id")
 
@@ -350,7 +347,7 @@ class CommentsView(View):
     def post(self, request, current_pid):
         print("ll", current_pid)
         if is_ajax(request):
-            print('jj')
+            print("jj")
             pid = current_pid
             post_ = Post_Model.objects.get(pk=pid)
             comments_form = CommentsForm(request.POST)
@@ -384,7 +381,11 @@ def show_comments_text_api(request, current_pid):
         post_ = Post_Model.objects.get(pk=pid)
         comments_form = CommentsForm()
 
-        contents = {"pid": pid, "comments_form": comments_form, "show_comments_text": False}
+        contents = {
+            "pid": pid,
+            "comments_form": comments_form,
+            "show_comments_text": False,
+        }
         if post_.viewed_by.filter(username=request.user.username).exists():
             contents["show_comments_text"] = True
 

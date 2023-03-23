@@ -32,7 +32,11 @@ urlpatterns = [
         login_required(views.UserPostsCreated.as_view()),
         name="profile_postscreated_page",
     ),
-    path("profile/<page>/<username>", login_required(views.CurrentProfileURL.as_view()), name='get_current_profile_url_api'),
+    path(
+        "profile/<page>/<username>",
+        login_required(views.CurrentProfileURL.as_view()),
+        name="get_current_profile_url_api",
+    ),
     # re_path("^profile/(?:name=(?P<username_>\w+))/$", views.UserHistory.as_view(), name="profile_page"),
     # re_path("profile/", login_required(views.UserHistory.as_view()), name="profile_page"),
 ]

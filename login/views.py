@@ -287,7 +287,6 @@ def password_change(request, contents):
     return render(request, "pages/profile.html", contents)
 
 
-
 def profile_page_contents(request, username_):
     password_change_form = PasswordChangeForm()
     profile_picture_change_form = ProfilePicForm()
@@ -324,7 +323,7 @@ def profile_view(request, username_):
             "pass_change": password_change,
         }
         return func_map[request.POST["account_info"]](request, contents)
-    
+
     contents["tab_to_click"] = "nav-profile-tab"
 
     return render(request, "pages/profile.html", contents)
@@ -347,8 +346,10 @@ class UserHistory(APIView):
                 "-view_time"
             )  # .order_by('-view_time') order by relation field here
             # print(content)
-            return Response({"posts": content}, template_name="pages/profile_history.html")
-        
+            return Response(
+                {"posts": content}, template_name="pages/profile_history.html"
+            )
+
         else:
             # print("url request")
             contents = profile_page_contents(request, username_)
@@ -362,7 +363,6 @@ class UserPostsCreated(APIView):
     # permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, username_):
-        
         if is_ajax(request):
             # print("ajax request")
             user_ = Custom_User.objects.get(username=username_)
@@ -383,22 +383,19 @@ class UserPostsCreated(APIView):
             return Response(contents, template_name="pages/profile.html")
 
 
-
-
-
 class CurrentProfileURL(APIView):
-
     renderer_classes = [JSONRenderer]
     # permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, username, page):
-        url_page_map = {'history': 'account:profile_history_page', 
-                        'posts_created': 'account:profile_postscreated_page', 
-                        'profile': 'account:profile_page'}
+        url_page_map = {
+            "history": "account:profile_history_page",
+            "posts_created": "account:profile_postscreated_page",
+            "profile": "account:profile_page",
+        }
         current_url = request.build_absolute_uri(
             reverse(url_page_map[page], kwargs={"username_": username})
         )
         content = {"current_url": current_url}
         # print(content)
         return Response(content)
-
