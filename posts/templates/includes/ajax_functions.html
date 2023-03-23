@@ -4,6 +4,10 @@
 
 <script>
 
+function getCurrentURL () {
+  return window.location.href
+    }
+
     function getPosts(){
         $.ajax({
             url: $(".post-content").data('url'),
@@ -19,8 +23,10 @@
 
 
     function getCategoryBasedPosts(){
+        var current_pid = getCurrentURL().toString();
+        current_pid = current_pid.split("/").at(-2);
         $.ajax({
-            url: "{% url 'posts:show_categorybased_post_api' 'sports' %}",
+            url: "{% url 'posts:show_categorybased_post_api' current_pid=1 category='sports' %}",
             type: "GET",
             success: function(resp){
                 $("#postDispDiv").html(resp);
@@ -34,9 +40,11 @@
 
 
     function getCurrPost(){
+        var current_pid = getCurrentURL().toString();
+        current_pid = current_pid.split("/").at(-2);
         $.ajax({
             // url: $(".post-content").data('url'),
-            url: "{% url 'posts:show_curr_post_api' %}",
+            url: "{% url 'posts:show_curr_post_api' current_pid=1 %}".replace(/1/, current_pid.toString()),
             type: "GET",
             success: function(resp){
                 // $("#postDispForm").html(resp);
@@ -52,9 +60,11 @@
 
 
     function getCurrPostInside(){
+        var current_pid = getCurrentURL().toString();
+        current_pid = current_pid.split("/").at(-2);
         $.ajax({
             // url: $(".post-content").data('url'),
-            url: "{% url 'posts:show_curr_post_api' %}",
+            url: "{% url 'posts:show_curr_post_api' current_pid=1 %}".replace(/1/, current_pid.toString()),
             type: "GET",
             success: function(resp){
                 // $("#postDispForm").html(resp);
@@ -116,8 +126,10 @@
 
     // change this to call getCurrPost() to keep it linear, return json in views.py
     function getNextPost(){
+        var current_pid = getCurrentURL().toString();
+        current_pid = current_pid.split("/").at(-2);
         $.ajax({
-            url:"{% url 'posts:show_next_post_api' %}",
+            url:"{% url 'posts:show_next_post_api' current_pid=1%}",
             type:"GET",
             success: function(resp){
                 $("#postDispDiv").html(resp);
@@ -136,28 +148,30 @@
 
 
 
-  // eg: changeurl("res");
-  function changeurl()
-  {
-    $.ajax({
-            url:"{% url 'posts:get_current_post_url_api' %}",
-            type:"GET",
-            success: function(resp){
-                var new_url=resp.current_url;
-                window.history.pushState("data","Title",new_url);
-                // console.log(new_url)
-            },
-            error: function(resp){
-              console.log("changeurl error")
-            }
-        });
-  }
+//   // eg: changeurl("res");
+//   function changeurl()
+//   {
+//     $.ajax({
+//             url:" url 'posts:get_current_post_url_api' ",
+//             type:"GET",
+//             success: function(resp){
+//                 var new_url=resp.current_url;
+//                 window.history.pushState("data","Title",new_url);
+//                 // console.log(new_url)
+//             },
+//             error: function(resp){
+//               console.log("changeurl error")
+//             }
+//         });
+//   }
 
 
   function getCommentsText()
   {
+    var current_pid = getCurrentURL().toString();
+    current_pid = current_pid.split("/").at(-2);
     $.ajax({
-      url: "{% url 'posts:show_comments_text_api' %}",
+      url: "{% url 'posts:show_comments_text_api' current_pid=1 %}",
       type: "GET",
       success: function(resp){
         $("#commentTextDisp").html(resp);
@@ -172,8 +186,10 @@
 
   function getComments()
   {
+    var current_pid = getCurrentURL().toString();
+    current_pid = current_pid.split("/").at(-2);
     $.ajax({
-      url: "{% url 'posts:show_comments_api' %}",
+      url: "{% url 'posts:show_comments_api' current_pid=1 %}",
       type: "GET",
       success: function(resp){
         $("#commentDisp").html(resp);
@@ -195,10 +211,12 @@
         var valid = true;
     
         if(valid){
+            const current_pid = getCurrentURL();
+            current_pid = current_pid.split("/").at(-2);
             //ajax
             $.ajax({
                 // url: $this.attr('action'),
-                url: "{% url 'posts:show_comments_api' %}",
+                url: "{% url 'posts:show_comments_api' current_pid=1 %}",
                 type: "POST",
                 data: $(this).serialize(),
                 // data: {
