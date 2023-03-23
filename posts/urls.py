@@ -10,7 +10,7 @@ urlpatterns = [
     path("show_curr_post/<int:current_pid>", views.show_curr_post_api_view, name="show_curr_post_api"),
     path("show_next_post/<int:current_pid>", views.show_next_post_api_view, name="show_next_post_api"),
     path(
-        "get_current_url/",
+        "get_current_url/<int:current_pid>",
         views.CurrentPostURL.as_view(),
         name="get_current_post_url_api",
     ),

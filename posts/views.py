@@ -353,7 +353,9 @@ class CurrentPostURL(APIView):
 ##to show comments
 class CommentsView(View):
     def post(self, request, current_pid):
+        print("ll", current_pid)
         if is_ajax(request):
+            print('jj')
             pid = current_pid
             post_ = Post_Model.objects.get(pk=pid)
             comments_form = CommentsForm(request.POST)
