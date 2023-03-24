@@ -192,7 +192,6 @@ def show_curr_post_api_view(request, current_pid):
         if request.method == "GET":
             return post_view_class.get(request=request, pid=pid, call="api")
         return post_view_class.post(request=request, pid=pid, call="api")
-
     else:
         return HttpResponse("Thou Shall not Enter!!")
 
@@ -317,7 +316,7 @@ def show_next_post_api_view(request, current_pid, category):
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
             return HttpResponse("No more posts to display")
-
+    
     else:
         return HttpResponse("Thou Shall not Enter!!")
 
@@ -365,7 +364,6 @@ class CurrentPostURL(APIView):
             )
             content = {"current_url": current_url}
             return Response(content)
-
         else:
             return HttpResponse("Thou Shall not Enter!!")
 
@@ -384,7 +382,7 @@ class CommentsView(View):
                 comments_.commented_by = request.user
                 comments_.save()
                 return JsonResponse({"commment": "success"})
-
+        
         else:
             return HttpResponse("Thou Shall not Enter!!")
 
