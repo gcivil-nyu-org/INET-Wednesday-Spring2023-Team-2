@@ -10,6 +10,9 @@ install:
 services:
     - postgresql
 
+addons:
+  postgresql: "15"
+
 before_script:
   - sleep 15
   - psql -c 'create database soh_test;' -U postgres

@@ -6,14 +6,14 @@ from login.models import Custom_User
 from django.test import Client
 
 
-#302: Redirect
-#200: OK (Rendering HTML)
-#301: 
+# 302: Redirect
+# 200: OK (Rendering HTML)
+# 301:
 
 
 class HomePageTest(TestCase):
     def test_homepage_url(self):
-        user1 = Custom_User.objects.create(username='test1', password='test123')
+        user1 = Custom_User.objects.create(username="test1", password="test123")
         post1 = Post_Model.objects.create(question_text="hi", created_by=user1)
         # option1 = Options_Model.objects.create(question=post1, choice_text='option1')
         # option2 = Options_Model.objects.create(question=post1, choice_text='option2')
@@ -23,18 +23,18 @@ class HomePageTest(TestCase):
         self.assertEqual(response.status_code, 302)
 
 
-
 class PostGenerationTest(TestCase):
     def test_post_generation_page_url(self):
-        user1 = Custom_User.objects.create(username='test2', password='test1234')
+        user1 = Custom_User.objects.create(username="test2", password="test1234")
         post1 = Post_Model.objects.create(question_text="hi2", created_by=user1, id=2)
         # option1 = Options_Model.objects.create(question=post1, choice_text='option1')
         # option2 = Options_Model.objects.create(question=post1, choice_text='option2')
 
-        response = self.client.get(reverse("posts:post_generation_page", kwargs={'pid':2}))
+        response = self.client.get(
+            reverse("posts:post_generation_page", kwargs={"pid": 2})
+        )
         # print(response.status_code)
         self.assertEqual(response.status_code, 200)
-
 
 
 class CreatePollTest(TestCase):
@@ -52,7 +52,7 @@ class CreatePollTest(TestCase):
         # self.client.login(username='test3', password='test1234')
         # response1 = self.client.post(reverse("account:login_page"), {'username': 'test3', 'password': 'test1234', 'access_info': 'Sign In'})
         # print(response1)
-        response = self.client.get(reverse('posts:create_poll'))
+        response = self.client.get(reverse("posts:create_poll"))
         # print("create_poll:", response.status_code)
         self.assertEqual(response.status_code, 302)
 
@@ -62,7 +62,6 @@ class CreatePollTest(TestCase):
         self.client.force_login(user=user)
         # response1 = self.client.post(reverse("account:login_page"), {'username': 'test3', 'password': 'test1234', 'access_info': 'Sign In'})
         # print(response1)
-        response = self.client.get(reverse('posts:create_poll'))
+        response = self.client.get(reverse("posts:create_poll"))
         # print("create_poll:", response.status_code)
         self.assertEqual(response.status_code, 200)
-        
