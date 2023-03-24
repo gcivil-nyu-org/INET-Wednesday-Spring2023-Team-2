@@ -178,12 +178,16 @@ def results_view(request, pid):
 # shows whether you have voted or not
 # if voted, then results. if not, poll
 def show_curr_post_api_view(request, current_pid):
-    pid = current_pid
-    print("here", pid)
-    post_view_class = PostsView()
-    if request.method == "GET":
-        return post_view_class.get(request=request, pid=pid, call="api")
-    return post_view_class.post(request=request, pid=pid, call="api")
+    if is_ajax(request):
+        pid = current_pid
+        print("here", pid)
+        post_view_class = PostsView()
+        if request.method == "GET":
+            return post_view_class.get(request=request, pid=pid, call="api")
+        return post_view_class.post(request=request, pid=pid, call="api")
+    
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
 
 
 # put ajax in poll_disp.html
@@ -215,7 +219,7 @@ class PostsView(View):
             except (KeyError, Options_Model.DoesNotExist):
                 print("error")
                 messages.error(request, "Select an option to submit!")
-                return JsonResponse({"voting": "Wrong request, nope"})
+                return JsonResponse({"voting": "Wrong request"})
 
             selected_choice.votes += 1
             selected_choice.chosen_by.add(request.user)
@@ -238,7 +242,7 @@ class PostsView(View):
             # request.user.posts_view_time.save()
 
             return JsonResponse({"voting": "success"})
-        return JsonResponse({"voting": "Wrong request tt"})
+        return JsonResponse({"voting": "Wrong request"})
 
 
 # def posts_view(request, pid, call="noapi"):
@@ -292,31 +296,40 @@ class PostsView(View):
 
 
 def show_next_post_api_view(request, current_pid):
-    pid, truth = get_random_pid(current_pid=current_pid)
+    if is_ajax(request):
+        pid, truth = get_random_pid(current_pid=current_pid)
 
-    if truth:
-        post_view_class = PostsView()
-        if request.method == "GET":
-            return post_view_class.get(request=request, pid=pid, call="api")
-        return post_view_class.post(request=request, pid=pid, call="api")
+        if truth:
+            post_view_class = PostsView()
+            if request.method == "GET":
+                return post_view_class.get(request=request, pid=pid, call="api")
+            return post_view_class.post(request=request, pid=pid, call="api")
 
+        else:
+            ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
+            pass
+    
     else:
-        ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
-        pass
+        return HttpResponse("Thou Shall not Enter!!")
 
 
 def show_categorybased_post_api_view(request, current_pid, category):
-    pid, truth = get_random_pid(current_pid=current_pid, category=category)
+    if is_ajax(request):
+        pid, truth = get_random_pid(current_pid=current_pid, category=category)
 
-    if truth:
-        post_view_class = PostsView()
-        if request.method == "GET":
-            return post_view_class.get(request=request, pid=pid, call="api")
-        return post_view_class.post(request=request, pid=pid, call="api")
+        if truth:
+            post_view_class = PostsView()
+            if request.method == "GET":
+                return post_view_class.get(request=request, pid=pid, call="api")
+            return post_view_class.post(request=request, pid=pid, call="api")
 
+        else:
+            ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
+            pass
+    
     else:
-        ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
-        pass
+        return HttpResponse("Thou Shall not Enter!!")
+        
 
 
 # def get_current_url_api_view(request):
@@ -334,20 +347,23 @@ class CurrentPostURL(APIView):
     # permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, current_pid):
-        pid = current_pid
-        current_url = request.build_absolute_uri(
-            reverse("posts:post_generation_page", kwargs={"pid": pid})
-        )
-        content = {"current_url": current_url}
-        return Response(content)
+        if is_ajax(request):
+            pid = current_pid
+            current_url = request.build_absolute_uri(
+                reverse("posts:post_generation_page", kwargs={"pid": pid})
+            )
+            content = {"current_url": current_url}
+            return Response(content)
+        
+        else:
+            return HttpResponse("Thou Shall not Enter!!")
 
 
 ##to show comments
 class CommentsView(View):
     def post(self, request, current_pid):
-        print("ll", current_pid)
+        # print("ll", current_pid)
         if is_ajax(request):
-            print("jj")
             pid = current_pid
             post_ = Post_Model.objects.get(pk=pid)
             comments_form = CommentsForm(request.POST)
@@ -357,40 +373,49 @@ class CommentsView(View):
                 comments_.commented_by = request.user
                 comments_.save()
                 return JsonResponse({"commment": "success"})
+        
+        else:
+            return HttpResponse("Thou Shall not Enter!!")
 
             # comment_text = request.POST["comment_text"].cleaned_data()
 
     ## Maybe sort and feed here
     def get(self, request, current_pid):
-        pid = current_pid
-        # print('whyyyy:', pid)
-        post_ = Post_Model.objects.get(pk=pid)
-        # comments_ = post_.comments_model_set.get(pk=pid)
-        comments_ = post_.comments_model_set.all().order_by("-commented_time")
-        template = loader.get_template("pages/comments.html")
-        contents = {"pid": pid, "comments": comments_, "show_comments_text": False}
-        if post_.viewed_by.filter(username=request.user.username).exists():
-            contents["show_comments_text"] = True
-        contents["post"] = post_
-        return HttpResponse(template.render(contents, request))
+        if is_ajax(request):
+            pid = current_pid
+            # print('whyyyy:', pid)
+            post_ = Post_Model.objects.get(pk=pid)
+            # comments_ = post_.comments_model_set.get(pk=pid)
+            comments_ = post_.comments_model_set.all().order_by("-commented_time")
+            template = loader.get_template("pages/comments.html")
+            contents = {"pid": pid, "comments": comments_, "show_comments_text": False}
+            if post_.viewed_by.filter(username=request.user.username).exists():
+                contents["show_comments_text"] = True
+            contents["post"] = post_
+            return HttpResponse(template.render(contents, request))
+        else:
+            return HttpResponse("Thou Shall not Enter!!")
 
 
 def show_comments_text_api(request, current_pid):
-    if request.method == "GET":
-        pid = current_pid
-        post_ = Post_Model.objects.get(pk=pid)
-        comments_form = CommentsForm()
+    if is_ajax(request):
+        if request.method == "GET":
+            pid = current_pid
+            post_ = Post_Model.objects.get(pk=pid)
+            comments_form = CommentsForm()
 
-        contents = {
-            "pid": pid,
-            "comments_form": comments_form,
-            "show_comments_text": False,
-        }
-        if post_.viewed_by.filter(username=request.user.username).exists():
-            contents["show_comments_text"] = True
+            contents = {
+                "pid": pid,
+                "comments_form": comments_form,
+                "show_comments_text": False,
+            }
+            if post_.viewed_by.filter(username=request.user.username).exists():
+                contents["show_comments_text"] = True
 
-        template = loader.get_template("pages/comments_text.html")
-        return HttpResponse(template.render(contents, request))
+            template = loader.get_template("pages/comments_text.html")
+            return HttpResponse(template.render(contents, request))
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
 
 
 # @api_view(["GET"])
