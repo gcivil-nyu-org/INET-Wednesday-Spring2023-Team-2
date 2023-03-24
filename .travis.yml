@@ -3,10 +3,6 @@ language: python
 python:
   - "3.8"
 
-
-install:
-   - pip install -r requirements.txt
-
 services:
     - postgresql
 
@@ -20,6 +16,14 @@ env:
   global:
   - PGPORT=5433
   - PGUSER=travis
+
+before_install:
+  - sudo sed -i -e "/local.*peer/s/postgres/all/" -e "s/peer\|md5/trust/g" /etc/postgresql/*/main/pg_hba.conf
+  - postgres --version
+  - sudo pg_ctlcluster 11 main restart
+
+install:
+   - pip install -r requirements.txt
 
 before_script:
   - sleep 15
