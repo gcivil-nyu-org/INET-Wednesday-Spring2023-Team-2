@@ -6,8 +6,6 @@ from login.models import Custom_User
 from django.test import Client
 
 
-#302: Redirect
-#200: OK (Rendering HTML)
-#301: 
-
-
+# 302: Redirect
+# 200: OK (Rendering HTML)
+# 301:
