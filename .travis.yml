@@ -34,7 +34,7 @@ after_script:
 
 script:
   #Secret_Key
-  - export $DJANGO_SECRET_KEY
+  # - export $DJANGO_SECRET_KEY
 
   # Run Black formatter
   - black --check .
