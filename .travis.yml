@@ -27,7 +27,7 @@ install:
 
 before_script:
   - sleep 15
-  - psql -c 'create database soh_test;' -U postgres
+  - psql -c 'create database soh_test2;' -U postgres
 
 after_script:
   - coveralls
