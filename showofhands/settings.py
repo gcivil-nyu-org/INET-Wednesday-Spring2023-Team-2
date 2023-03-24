@@ -220,5 +220,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 TIME_ZONE = "America/New_York"
 
-#need to change later
+# need to change later
 USE_TZ = False
