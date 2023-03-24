@@ -27,7 +27,7 @@ class HomePageTest(TestCase):
 class PostGenerationTest(TestCase):
     def test_post_generation_page_url(self):
         user1 = Custom_User.objects.create(username='test2', password='test1234')
-        post1 = Post_Model.objects.create(question_text="hi2", created_by=user1)
+        post1 = Post_Model.objects.create(question_text="hi2", created_by=user1, id=2)
         # option1 = Options_Model.objects.create(question=post1, choice_text='option1')
         # option2 = Options_Model.objects.create(question=post1, choice_text='option2')
 
@@ -38,21 +38,31 @@ class PostGenerationTest(TestCase):
 
 
 class CreatePollTest(TestCase):
-    def setUp(self):
-        self.client = Client()
-        self.user = Custom_User.objects.create_user('test3', 'test1234')
-        self.client.login(username='test3', password='test1234')
+    # def setUp(self):
+    #     self.client = Client()
+    #     self.user = Custom_User.objects.create_user('test3', 'test1234')
+    #     self.client.login(username='test3', password='test1234')
 
     # def testLogin(self):
     #     self.client.login(username='test3', password='test1234')
     #     response = self.client.get(reverse('account:login_page'))
     #     self.assertEqual(response.status_code, 200)
 
-    def test_create_poll_url(self):
+    def test_create_poll_url_withoutlogin(self):
         # self.client.login(username='test3', password='test1234')
-        response1 = self.client.post(reverse("account:login_page"), {'username': 'test3', 'password': 'test1234', 'access_info': 'Sign In'})
-        print(response1)
+        # response1 = self.client.post(reverse("account:login_page"), {'username': 'test3', 'password': 'test1234', 'access_info': 'Sign In'})
+        # print(response1)
         response = self.client.get(reverse('posts:create_poll'))
-        print("create_poll:", response.status_code)
+        # print("create_poll:", response.status_code)
         self.assertEqual(response.status_code, 302)
+
+    def test_create_poll_url_login(self):
+        # self.client.login(username='test3', password='test1234')
+        user = Custom_User.objects.create_user(username="test3", password="test1234")
+        self.client.force_login(user=user)
+        # response1 = self.client.post(reverse("account:login_page"), {'username': 'test3', 'password': 'test1234', 'access_info': 'Sign In'})
+        # print(response1)
+        response = self.client.get(reverse('posts:create_poll'))
+        # print("create_poll:", response.status_code)
+        self.assertEqual(response.status_code, 200)
         
