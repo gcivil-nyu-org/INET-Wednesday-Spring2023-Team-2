@@ -11,7 +11,15 @@ services:
     - postgresql
 
 addons:
-  postgresql: "15"
+  postgresql: "11"
+  apt:
+    packages:
+    - postgresql-11
+    - postgresql-client-11
+env:
+  global:
+  - PGPORT=5433
+  - PGUSER=travis
 
 before_script:
   - sleep 15
