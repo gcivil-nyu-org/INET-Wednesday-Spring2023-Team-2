@@ -382,7 +382,7 @@ class CommentsView(View):
                 comments_.commented_by = request.user
                 comments_.save()
                 return JsonResponse({"commment": "success"})
-        
+
         else:
             return HttpResponse("Thou Shall not Enter!!")
 
