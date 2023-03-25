@@ -27,7 +27,7 @@ class ResultsViewTest(TestCase):
     def test_results_view(self):
         self.client.login(username="testuser", password="test")
         response = self.client.get(
-            reverse("posts:post_generation_page", kwargs={"pid": 1})
+            reverse("posts:show_curr_post_api", kwargs={"current_pid": 1})
         )
 
         self.assertEqual(response.status_code, 200)
