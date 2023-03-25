@@ -250,7 +250,6 @@ class TestRegisterViews(TestCase):
         self.assertTemplateUsed(response, 'pages/login.html')
         # self.assertEqual(Custom_User.objects.count(), 1)
 
-
     
 
 
