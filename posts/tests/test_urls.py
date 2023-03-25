@@ -65,4 +65,3 @@ class CreatePollTest(TestCase):
         response = self.client.get(reverse("posts:create_poll"))
         # print("create_poll:", response.status_code)
         self.assertEqual(response.status_code, 200)
-
