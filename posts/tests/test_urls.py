@@ -74,10 +74,10 @@ class ViewsFunctions(TestCase):
             username="test1", password="test123", id=1
         )
         self.post1 = Post_Model.objects.create(
-            question_text="hi", created_by=self.user1, id=1
+            question_text="hi", created_by=self.user1
         )
         self.post2 = Post_Model.objects.create(
-            question_text="bye", created_by=self.user1, id=2
+            question_text="bye", created_by=self.user1
         )
 
     def test_create_poll(self):
@@ -95,17 +95,31 @@ class ViewsFunctions(TestCase):
         response = self.client.post(
             reverse("posts:create_poll"),
             {
-                "prefix": "Test",
+                "prefix": "Show of hands if",
                 "category": "sports",
-                "delay": "No Delay",
+                "delay": "0",
                 "choice1": "Option 1",
                 "choice2": "Option 2",
                 "created_by": user,
             },
             follows=True,
         )
+        self.assertEqual(response.status_code, 302)
+
+        post1 = Post_Model.objects.last()
+        self.assertEqual(post1.question_text, "Show of hands if")
+        self.assertEqual(post1.category, ["sports"])
+        self.assertEqual(post1.created_by, user)
+
+    def test_ShowCurrPost_ajax(self):
+        response = self.client.post(
+            reverse("posts:show_curr_post_api", kwargs={"current_pid": 2})
+        )
         self.assertEqual(response.status_code, 200)
 
-
-#     def test_ShowCurrPost(self):
-#         response = self.client.post("http://example.com", {"foo": "bar"}, xhr=True)
+    def test_ShowCurrPost_ajax(self):
+        response = self.client.post(
+            reverse("posts:show_curr_post_api", kwargs={"current_pid": 2}),
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+        )
+        self.assertEqual(response.status_code, 200)
