@@ -16,22 +16,31 @@ class ResultsViewTest(TestCase):
             question_text="Test question", created_by=self.user, id=1
         )
         self.option1 = Options_Model.objects.create(
-            question=self.post, choice_text="option1"
+            question=self.post, choice_text="option1", id=1
         )
         self.option2 = Options_Model.objects.create(
-            question=self.post, choice_text="option2"
+            question=self.post, choice_text="option2", id=2
         )
         self.post.viewed_by.add(self.user)
         self.post.save()
         self.option1.chosen_by.add(self.user)
         self.option1.save()
 
-    def test_results_view(self):
+    def test_results_view_get(self):
         self.client.login(username="testuser", password="test")
-        print(self.post.options_model_set.all())
         response = self.client.get(
             reverse("posts:show_curr_post_api", kwargs={"current_pid": 1}),
             **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
+        self.assertEqual(response.status_code, 200)
 
+    def test_results_view_post(self):
+        self.client.login(username="testuser", password="test")
+        response = self.client.post(
+            reverse("posts:show_curr_post_api", kwargs={"current_pid": 1}),
+            {"option": 1},
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+        )
+        self.assertEqual(Options_Model.objects.get(pk=2).votes, 0)
+        self.assertEqual(Options_Model.objects.get(pk=1).votes, 1)
         self.assertEqual(response.status_code, 200)
