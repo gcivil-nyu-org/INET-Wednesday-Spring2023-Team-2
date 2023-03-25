@@ -65,3 +65,47 @@ class CreatePollTest(TestCase):
         response = self.client.get(reverse("posts:create_poll"))
         # print("create_poll:", response.status_code)
         self.assertEqual(response.status_code, 200)
+
+
+class ViewsFunctions(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user1 = Custom_User.objects.create(
+            username="test1", password="test123", id=1
+        )
+        self.post1 = Post_Model.objects.create(
+            question_text="hi", created_by=self.user1, id=1
+        )
+        self.post2 = Post_Model.objects.create(
+            question_text="bye", created_by=self.user1, id=2
+        )
+
+    def test_create_poll(self):
+        user = Custom_User.objects.create_user(username="test3", password="test1234")
+        self.client.force_login(user=user)
+        # data = {
+        #     'prefix': 'Test question',
+        #     'category': 'sports',
+        #     'delay': 'No Delay',
+        #     'choice1': 'Option 1',
+        #     'choice2': 'Option 2',
+        # }
+
+        # response = self.client.post(reverse("posts:create_poll"), data)
+        response = self.client.post(
+            reverse("posts:create_poll"),
+            {
+                "prefix": "Test",
+                "category": "sports",
+                "delay": "No Delay",
+                "choice1": "Option 1",
+                "choice2": "Option 2",
+                "created_by": user,
+            },
+            follows=True,
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+#     def test_ShowCurrPost(self):
+#         response = self.client.post("http://example.com", {"foo": "bar"}, xhr=True)
