@@ -14,16 +14,51 @@ from login.forms import (LoginForm, RegisterForm, PasswordChangeForm, PasswordRe
                          )
 
 
-# testuser = os.environ["testuser"]
-# testuserpassword = os.environ["testuserpassword"]
+
+
+
 
 class TestLoginModels(TestCase):
-    def setUp(self):
-        client = Client()
-        Custom_User.objects.create(username="test",  email="test@testemail.com", password="test1234")
-        self.profile_pic = SimpleUploadedFile(
-            "test", b"file_content", content_type="image/jpeg"
-        )
+
+    def test_valid_image_extensions(self):
+        valid_extensions = [".jpg", ".jpeg", ".png"]
+
+        for ext in valid_extensions:
+            image = SimpleUploadedFile(f"test_image{ext}", b"file_content", content_type=f"image/{ext}")
+
+            try:
+                validate_image_extension(image)
+            except ValidationError:
+                self.fail(f"validate_image_extension raised ValidationError for a valid extension: {ext}")
+
+    def test_invalid_image_extensions(self):
+        invalid_extensions = [".gif", ".bmp", ".tiff"]
+
+        for ext in invalid_extensions:
+            image = SimpleUploadedFile(f"test_image{ext}", b"file_content", content_type=f"image/{ext}")
+
+            with self.assertRaises(ValidationError):
+                validate_image_extension(image)
+
+    def test_case_insensitive_validation(self):
+        valid_extensions = [".JPG", ".JPEG", ".PNG"]
+
+        for ext in valid_extensions:
+            image = SimpleUploadedFile(f"test_image{ext}", b"file_content", content_type=f"image/{ext.lower()}")
+
+            try:
+                validate_image_extension(image)
+            except ValidationError:
+                self.fail(f"validate_image_extension raised ValidationError for a valid case-insensitive extension: {ext}")
+
+
+# class TestLoginModels(TestCase):
+#     def setUp(self):
+#         client = Client()
+#         Custom_User.objects.create(username="test",  email="test@testemail.com", password="test1234")
+#         self.profile_pic = SimpleUploadedFile(
+#             "test", b"file_content", content_type="image/jpeg"
+#         )
 
 
 
@@ -38,12 +73,12 @@ class TestLoginModels(TestCase):
     #         self.assertTrue( "Only image files with the following extensions are allowed: %s"
     #         % ", ".join(allowed_extensions))
 
-    def test_validated_image_extension(self):
-        url = reverse("account:profile_page", args=["test"])
-        response = self.client.post(
-            url, {"account_info": "profile_pic", "profile_picture": self.profile_pic}
-        )
-        self.assertEqual(Custom_User.objects.get(username="test").profile_picture, "default-profile.jpeg")
+    # def test_validated_image_extension(self):
+    #     url = reverse("account:profile_page", args=["test"])
+    #     response = self.client.post(
+    #         url, {"account_info": "profile_pic", "profile_picture": self.profile_pic}
+    #     )
+    #     self.assertEqual(Custom_User.objects.get(username="test").profile_picture, "default-profile.jpeg")
         
 
 class TestLoginForms(TestCase):
