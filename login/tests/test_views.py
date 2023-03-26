@@ -20,8 +20,12 @@ from login.forms import (LoginForm, RegisterForm, PasswordChangeForm, PasswordRe
 class TestLoginModels(TestCase):
     def setUp(self):
         client = Client()
-        Custom_User.objects.create(username="test", password="test1234")
-        profile_picture = SimpleUploadedFile("test.jpg", b"file_content", content_type="image/jpeg")
+        Custom_User.objects.create(username="test",  email="test@testemail.com", password="test1234")
+        self.profile_pic = SimpleUploadedFile(
+            "test", b"file_content", content_type="image/jpeg"
+        )
+
+
 
 
     # def test_validated_image_extension(self):
@@ -34,6 +38,13 @@ class TestLoginModels(TestCase):
     #         self.assertTrue( "Only image files with the following extensions are allowed: %s"
     #         % ", ".join(allowed_extensions))
 
+    def test_validated_image_extension(self):
+        url = reverse("account:profile_page", args=["test"])
+        response = self.client.post(
+            url, {"account_info": "profile_pic", "profile_picture": self.profile_pic}
+        )
+        self.assertEqual(Custom_User.objects.get(username="test").profile_picture, "default-profile.jpeg")
+        
 
 class TestLoginForms(TestCase):
         def setUp(self):
