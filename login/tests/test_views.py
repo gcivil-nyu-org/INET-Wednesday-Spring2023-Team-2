@@ -2,18 +2,61 @@
 import os
 
 from django.test import TestCase, Client
-from login.models import Custom_User
+from login.models import Custom_User, validate_image_extension
+
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from login.forms import LoginForm
+from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
+from login.forms import (LoginForm, RegisterForm, PasswordChangeForm, PasswordResetConfirmationForm,
+                         PasswordResetForm
+                         )
+
 
 # testuser = os.environ["testuser"]
 # testuserpassword = os.environ["testuserpassword"]
 
+class TestLoginModels(TestCase):
+    def setUp(self):
+        client = Client()
+        Custom_User.objects.create(username="test", password="test1234")
+        profile_picture = SimpleUploadedFile("test.jpg", b"file_content", content_type="image/jpeg")
+
+
+    # def test_validated_image_extension(self):
+    #     self.client.login(username="test", password="test1234")
+    #     allowed_extensions = [".jpg", ".jpeg", ".png"]
+    #     # value = eval('test.svg')
+
+    #     with self.assertRaises(ValidationError) as context:
+    #         validate_image_extension(profile_picture)
+    #         self.assertTrue( "Only image files with the following extensions are allowed: %s"
+    #         % ", ".join(allowed_extensions))
+
+
+class TestLoginForms(TestCase):
+        def setUp(self):
+            self.client = Client()
+            self.user = Custom_User.objects.create_user(username="test", 
+                                                        email="test@testemail.com",
+                                                        password="test1234")
+
+
+            self.client.login(username="test", password="test1234")
+            
+        def test_existed_emial(self):
+            form = RegisterForm(data={"username": "test1", "email": "test@testemail.com", 
+                                      "password1": "test1234", "password2": "test1234"})
+            
+            
+            self.assertFalse(form.is_valid())
+
+
 class TestLoginViews(TestCase):
     def setUp(self):
         self.client = Client()
-        self.user = Custom_User.objects.create_user(username="test", password="test1234")
+        self.user = Custom_User.objects.create_user(username="test", password="test1234", email="test@testemail.com")
         # self.login_url = reverse("account:login_page")
         # self.home_page_url = reverse("posts:home_page")
         # self.login_form = LoginForm()
@@ -74,6 +117,7 @@ class TestRegisterViews(TestCase):
         # user.save()
         self.assertTemplateUsed(response, 'pages/login.html')
         # self.assertEqual(Custom_User.objects.count(), 1)
+
 
     
 
