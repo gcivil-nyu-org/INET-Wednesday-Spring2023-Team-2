@@ -135,11 +135,11 @@ else:
 
 
 # Email Settings
-if os.environ.get("DJANGO_TEST"):
-    EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
-else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# if os.environ.get("DJANGO_TEST"):
+#     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+# else:
+#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
 EMAIL_USE_TLS = True

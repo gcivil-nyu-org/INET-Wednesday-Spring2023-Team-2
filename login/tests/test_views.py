@@ -213,6 +213,33 @@ class TestRegisterViews(TestCase):
         self.assertIn('activate your account', email.body)
         self.assertEqual(email.to, ['test@testemail.com'])
 
+    def test_register_view_password_mismatch(self):
+        response = self.client.post(reverse('account:login_page'), {
+            'username': 'test',
+            'email': 'test@testemail.com',
+            'password1': 'testpasswordcs6063',
+            'password2': 'testwrongpasswordcs6063',
+            'access_info': 'Sign Up',
+        })
+
+        self.assertEqual(response.status_code, 200)  # Registration failed, should render the same page
+        self.assertEqual(Custom_User.objects.filter(username='test').count(), 0)  # No new user should be created
+
+    def test_register_view_username_exists(self):
+        Custom_User.objects.create_user(username="test", 
+                                        email="test@testemail.com",
+                                        password="testpasswordcs6063")
+
+        response = self.client.post(reverse('account:login_page'), {
+            'username': 'test',
+            'email': 'test@testemail.com',
+            'password1': 'newpasswordcs6063',
+            'password2': 'newpasswordcs6063',
+            'access_info': 'Sign Up',
+        })
+
+        self.assertEqual(response.status_code, 200)  # Registration failed, should render the same page
+        self.assertContains(response, "A user with that username already exists.")  # Error message should be displayed
   
     def test_register(self):
         response = self.client.post(reverse("account:login_page"), {'username': 'test', 'password': 'test1234', 'access_info': 'Sign Up', 'email': 'test@testemail.com'})
