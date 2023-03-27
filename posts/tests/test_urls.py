@@ -3,7 +3,10 @@ from django.urls import reverse, resolve
 from posts.views import PostsView, show_curr_post_api_view, home_view, results_view
 from posts.models import Post_Model, Options_Model, Comments_Model, UserPostViewTime
 from login.models import Custom_User
-from django.test import Client
+from django.test import Client, TestCase, RequestFactory
+from rest_framework.test import APITestCase
+from rest_framework.views import Response, status
+from posts.views import CurrentPostURL
 
 
 # 302: Redirect
@@ -123,6 +126,26 @@ class ViewsFunctions(TestCase):
             **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
         self.assertEqual(response.status_code, 200)
+
+    def test_show_comments_text_apit_ajax(self):
+        response = self.client.post(
+            reverse("posts:show_comments_text_api", kwargs={"current_pid": 2})
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_ajax_get_current_post_url_api(self):
+        self.factory = RequestFactory()
+        url = reverse("posts:get_current_post_url_api", kwargs={"current_pid": 2})
+        request = self.factory.get(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
+        response = CurrentPostURL.as_view()(request, current_pid=2)
+        self.assertEqual(response.status_code, 200)
+
+    # def test_non_ajax_get_current_post_url_api(self):
+    #     factory = RequestFactory()
+    #     url = reverse("posts:get_current_post_url_api", kwargs={"current_pid": 2})
+    #     request = factory.get(url)
+    #     response = CurrentPostURL.as_view()(request, current_pid=2)
+    #     self.assertEqual(response.status_code, 403)
 
     def test_comments_post_ajax(self):
         # self.client.login(username="test1", password="test123")

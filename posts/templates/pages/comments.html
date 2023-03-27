@@ -19,6 +19,11 @@
                     <span class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</span>
                 </div>
             </div>
+            <div class="comment-action">
+                <a href="#" class="reply" data-username="{{ comment.commented_by.username }}">Reply</a>
+                <a href="#" class="report">Report</a>
+                <a href="#" class="like">Like</a>
+            </div>
         </div>
         <script>
             document.getElementById('pfp{{ forloop.counter }}').style.borderColor = "#{{user_color}}";
@@ -31,6 +36,14 @@
 
 </div>
 
-
-
-{% comment %} user.user_option.color {% endcomment %}
+<script>
+    $(document).ready(function() {
+        $(".reply").click(function(e) {
+            e.preventDefault();
+            var username = $(this).data("username");
+            var commentField = $("#commentTextDisp2 .comment-input");
+            commentField.val("@" + username + " ");
+            commentField.focus();
+        });
+    });
+</script>

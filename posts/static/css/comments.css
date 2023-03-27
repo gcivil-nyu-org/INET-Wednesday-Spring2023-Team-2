@@ -80,6 +80,11 @@
     font-family: Arial, Helvetica;
 }
 
+.comment-interact {
+    flex-grow: 1;
+    font-family: Arial, Helvetica;
+}
+
 .username {
     font-size: 14px;
     font-weight: bold;
@@ -93,6 +98,24 @@
 
 .comment-info .timestamp {
     font-size: 9px;
+    color: #5a5a5a;
+    text-align: left;
+}
+
+.comment-action .reply {
+    font-size: 15px;
+    color: #5a5a5a;
+    text-align: left;
+}
+
+.comment-action .report {
+    font-size: 15px;
+    color: #5a5a5a;
+    text-align: left;
+}
+
+.comment-action .like {
+    font-size: 15px;
     color: #5a5a5a;
     text-align: left;
 }
