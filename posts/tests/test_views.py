@@ -44,3 +44,45 @@ class ResultsViewTest(TestCase):
         self.assertEqual(Options_Model.objects.get(pk=2).votes, 0)
         self.assertEqual(Options_Model.objects.get(pk=1).votes, 1)
         self.assertEqual(response.status_code, 200)
+
+    def test_results_view_post_not_ajax(self):
+        self.client.login(username="testuser", password="test")
+        response = self.client.post(
+            reverse("posts:show_curr_post_api", kwargs={"current_pid": 1}),
+            {"option": 1},
+            # **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+
+class NextPostTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+        self.user = Custom_User.objects.create_user(
+            username="testuser", password="test"
+        )
+        self.post1 = Post_Model.objects.create(
+            question_text="test question", created_by=self.user, id=1
+        )
+
+        self.post2 = Post_Model.objects.create(
+            question_text="test question 2", created_by=self.user, id=2
+        )
+        self.post3 = Post_Model.objects.create(
+            question_text="test question 3", created_by=self.user, id=3
+        )
+
+    def test_next_post_get(self):
+        self.client.login(username="testuser", password="test")
+        response = self.client.get(
+            reverse("posts:show_next_post_api", kwargs={"current_pid": 1})
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_next_post_post(self):
+        self.client.login(username="testuser", password="test")
+        response = self.client.post(
+            reverse("posts:show_next_post_api", kwargs={"current_pid": 1})
+        )
+        self.assertEqual(response.status_code, 200)
