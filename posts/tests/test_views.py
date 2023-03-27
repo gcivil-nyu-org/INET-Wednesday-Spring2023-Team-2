@@ -74,15 +74,24 @@ class NextPostTest(TestCase):
         )
 
     def test_next_post_get(self):
-        self.client.login(username="testuser", password="test")
+        self.client.force_login(user=self.user)
+
         response = self.client.get(
-            reverse("posts:show_next_post_api", kwargs={"current_pid": 1})
+            reverse(
+                "posts:show_next_post_api",
+                kwargs={"current_pid": 1},
+            ),
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
         self.assertEqual(response.status_code, 200)
 
     def test_next_post_post(self):
-        self.client.login(username="testuser", password="test")
+        self.client.force_login(user=self.user)
         response = self.client.post(
-            reverse("posts:show_next_post_api", kwargs={"current_pid": 1})
+            reverse(
+                "posts:show_next_post_api",
+                kwargs={"current_pid": 1},
+            ),
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
         self.assertEqual(response.status_code, 200)
