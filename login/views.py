@@ -225,7 +225,7 @@ def register_view(request, login_form, register_form):
             return redirect(reverse("account:login_page"))
         else:
             messages.error(request, "Email verification failed!")
-    else:
+    else:       
         for err in list(register_form.errors.values()):
             messages.error(request, err)
 

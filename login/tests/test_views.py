@@ -3,6 +3,12 @@ import os
 
 from django.test import TestCase, Client
 from login.models import Custom_User, validate_image_extension
+from django.core import mail
+from unittest.mock import patch
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from login.tokens import account_activation_token
+
 
 from django.urls import reverse
 from django.contrib.auth import authenticate, login, logout, get_user_model
@@ -178,11 +184,35 @@ class TestRegisterViews(TestCase):
 
     def setUp(self):
         self.client = Client()
-        # self.user = Custom_User.objects.create_user(username="test", password="test1234")
-        # self.login_url = reverse("account:login_page")
-        # self.home_page_url = reverse("posts:home_page")
-        # self.login_form = LoginForm()
-        self.url = reverse('account:login_page')
+        self.register_form = RegisterForm({
+                "username": "test",
+                'email': 'test@testemail.com',
+                'password1': 'test1234',
+                'password2': 'test1234',})
+
+    def test_register_view_success(self):
+
+        response = self.client.post(reverse('account:login_page'), {
+            'username': 'test',
+            'email': 'test@testemail.com',
+            'password1': 'testpasswordcs6063',
+            'password2': 'testpasswordcs6063',
+            'access_info': 'Sign Up',
+        })
+
+        self.assertEqual(response.status_code, 302)  # Successful registration should redirect
+        self.assertRedirects(response, reverse('account:login_page'), status_code=302, target_status_code=200)
+        self.assertTrue(Custom_User.objects.filter(username="test").exists())
+        self.assertEqual(len(mail.outbox), 1)
+
+
+
+        # Check email content
+        email = mail.outbox[0]
+        self.assertEqual(email.subject, 'Verification')
+        self.assertIn('activate your account', email.body)
+        self.assertEqual(email.to, ['test@testemail.com'])
+
   
     def test_register(self):
         response = self.client.post(reverse("account:login_page"), {'username': 'test', 'password': 'test1234', 'access_info': 'Sign Up', 'email': 'test@testemail.com'})
