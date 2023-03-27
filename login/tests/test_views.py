@@ -143,6 +143,35 @@ class TestLoginViews(TestCase):
         response = self.client.get(reverse('posts:home_page'))
         self.assertEqual(response.status_code, 200)
 
+    def test_login_view_success(self):
+        response = self.client.post(reverse('account:login_page'), {
+            'username': 'test',
+            'password': 'test1234',
+            'access_info': 'Sign In',
+        })
+        self.assertEqual(response.status_code, 302)  # A successful login should redirect
+        self.assertEqual(response.url, reverse('posts:home_page'))  # User should be redirected to the home page
+
+    def test_login_view_failure(self):
+        response = self.client.post(reverse('account:login_page'), {
+            'username': 'test',
+            'password': 'wrongpassword',
+            'access_info': 'Sign In',
+        })
+
+        self.assertEqual(response.status_code, 200)  # Login failed, should render the same page
+        self.assertContains(response, "Username or password is wrong.")  # Error message should be displayed
+
+
+    def test_login_view_invalid_username(self):
+        response = self.client.post(reverse('account:login_page'), {
+            'username': 'invalid_user',
+            'password': 'test1234',
+            'access_info': 'Sign In',
+        })
+
+        self.assertEqual(response.status_code, 200)  # Login failed, should render the same page
+        self.assertContains(response, "Username or password is wrong.")  # Error message should be displayed
 
 
 class TestRegisterViews(TestCase):
