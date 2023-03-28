@@ -134,15 +134,14 @@ def results_view(request, pid):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
-    user_choice = post_.options_model_set.get(chosen_by=request.user)
-    user_color = user_choice.color
+    # user_choice = post_.options_model_set.get(chosen_by=request.user)
+    # user_color_ = user_choice.color
     contents = {
         "post": post_,
         "options": options_,
         "pid": pid,
         "user_option": user_option,
         "show_poll_results": False,
-        "user_color": user_color,
     }
     template = loader.get_template("pages/poll_result.html")
 
@@ -387,10 +386,12 @@ class CommentsView(View):
             pid = current_pid
             # print('whyyyy:', pid)
             post_ = Post_Model.objects.get(pk=pid)
+            user_choice = post_.options_model_set.get(chosen_by=request.user)
+            user_color_ = user_choice.color
             # comments_ = post_.comments_model_set.get(pk=pid)
             comments_ = post_.comments_model_set.all().order_by("-commented_time")
             template = loader.get_template("pages/comments.html")
-            contents = {"pid": pid, "comments": comments_, "show_comments_text": False}
+            contents = {"pid": pid, "comments": comments_, "show_comments_text": False, "user_color" : user_color_}
             if post_.viewed_by.filter(username=request.user.username).exists():
                 contents["show_comments_text"] = True
             contents["post"] = post_
