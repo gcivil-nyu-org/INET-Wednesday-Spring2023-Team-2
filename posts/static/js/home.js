@@ -1,70 +1,70 @@
-let currentPoll = 1;
-  const maxPoll = 2;
+// let currentPoll = 1;
+//   const maxPoll = 2;
 
-  function showNextPoll() {
-    currentPoll++;
-    if (currentPoll > maxPoll) {
-      currentPoll = 1;
-    }
-    showCurrentPoll();
-  }
+//   function showNextPoll() {
+//     currentPoll++;
+//     if (currentPoll > maxPoll) {
+//       currentPoll = 1;
+//     }
+//     showCurrentPoll();
+//   }
 
-  function showPrevPoll() {
-    currentPoll--;
-    if (currentPoll < 1) {
-      currentPoll = maxPoll;
-    }
-    showCurrentPoll();
-  }
-
-
-  function showCurrentPoll() {
-    const pollContainers = document.getElementsByClassName('container');
-    for (let i = 0; i < pollContainers.length; i++) {
-      pollContainers[i].style.display = 'none';
-    }
-    const currentPollContainer = document.getElementById(`poll${currentPoll}`);
-    currentPollContainer.style.display = 'block';
-    pollContainers.classList.add("right-panel-active");
-  }
+//   function showPrevPoll() {
+//     currentPoll--;
+//     if (currentPoll < 1) {
+//       currentPoll = maxPoll;
+//     }
+//     showCurrentPoll();
+//   }
 
 
-  function chBackcolor(id) {
-    if(document.getElementById("yolo1")){
-      document.getElementById("yolo1").style.backgroundColor = "#f2f2f2";
-    }
-    if(document.getElementById("yolo2")){
-      document.getElementById("yolo2").style.backgroundColor = "#f2f2f2";
-    }
-    if(document.getElementById("yolo3")){
-      document.getElementById("yolo3").style.backgroundColor = "#f2f2f2";
-    }
-    if(document.getElementById("yolo4")){
-      document.getElementById("yolo4").style.backgroundColor = "#f2f2f2";
-    }
-    document.getElementById(id).style.backgroundColor = "#555";
- }
+//   function showCurrentPoll() {
+//     const pollContainers = document.getElementsByClassName('container');
+//     for (let i = 0; i < pollContainers.length; i++) {
+//       pollContainers[i].style.display = 'none';
+//     }
+//     const currentPollContainer = document.getElementById(`poll${currentPoll}`);
+//     currentPollContainer.style.display = 'block';
+//     pollContainers.classList.add("right-panel-active");
+//   }
 
- function registerCategoryTabs() {
-  document.getElementById("nav-sports-tab").addEventListener("click", function () {
-    const url = this.getAttribute("data-url");
-    getCategoryBasedPost(url);
-  });
 
-  document.getElementById("nav-entertainment-tab").addEventListener("click", function () {
-    const url = this.getAttribute("data-url");
-    getCategoryBasedPost(url);
-  });
+//   function chBackcolor(id) {
+//     if(document.getElementById("yolo1")){
+//       document.getElementById("yolo1").style.backgroundColor = "#f2f2f2";
+//     }
+//     if(document.getElementById("yolo2")){
+//       document.getElementById("yolo2").style.backgroundColor = "#f2f2f2";
+//     }
+//     if(document.getElementById("yolo3")){
+//       document.getElementById("yolo3").style.backgroundColor = "#f2f2f2";
+//     }
+//     if(document.getElementById("yolo4")){
+//       document.getElementById("yolo4").style.backgroundColor = "#f2f2f2";
+//     }
+//     document.getElementById(id).style.backgroundColor = "#555";
+//  }
 
-  document.getElementById("nav-misc-tab").addEventListener("click", function () {
-    const url = this.getAttribute("data-url");
-    getCategoryBasedPost(url);
-  });
-}
+//  function registerCategoryTabs() {
+//   document.getElementById("nav-sports-tab").addEventListener("click", function () {
+//     const current_cat = this.getAttribute("data-url");
+//     getCategoryBasedPost(current_cat);
+//   });
 
-document.addEventListener("DOMContentLoaded", function () {
-  registerCategoryTabs();
-});
+//   document.getElementById("nav-entertainment-tab").addEventListener("click", function () {
+//     const current_cat = this.getAttribute("data-url");
+//     getCategoryBasedPost(current_cat);
+//   });
+
+//   document.getElementById("nav-misc-tab").addEventListener("click", function () {
+//     const current_cat = this.getAttribute("data-url");
+//     getCategoryBasedPost(current_cat);
+//   });
+// }
+
+// document.addEventListener("DOMContentLoaded", function () {
+//   registerCategoryTabs();
+// });
 
 // function getCategoryBasedPost(url) {
 //   fetch(url)
@@ -79,21 +79,21 @@ document.addEventListener("DOMContentLoaded", function () {
 //     });
 // }
 
-function getCategoryBasedPost(url) {
-  fetch(url)
-    .then((response) => response.text())
-    .then((html) => {
-      document.getElementById("poll-container").innerHTML = html;
-      registerVoteButtons();
-    })
-    .catch((error) => {
-      console.warn(error);
-    });
-}
+// function getCategoryBasedPost(url) {
+//   fetch(url)
+//     .then((response) => response.text())
+//     .then((html) => {
+//       document.getElementById("poll-container").innerHTML = html;
+//       registerVoteButtons();
+//     })
+//     .catch((error) => {
+//       console.warn(error);
+//     });
+// }
 
-function showCategoryBasedPost(post_id) {
-  window.location.href = `{% url 'posts:post_generation_page' 0 %}`.replace(/0$/, post_id);
-}
+// function showCategoryBasedPost(post_id) {
+//   window.location.href = `{% url 'posts:post_generation_page' 0 %}`.replace(/0$/, post_id);
+// }
 
 
  

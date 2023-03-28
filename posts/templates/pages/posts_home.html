@@ -11,16 +11,16 @@
 <div class="main-container">
     <div class="nav-tabs" id="category-tabs">
         <div class="tab-wrapper">
-            <a class="nav-tab activate" id="nav-all-tab">All</a>
+            <a class="nav-tab active" id="nav-all-tab" data-url="all" onclick="openCatTab(event, 'all');">All</a>
             </div>
             <div class="tab-wrapper">
-            <a class="nav-tab" id="nav-sports-tab"  data-url="{% url 'posts:show_categorybased_post_api' 'sports' %}">Sports</a>
+            <a class="nav-tab" id="nav-sports-tab"  data-url="sports" onclick="openCatTab(event, 'sports');">Sports</a>
              </div>
             <div class="tab-wrapper">
-            <a  class="nav-tab" id="nav-entertainment-tab"  data-url="{% url 'posts:show_categorybased_post_api' 'sports' %}">Entertainment</a>
+            <a  class="nav-tab" id="nav-entertainment-tab"  data-url="entertainment" onclick="openCatTab(event, 'entertainment');">Entertainment</a>
             </div>
             <div class="tab-wrapper">
-                <a  class="nav-tab" id="nav-misc-tab"  data-url="{% url 'posts:show_categorybased_post_api' 'sports' %}">Misc</a>
+                <a  class="nav-tab" id="nav-misc-tab"  data-url="misc" onclick="openCatTab(event, 'misc');">Misc</a>
             </div>
     </div>
     <div class="container" id="poll-container">
@@ -52,5 +52,16 @@
 <script>
 
 getCurrPost();
+
+
+function openCatTab(evt, currentCat){
+    tablinks = document.getElementsByClassName("nav-tab");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    evt.currentTarget.className += " active";
+    getCategoryBasedPosts(currentCat);
+}
 
 </script>

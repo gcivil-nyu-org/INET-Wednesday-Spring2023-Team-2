@@ -22,11 +22,11 @@ function getCurrentURL () {
     }
 
 
-    function getCategoryBasedPosts(){
+    function getCategoryBasedPosts(current_cat){
         var current_pid = getCurrentURL().toString();
         current_pid = current_pid.split("/").at(-2);
         $.ajax({
-            url: "{% url 'posts:show_categorybased_post_api' current_pid=1 category='sports' %}".replace(/1/, current_pid.toString()),
+            url: "{% url 'posts:show_categorybased_post_api' current_pid=1 category='rep1' %}".replace(/1/, current_pid.toString()).replace("rep1", current_cat.toString()),
             type: "GET",
             success: function(resp){
                 $("#postDispDiv").html(resp);
@@ -128,8 +128,14 @@ function getCurrentURL () {
     function getNextPost(){
         var current_pid = getCurrentURL().toString();
         current_pid = current_pid.split("/").at(-2);
+
+        $('.nav-tab').each(function () {
+            if ($(this).hasClass('active')) {
+                var current_cat = $(this).attr('data-url');
+
+
         $.ajax({
-            url:"{% url 'posts:show_next_post_api' current_pid=1 %}".replace(/1/, current_pid.toString()),
+            url:"{% url 'posts:show_next_post_api' current_pid=1 category='rep1' %}".replace(/1/, current_pid.toString()).replace("rep1", current_cat.toString()),
             type:"GET",
             success: function(resp){
                 // changeurl();
@@ -144,6 +150,8 @@ function getCurrentURL () {
               console.log("getnextpost error")
             }
         });
+    }
+    });
     }
 
 
@@ -244,6 +252,16 @@ function getCurrentURL () {
     });
 
 
+
+
+//// to check category click
+// $(function () {
+//     $('.nav-tab').click(function () {
+//         $('.nav-tab').removeClass('active').text('');
+//         $(this).addClass('active').text(' active');
+//         getCategoryBasedPosts($(this).attr('data-url'));
+//         })
+// });
 
 </script>
 {% endblock scripts %}

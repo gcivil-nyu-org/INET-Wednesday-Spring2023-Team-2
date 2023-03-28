@@ -47,13 +47,14 @@ def is_ajax(request):
 def get_random_pid(current_pid=None, category=None):
     if category:
         # pids = Post_Model.objects.filter(category=category)
-        pids = Post_Model.objects.filter(category__iexact=category)
+        pids = Post_Model.objects.filter(category__iexact=category).filter(~Q(id=current_pid))
+        # pids = Post_Model.objects.filter(~Q(id=current_pid))
     else:
         # pids = Post_Model.objects.all()
         pids = Post_Model.objects.filter(~Q(id=current_pid))
 
-    print(f"Category: {category}")  # Debugging line
-    print(f"PIDs: {pids}")          # Debugging line
+    # print(f"Category: {category}")  # Debugging line
+    # print(f"PIDs: {pids}")          # Debugging line
 
     ##to check if user has alread seen/ interaacted with the post
     # if request.user.is_authenticated:
@@ -299,9 +300,11 @@ class PostsView(View):
 #     return HttpResponse(template.render(contents, request))
 
 
-def show_next_post_api_view(request, current_pid):
+def show_next_post_api_view(request, current_pid, category):
     if is_ajax(request):
-        pid, truth = get_random_pid(current_pid=current_pid)
+        if category == "all":
+            category = None
+        pid, truth = get_random_pid(current_pid=current_pid, category=category)
 
         if truth:
             post_view_class = PostsView()
@@ -319,7 +322,11 @@ def show_next_post_api_view(request, current_pid):
 
 def show_categorybased_post_api_view(request, current_pid, category):
     if is_ajax(request):
+        if category == "all":
+            category = None
         pid, truth = get_random_pid(current_pid=current_pid, category=category)
+
+        print(pid)
 
         if truth:
             post_view_class = PostsView()
