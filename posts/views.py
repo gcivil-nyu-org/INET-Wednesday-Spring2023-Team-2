@@ -46,10 +46,14 @@ def is_ajax(request):
 
 def get_random_pid(category=None):
     if category:
-        pids = Post_Model.objects.filter(category=category)
+        # pids = Post_Model.objects.filter(category=category)
+        pids = Post_Model.objects.filter(category__iexact=category)
     else:
         # pids = Post_Model.objects.all()
         pids = Post_Model.objects.filter(~Q(id=current_pid))
+
+    print(f"Category: {category}")  # Debugging line
+    print(f"PIDs: {pids}")          # Debugging line
 
     ##to check if user has alread seen/ interaacted with the post
     # if request.user.is_authenticated:
@@ -328,7 +332,8 @@ def show_categorybased_post_api_view(request, category):
 
     else:
         ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
-        pass
+        # pass
+        return HttpResponse("No posts found in the selected category.")
 
 
 # def get_current_url_api_view(request):
