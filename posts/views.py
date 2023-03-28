@@ -47,7 +47,9 @@ def is_ajax(request):
 def get_random_pid(current_pid=None, category=None):
     if category:
         # pids = Post_Model.objects.filter(category=category)
-        pids = Post_Model.objects.filter(category__iexact=category).filter(~Q(id=current_pid))
+        pids = Post_Model.objects.filter(category__iexact=category).filter(
+            ~Q(id=current_pid)
+        )
         # pids = Post_Model.objects.filter(~Q(id=current_pid))
     else:
         # pids = Post_Model.objects.all()
@@ -339,7 +341,6 @@ def show_categorybased_post_api_view(request, current_pid, category):
             return HttpResponse("No posts found in the selected category.")
     else:
         return HttpResponse("Thou Shall not Enter!!")
-        
 
 
 # def get_current_url_api_view(request):
