@@ -7,6 +7,8 @@ from unittest.mock import patch
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from login.tokens import account_activation_token
+from posts.models import Post_Model, Options_Model, Comments_Model, UserPostViewTime
+from django.contrib.auth import get_user_model
 
 
 from django.urls import reverse
@@ -156,10 +158,12 @@ class TestLoginViews(TestCase):
     # response = self.client.post(self.url, data)
     # self.assertRedirects(response, reverse("posts:home_page"))
 
-    def test_logout(self):
-        self.client.login(username="testuser", password="testuserpassword")
-        response = self.client.get(reverse("posts:home_page"))
-        self.assertEqual(response.status_code, 200)
+    # def test_logout(self):
+    #     self.client.login(username="test", password="test1234")
+    #     # response = self.client.get(reverse("posts:home_page"))
+    #     # self.assertEqual(response.status_code, 200)
+    #     response = self.client.get(reverse("account:profile_page", kwargs={"username_": "testuser"}))
+    #     self.assertEqual(response.status_code, 200)
 
     def test_login_view_success(self):
         response = self.client.post(
@@ -312,3 +316,47 @@ class TestRegisterViews(TestCase):
         # user.save()
         self.assertTemplateUsed(response, "pages/login.html")
         # self.assertEqual(Custom_User.objects.count(), 1)
+
+
+
+class TestLogoutViews(TestCase):
+
+    def setUp(self):
+        self.username = "testuser"
+        self.password = "testuserpasswordcs6063"
+        self.user = Custom_User.objects.create_user(
+            username=self.username,
+            password=self.password
+        )
+
+        self.post = Post_Model.objects.create(
+            question_text="Test question", created_by=self.user, id=1
+        )
+        self.option1 = Options_Model.objects.create(
+            question=self.post, choice_text="option1", id=1
+        )
+        self.option2 = Options_Model.objects.create(
+            question=self.post, choice_text="option2", id=2
+        )
+        self.post.viewed_by.add(self.user)
+        self.post.save()
+        self.option1.chosen_by.add(self.user)
+        self.option1.save()
+
+    def test_logout(self):
+        # self.client.login(username=self.username, password=self.password)
+        # response = self.client.post(reverse("account:logout_page"), follow=False)
+        # self.assertEqual(response.status_code, 302)
+        # self.assertEqual(response.url, reverse("posts:home_page"))
+        # self.assertFalse(self.user.is_authenticated)
+        self.client.login(username=self.username, password=self.password)
+        response = self.client.post(reverse("account:logout_page"), follow=False)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse("posts:home_page"))
+        # user_after_logout = self.client.get_user()
+        # self.assertFalse(user_after_logout.is_authenticated)
+
+        user_after_logout = response.client
+        self.assertFalse(user_after_logout.session.get("_auth_user_id"))
+
+            
