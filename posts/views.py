@@ -134,16 +134,19 @@ def results_view(request, pid):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
+    user_choice = post_.options_model_set.get(chosen_by=request.user)
+    user_color = user_choice.color
     contents = {
         "post": post_,
         "options": options_,
         "pid": pid,
         "user_option": user_option,
         "show_poll_results": False,
+        "user_color": user_color,
     }
     template = loader.get_template("pages/poll_result.html")
 
-    ##use this to get user's choice and color code the username in comments to match the choice!
+    #use this to get user's choice and color code the username in comments to match the choice!
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color = user_choice.color
     # print(user_choice, user_color)
