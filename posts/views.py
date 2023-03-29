@@ -8,7 +8,10 @@ from django.http import JsonResponse
 from django.template import loader
 from django.views import View
 from django.db.models import Q
+from django.utils.safestring import mark_safe
 from .forms import PollForm
+import re
+from django.views.generic import TemplateView
 
 # import datetime
 
@@ -81,7 +84,7 @@ def home_view(request):
     if truth:
         return redirect(reverse("posts:post_generation_page", kwargs={"pid": pid}))
     else:
-        return render(request, "pages/posts_home.html")
+        return render(request, "pages/poll_empty.html")
 
 
 # def posts_view(request, pid, call="noapi"):
@@ -141,6 +144,8 @@ def results_view(request, pid):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
+    # user_choice = post_.options_model_set.get(chosen_by=request.user)
+    # user_color_ = user_choice.color
     contents = {
         "post": post_,
         "options": options_,
@@ -150,7 +155,7 @@ def results_view(request, pid):
     }
     template = loader.get_template("pages/poll_result.html")
 
-    ##use this to get user's choice and color code the username in comments to match the choice!
+    # use this to get user's choice and color code the username in comments to match the choice!
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color = user_choice.color
     # print(user_choice, user_color)
@@ -201,7 +206,10 @@ def show_curr_post_api_view(request, current_pid):
 
 class PostsView(View):
     def get(self, request, pid, call="noapi"):
-        post_ = Post_Model.objects.get(pk=pid)
+        try:
+            post_ = Post_Model.objects.get(pk=pid)
+        except Post_Model.DoesNotExist:
+            return render(request, "pages/poll_empty.html")
         options_ = post_.options_model_set.all().order_by("id")
 
         if call == "noapi":
@@ -249,6 +257,32 @@ class PostsView(View):
 
             return JsonResponse({"voting": "success"})
         return JsonResponse({"voting": "Wrong request"})
+
+
+class SearchPostsView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get("search", "")
+
+        if query:
+            results = Options_Model.objects.filter(
+                Q(question__question_text__icontains=query)
+                | Q(choice_text__icontains=query)
+            ).distinct()
+        else:
+            results = Post_Model.objects.none()
+
+        return JsonResponse(
+            {
+                "search_results": [
+                    {
+                        "id": option.question.id,
+                        "question_text": option.question.question_text,
+                        "choice_text": option.choice_text,
+                    }
+                    for option in results
+                ]
+            }
+        )
 
 
 # def posts_view(request, pid, call="noapi"):
@@ -315,7 +349,7 @@ def show_next_post_api_view(request, current_pid, category):
 
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
-            return HttpResponse("No more posts to display")
+            return HttpResponse("No more posts to display in the selected category")
 
     else:
         return HttpResponse("Thou Shall not Enter!!")
@@ -380,6 +414,19 @@ class CommentsView(View):
                 comments_ = comments_form.save(commit=False)
                 comments_.question = post_
                 comments_.commented_by = request.user
+
+                comment_text = comments_form.cleaned_data["comment_text"]
+                comment_text = re.sub(
+                    r"@(\w+)",
+                    lambda match: f'<a href="{reverse("account:profile_page", args=[match.group(1)])}"><strong>@{match.group(1)}</strong></a>',
+                    comment_text,
+                )
+
+                comment_text = comment_text.replace("\r\n", "<br>")
+                comments_.comment_text = comment_text
+
+                comments_.comment_text = comment_text
+
                 comments_.save()
                 return JsonResponse({"commment": "success"})
 
@@ -394,10 +441,17 @@ class CommentsView(View):
             pid = current_pid
             # print('whyyyy:', pid)
             post_ = Post_Model.objects.get(pk=pid)
+            user_choices = post_.options_model_set.get(chosen_by=request.user)
+            user_color_ = user_choices.color
             # comments_ = post_.comments_model_set.get(pk=pid)
             comments_ = post_.comments_model_set.all().order_by("-commented_time")
             template = loader.get_template("pages/comments.html")
-            contents = {"pid": pid, "comments": comments_, "show_comments_text": False}
+            contents = {
+                "pid": pid,
+                "comments": comments_,
+                "show_comments_text": False,
+                "user_color": user_color_,
+            }
             if post_.viewed_by.filter(username=request.user.username).exists():
                 contents["show_comments_text"] = True
             contents["post"] = post_
@@ -452,7 +506,7 @@ def create_poll(request):
                 question_text = form.cleaned_data["question"]
 
             delay = int(form.cleaned_data["delay"])
-            print(delay)
+            # print(delay)
             category = form.cleaned_data["category"]
 
             post = Post_Model.objects.create(

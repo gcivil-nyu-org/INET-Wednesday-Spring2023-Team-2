@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import SearchPostsView
 
 
 app_name = "posts"
@@ -40,4 +41,5 @@ urlpatterns = [
     # path("get_current_url/", views.get_current_url_api_view, name="get_current_url_api")
     # path("get_current_url/", views.get_current_url_api_view, name="get_current_url_api"),
     path("create_poll/", views.create_poll, name="create_poll"),
+    path("search/", SearchPostsView.as_view(), name="search_posts"),
 ]

@@ -1,3 +1,4 @@
+
 <div class = "comment-section">
 
 {% if show_comments_text %}
@@ -10,15 +11,24 @@
             <div class="comment">
                 <!-- query user model and get profile_picture -->
                 <!-- <img src="https://via.placeholder.com/40" alt="User Avatar" class="avatar"> -->
-                <img src="{{ comment.commented_by.profile_picture.url }}" alt="User Avatar" class="avatar">
+                <div class="profile-picture-container"  id="pfp{{ forloop.counter }}">
+                    <img src="{{ comment.commented_by.profile_picture.url }}" alt="User Avatar" class="avatar">
+                </div>
                 <div class="comment-info">
                     <p class="username"><a href="{% url 'account:profile_page' comment.commented_by %}">{{ comment.commented_by }}</a></p> 
-                    <p class="comment-text">{{ comment.comment_text | linebreaks }}</p>
+                    <p class="comment-text">{{ comment.comment_text | safe }}</p>
                     <span class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</span>
                 </div>
             </div>
+            <div class="comment-action">
+                <a href="#" class="reply" data-username="{{ comment.commented_by.username }}">Reply</a>
+                <a href="#" class="report">Report</a>
+                <!-- <a href="#" class="like">Like</a> -->
+            </div>
         </div>
-
+        <script>
+            document.getElementById('pfp{{ forloop.counter }}').style.borderColor = "#{{user_color}}";
+        </script>
         {% endfor %}
     
     </div>
@@ -26,3 +36,16 @@
 {% endif %}
 
 </div>
+
+<script>
+    $(document).ready(function() {
+        $(".reply").click(function(e) {
+            e.preventDefault();
+            var username = $(this).data("username");
+            var commentField = $("#commentTextDisp2 .comment-input");
+            commentField.val("@" + username + " ");
+            commentField.focus();
+        });
+    });
+</script>
+
