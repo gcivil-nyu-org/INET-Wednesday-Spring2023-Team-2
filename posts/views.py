@@ -458,6 +458,9 @@ class CommentsView(View):
             return HttpResponse(template.render(contents, request))
         else:
             # return HttpResponse("Thou Shall not Enter!!")
+            pid = current_pid
+            post_ = Post_Model.objects.get(pk=pid)
+            comments_ = post_.comments_model_set.all().order_by("-commented_time")
             template = loader.get_template("pages/comments.html")
             return HttpResponse(template.render(contents, request))
 
