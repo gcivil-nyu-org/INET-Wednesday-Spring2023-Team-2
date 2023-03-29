@@ -6,11 +6,13 @@
         
         {% for comment in comments %}
 
-        <div class="comment-box" id = "comment-box_{{ comment.id }}">
+        <div class="comment-box">
             <div class="comment">
                 <!-- query user model and get profile_picture -->
                 <!-- <img src="https://via.placeholder.com/40" alt="User Avatar" class="avatar"> -->
-                <img src="{{ comment.commented_by.profile_picture.url }}" alt="User Avatar" class="avatar">
+                <div class="profile-picture-container"  id="pfp{{ forloop.counter }}">
+                    <img src="{{ comment.commented_by.profile_picture.url }}" alt="User Avatar" class="avatar">
+                </div>
                 <div class="comment-info">
                     <p class="username"><a href="{% url 'account:profile_page' comment.commented_by %}">{{ comment.commented_by }}</a></p> 
                     <p class="comment-text">{{ comment.comment_text | linebreaks }}</p>
@@ -19,7 +21,7 @@
             </div>
         </div>
         <script>
-            document.getElementById('comment-box_{{ comment.id }}').style.backgroundImage = "linear-gradient(75deg, #ececec 1%, #{{user_color}}";
+            document.getElementById('pfp{{ forloop.counter }}').style.borderColor = "#{{user_color}}";
         </script>
         {% endfor %}
     
