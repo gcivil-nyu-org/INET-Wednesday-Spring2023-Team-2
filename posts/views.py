@@ -9,6 +9,7 @@ from django.template import loader
 from django.views import View
 from django.db.models import Q
 from .forms import PollForm
+from django.views.generic import TemplateView
 
 # import datetime
 
@@ -81,7 +82,7 @@ def home_view(request):
     if truth:
         return redirect(reverse("posts:post_generation_page", kwargs={"pid": pid}))
     else:
-        return render(request, "pages/posts_home.html")
+        return render(request, "pages/poll_empty.html")
 
 
 # def posts_view(request, pid, call="noapi"):
@@ -201,7 +202,10 @@ def show_curr_post_api_view(request, current_pid):
 
 class PostsView(View):
     def get(self, request, pid, call="noapi"):
-        post_ = Post_Model.objects.get(pk=pid)
+        try:
+            post_ = Post_Model.objects.get(pk=pid)
+        except Post_Model.DoesNotExist:
+            return render(request, "pages/poll_empty.html")
         options_ = post_.options_model_set.all().order_by("id")
 
         if call == "noapi":
@@ -249,6 +253,32 @@ class PostsView(View):
 
             return JsonResponse({"voting": "success"})
         return JsonResponse({"voting": "Wrong request"})
+
+
+class SearchPostsView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get("search", "")
+
+        if query:
+            results = Options_Model.objects.filter(
+                Q(question__question_text__icontains=query)
+                | Q(choice_text__icontains=query)
+            ).distinct()
+        else:
+            results = Post_Model.objects.none()
+
+        return JsonResponse(
+            {
+                "search_results": [
+                    {
+                        "id": option.question.id,
+                        "question_text": option.question.question_text,
+                        "choice_text": option.choice_text,
+                    }
+                    for option in results
+                ]
+            }
+        )
 
 
 # def posts_view(request, pid, call="noapi"):
@@ -315,7 +345,7 @@ def show_next_post_api_view(request, current_pid, category):
 
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
-            return HttpResponse("No more posts to display")
+            return render(request, "pages/poll_empty.html")
 
     else:
         return HttpResponse("Thou Shall not Enter!!")
