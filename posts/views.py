@@ -361,7 +361,7 @@ def show_categorybased_post_api_view(request, current_pid, category):
             category = None
         pid, truth = get_random_pid(current_pid=current_pid, category=category)
 
-        print(pid)
+        # print(pid)
 
         if truth:
             post_view_class = PostsView()
