@@ -491,7 +491,7 @@ def create_poll(request):
                 question_text = form.cleaned_data["question"]
 
             delay = int(form.cleaned_data["delay"])
-            print(delay)
+            # print(delay)
             category = form.cleaned_data["category"]
 
             post = Post_Model.objects.create(
