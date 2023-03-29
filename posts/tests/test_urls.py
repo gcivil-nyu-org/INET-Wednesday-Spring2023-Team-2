@@ -127,8 +127,8 @@ class ViewsFunctions(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    def test_show_comments_text_apit_ajax(self):
-        response = self.client.post(
+    def test_show_comments_text_api_get_ajax(self):
+        response = self.client.get(
             reverse("posts:show_comments_text_api", kwargs={"current_pid": 2})
         )
         self.assertEqual(response.status_code, 200)
