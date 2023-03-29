@@ -170,8 +170,8 @@ class ViewsFunctions(TestCase):
         post4 = Post_Model.objects.create(
             question_text="bye", created_by=self.user1, id=7
         )
-        option1 = Options_Model.objects.create(question=post4, choice_text='option1')
-        option2 = Options_Model.objects.create(question=post4, choice_text='option2')
+        option1 = Options_Model.objects.create(question=post4, choice_text="option1")
+        option2 = Options_Model.objects.create(question=post4, choice_text="option2")
         option1.chosen_by.add(user)
         comment2 = Comments_Model.objects.create(
             comment_text="Test Comment 2", question=post4, commented_by=user
