@@ -345,7 +345,7 @@ def show_next_post_api_view(request, current_pid, category):
 
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
-            return render(request, "pages/poll_empty.html")
+            return HttpResponse("No more posts to display in the selected category")
 
     else:
         return HttpResponse("Thou Shall not Enter!!")
