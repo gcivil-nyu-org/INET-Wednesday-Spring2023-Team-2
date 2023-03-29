@@ -239,6 +239,46 @@ class TestRegisterViews(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
+    
+
+    def test_register_view_email_verification_failed(self):
+        # Register a new user
+        response = self.client.post(
+            reverse("account:login_page"),
+            {
+                "username": "test",
+                "email": "test@testemail.com",
+                "password1": "testpasswordcs6063",
+                "password2": "testpasswordcs6063",
+                "access_info": "Sign Up",
+            },
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Custom_User.objects.filter(username="test").exists())
+
+        # Retrieve the user
+        test_user = Custom_User.objects.get(username="test")
+
+        # Generate an invalid activation URL
+        uid = urlsafe_base64_encode(force_bytes(test_user.pk))
+        invalid_token = "invalid_token"
+        url = reverse("account:activate_page", kwargs={"uid": uid, "token": invalid_token})
+
+        # Attempt to activate the user with an invalid token
+        response = self.client.get(url)
+
+        # Check if the email verification failed message is displayed
+        messages = list(response.wsgi_request._messages)
+
+        self.assertEqual(len(messages), 2)
+        self.assertEqual(str(messages[0]), "Registration successful, verify email to login.")
+        self.assertEqual(str(messages[1]), "Invalid Link!!")
+
+        # Check if the user is still inactive
+        test_user.refresh_from_db()
+        self.assertFalse(test_user.is_active)
+
+
 
 
     def test_register_view_password_mismatch(self):
