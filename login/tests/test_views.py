@@ -69,9 +69,6 @@ class TestLoginModels(TestCase):
                 )
 
 
-
-
-
 class TestLoginForms(TestCase):
     def setUp(self):
         self.client = Client()
@@ -103,15 +100,11 @@ class TestLoginViews(TestCase):
 
         self.url = reverse("account:login_page")
 
-    
-
     def test_login_url(self):
         url_path = "/account/login/"
         # response = self.client.get(url_path)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-
-   
 
     def test_login_view_success(self):
         response = self.client.post(
@@ -239,8 +232,6 @@ class TestRegisterViews(TestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-    
-
     def test_register_view_email_verification_failed(self):
         # Register a new user
         response = self.client.post(
@@ -262,7 +253,9 @@ class TestRegisterViews(TestCase):
         # Generate an invalid activation URL
         uid = urlsafe_base64_encode(force_bytes(test_user.pk))
         invalid_token = "invalid_token"
-        url = reverse("account:activate_page", kwargs={"uid": uid, "token": invalid_token})
+        url = reverse(
+            "account:activate_page", kwargs={"uid": uid, "token": invalid_token}
+        )
 
         # Attempt to activate the user with an invalid token
         response = self.client.get(url)
@@ -275,9 +268,6 @@ class TestRegisterViews(TestCase):
         # Check if the user is still inactive
         test_user.refresh_from_db()
         self.assertFalse(test_user.is_active)
-
-
-
 
     def test_register_view_password_mismatch(self):
         response = self.client.post(
@@ -322,17 +312,12 @@ class TestRegisterViews(TestCase):
         )  # Error message should be displayed
 
 
-
-
-
 class TestLogoutViews(TestCase):
-
     def setUp(self):
         self.username = "testuser"
         self.password = "testuserpasswordcs6063"
         self.user = Custom_User.objects.create_user(
-            username=self.username,
-            password=self.password
+            username=self.username, password=self.password
         )
 
         self.post = Post_Model.objects.create(
@@ -350,12 +335,9 @@ class TestLogoutViews(TestCase):
         self.option1.save()
 
     def test_logout(self):
-
         self.client.login(username=self.username, password=self.password)
         response = self.client.post(reverse("account:logout_page"), follow=False)
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, reverse("posts:home_page"))
         user_after_logout = response.client
         self.assertFalse(user_after_logout.session.get("_auth_user_id"))
-
-            

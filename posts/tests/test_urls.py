@@ -74,7 +74,7 @@ class ViewsFunctions(TestCase):
             username="test1", password="test123", id=1
         )
         self.post1 = Post_Model.objects.create(
-            question_text="hi", created_by=self.user1
+            question_text="hi", created_by=self.user1, id=1
         )
         self.post2 = Post_Model.objects.create(
             question_text="bye", created_by=self.user1
@@ -120,6 +120,38 @@ class ViewsFunctions(TestCase):
     def test_ShowCurrPost_ajax(self):
         response = self.client.post(
             reverse("posts:show_curr_post_api", kwargs={"current_pid": 2}),
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_comments_post_ajax(self):
+        # self.client.login(username="test1", password="test123")
+        user = Custom_User.objects.create_user(username="test3", password="test1234")
+        self.client.force_login(user=user)
+        post3 = Post_Model.objects.create(
+            question_text="bye", created_by=self.user1, id=6
+        )
+        response = self.client.post(
+            reverse("posts:show_comments_api", kwargs={"current_pid": 6}),
+            {"comment_text": "Test Comment 1"},
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
+        )
+        self.assertEqual(
+            Comments_Model.objects.get(question=post3).comment_text, "Test Comment 1"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_comments_get_ajax(self):
+        user = Custom_User.objects.create_user(username="test3", password="test1234")
+        self.client.force_login(user=user)
+        post4 = Post_Model.objects.create(
+            question_text="bye", created_by=self.user1, id=7
+        )
+        comment2 = Comments_Model.objects.create(
+            comment_text="Test Comment 2", question=post4, commented_by=user
+        )
+        response = self.client.get(
+            reverse("posts:show_comments_api", kwargs={"current_pid": 7}),
             **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
         self.assertEqual(response.status_code, 200)
