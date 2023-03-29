@@ -316,7 +316,7 @@ def show_next_post_api_view(request, current_pid, category):
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
             return HttpResponse("No more posts to display")
-    
+
     else:
         return HttpResponse("Thou Shall not Enter!!")
 
