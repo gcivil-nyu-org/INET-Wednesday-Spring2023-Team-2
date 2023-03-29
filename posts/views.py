@@ -474,7 +474,6 @@ class CommentsView(View):
             # return render(request, "pages/comments.html", contents)
 
 
-
 def show_comments_text_api(request, current_pid):
     if is_ajax(request):
         if request.method == "GET":
