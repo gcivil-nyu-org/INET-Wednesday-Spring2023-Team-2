@@ -462,6 +462,12 @@ class CommentsView(View):
             post_ = Post_Model.objects.get(pk=pid)
             comments_ = post_.comments_model_set.all().order_by("-commented_time")
             template = loader.get_template("pages/comments.html")
+            contents = {
+                "pid": pid,
+                "comments": comments_,
+                "show_comments_text": False,
+                "user_color": "red",
+            }
             return HttpResponse(template.render(contents, request))
 
 
