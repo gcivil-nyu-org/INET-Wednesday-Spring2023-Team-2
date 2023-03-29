@@ -52,9 +52,11 @@ class ResultsViewTest(TestCase):
             {"option": 1},
             # **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
-
+        # print(response)
+        # print(str(response.content, encoding='utf8'))
         self.assertEqual(response.status_code, 200)
 
+        
 
 class NextPostTest(TestCase):
     def setUp(self):

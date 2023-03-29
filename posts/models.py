@@ -94,3 +94,5 @@ class UserPostViewTime(models.Model):
     post = models.ForeignKey(Post_Model, on_delete=models.CASCADE)
 
     view_time = models.DateTimeField(default=datetime.now, blank=True)
+    
+
