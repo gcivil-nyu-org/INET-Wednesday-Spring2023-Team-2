@@ -468,7 +468,11 @@ class CommentsView(View):
                 "show_comments_text": False,
                 "user_color": "red",
             }
+            contents["post"] = post_
+            contents["show_comments_text"] = True
             return HttpResponse(template.render(contents, request))
+            # return render(request, "pages/comments.html", contents)
+
 
 
 def show_comments_text_api(request, current_pid):
