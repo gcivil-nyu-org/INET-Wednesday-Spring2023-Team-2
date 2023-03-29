@@ -30,7 +30,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.getenv("SECRET_KEY")
+if "DJANGO_SECRET_KEY" in os.environ:
+    SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+else:
+    SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -132,6 +135,10 @@ else:
 
 
 # Email Settings
+# if os.environ.get("DJANGO_TEST"):
+#     EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+# else:
+#     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.getenv("EMAIL_HOST")
 EMAIL_PORT = os.getenv("EMAIL_PORT")
@@ -212,3 +219,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 
 TIME_ZONE = "America/New_York"
+
+# need to change later
+USE_TZ = False

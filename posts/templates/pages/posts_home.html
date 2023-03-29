@@ -10,44 +10,28 @@
 
 <div class="main-container">
     <div class="nav-tabs" id="category-tabs">
-        <div class="tab-wrapper" onclick="openTab(event, 'nav-profile')">
-            <a class="nav-tab activate" id="nav-all-tab" onclick="openTab(event, 'nav-profile')">All</a>
+        <div class="tab-wrapper">
+            <a class="nav-tab active" id="nav-all-tab" data-url="all" onclick="openCatTab(event, 'all');">All</a>
             </div>
             <div class="tab-wrapper">
-            <a class="nav-tab" id="nav-sports-tab"  onclick="openTab(event, 'nav-edit')">Sports</a>
+            <a class="nav-tab" id="nav-sports-tab"  data-url="sports" onclick="openCatTab(event, 'sports');">Sports</a>
              </div>
             <div class="tab-wrapper">
-            <a  class="nav-tab" id="nav-entertainment-tab"   onclick="getProfileHistory();">Entertainment</a>
+            <a  class="nav-tab" id="nav-entertainment-tab"  data-url="entertainment" onclick="openCatTab(event, 'entertainment');">Entertainment</a>
             </div>
             <div class="tab-wrapper">
-                <a  class="nav-tab" id="nav-misc-tab"   onclick="getProfileHistory();">Misc</a>
+                <a  class="nav-tab" id="nav-misc-tab"  data-url="misc" onclick="openCatTab(event, 'misc');">Misc</a>
             </div>
     </div>
     <div class="container" id="poll-container">
     
-        <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}" id="postDispDiv">
+        <div class="post-content mt-5" id="postDispDiv">
             <!-- <form action="." method="post" id="postDispForm"></form> -->
         </div>
-        <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>   
     </div>
+
 </div>
 
-<!-- <div class="container" id="container">
-    <div class="post-content mt-5" data-url="{% url 'posts:show_curr_post_api' %}">
-        <form action="." method="post" id="postDispForm"></form>
-    </div>
-    <script type="text/javascript" src="{% static '../static/js/home.js' %}"></script>
-
-</div> -->
-
-<!-- <div class="center-con">
-    <div class="round">
-        <div id="cta">
-            <span class="arrow primera prev " onclick="getNextPost();"></span>
-            <span class="arrow segunda prev " onclick="getNextPost();"></span>
-        </div>
-    </div>
-</div> -->
 
 <div class="center-con">
     <div class="round">
@@ -67,5 +51,16 @@
 <script>
 
 getCurrPost();
+
+
+function openCatTab(evt, currentCat){
+    tablinks = document.getElementsByClassName("nav-tab");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    evt.currentTarget.className += " active";
+    getCategoryBasedPosts(currentCat);
+}
 
 </script>

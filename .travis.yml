@@ -3,21 +3,39 @@ language: python
 python:
   - "3.8"
 
+services:
+    - postgresql
+
+addons:
+  postgresql: "11"
+  apt:
+    packages:
+    - postgresql-11
+    - postgresql-client-11
+env:
+  global:
+  - PGPORT=5433
+  - PGUSER=travis
+
+before_install:
+  - sudo sed -i -e "/local.*peer/s/postgres/all/" -e "s/peer\|md5/trust/g" /etc/postgresql/*/main/pg_hba.conf
+  - postgres --version
+  - sudo pg_ctlcluster 11 main restart
 
 install:
    - pip install -r requirements.txt
 
-services:
-    - postgresql
-
 before_script:
   - sleep 15
-  - psql -c 'create database soh_test;' -U postgres
+  - psql -c 'create database soh_test2;' -U postgres
 
 after_script:
   - coveralls
 
 script:
+  #Secret_Key
+  # - export $DJANGO_SECRET_KEY
+
   # Run Black formatter
   - black --check .
 

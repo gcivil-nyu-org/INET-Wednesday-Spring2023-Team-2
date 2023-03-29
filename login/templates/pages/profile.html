@@ -12,16 +12,16 @@
 
 <div class="container" id="profile-container">
 	<div class="nav-tabs" id="profile-tabs">
-		<div class="tab-wrapper" onclick="openTab(event, 'nav-profile')">
-		<a class="nav-tab activate" id="nav-profile-tab" onclick="openTab(event, 'nav-profile')">Profile</a>
+		<div class="tab-wrapper">
+		<a class="nav-tab activate" id="nav-profile-tab" onclick="getProfileInfo();">Profile</a>
 		</div>
 		{% if edit_access %}
 		<div class="tab-wrapper">
-		<a class="nav-tab" id="nav-edit-tab"  onclick="openTab(event, 'nav-edit')">Edit Profile</a>
+		<a class="nav-tab" id="nav-edit-tab"  onclick="getProfileEditInfo();">Edit Profile</a>
 	 	</div>
 		 {% endif %}
 		<div class="tab-wrapper">
-		<a  class="nav-tab" id="nav-history-tab"   onclick="getProfileHistory();">History</a>
+		<a  class="nav-tab " id="nav-history-tab"   onclick="getProfileHistory();">History</a>
 		</div>
 		<div class="tab-wrapper">
 		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
@@ -117,13 +117,21 @@
 
 
 
-{% block scripts %}
-
-{% include "includes/ajax_functions.html" %}
-
-{% endblock scripts %}
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
 
 <script>
+
+function getProfileInfo(){
+	openTab(event, 'nav-profile');
+	changeurlProfile("profile");
+}
+
+
+function getProfileEditInfo(){
+	openTab(event, 'nav-edit');
+	changeurlProfile("profile");
+}
+
 
 function getProfileHistory(){
 		openTab(event, 'nav-history');
@@ -131,6 +139,7 @@ function getProfileHistory(){
             url: "{% url 'account:profile_history_page' profile.username %}",
             type: "GET",
             success: function(resp){
+				changeurlProfile("history");
                 $("#profileHistory").html(resp);
 				// implement change_profile_url
             },
@@ -149,6 +158,7 @@ function getPostsCreated(){
             url: "{% url 'account:profile_postscreated_page' profile.username %}",
             type: "GET",
             success: function(resp){
+				changeurlProfile("posts_created");
                 $("#postsCreated").html(resp);
 				// implement change_profile_url
             },
@@ -157,5 +167,26 @@ function getPostsCreated(){
             }
         });
 }
+
+
+
+function changeurlProfile(page)
+  {
+    $.ajax({
+            url:"{% url 'account:get_current_profile_url_api' page=1 username=profile.username %}".replace(/1/, page.toString()),
+            type:"GET",
+            success: function(resp){
+                var new_url=resp.current_url;
+                window.history.pushState("data","Title",new_url);
+                // console.log(new_url)
+            },
+            error: function(resp){
+              console.log("changeurl error")
+            }
+        });
+  }
+
+
+document.getElementById("{{ tab_to_click }}").click();
 
 </script>
