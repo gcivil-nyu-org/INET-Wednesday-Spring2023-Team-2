@@ -457,7 +457,8 @@ class CommentsView(View):
             contents["post"] = post_
             return HttpResponse(template.render(contents, request))
         else:
-            return HttpResponse("Thou Shall not Enter!!")
+            # return HttpResponse("Thou Shall not Enter!!")
+            return HttpResponse(template.render(contents, request))
 
 
 def show_comments_text_api(request, current_pid):
