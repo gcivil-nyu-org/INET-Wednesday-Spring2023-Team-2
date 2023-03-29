@@ -415,14 +415,14 @@ class CommentsView(View):
                 comments_.question = post_
                 comments_.commented_by = request.user
 
-                comment_text = comments_form.cleaned_data['comment_text']
+                comment_text = comments_form.cleaned_data["comment_text"]
                 comment_text = re.sub(
-                    r'@(\w+)',
+                    r"@(\w+)",
                     lambda match: f'<a href="{reverse("account:profile_page", args=[match.group(1)])}"><strong>@{match.group(1)}</strong></a>',
-                    comment_text
+                    comment_text,
                 )
- 
-                comment_text = comment_text.replace('\r\n', '<br>')
+
+                comment_text = comment_text.replace("\r\n", "<br>")
                 comments_.comment_text = comment_text
 
                 comments_.comment_text = comment_text
