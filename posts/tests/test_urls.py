@@ -151,7 +151,7 @@ class ViewsFunctions(TestCase):
             comment_text="Test Comment 2", question=post4, commented_by=user
         )
         response = self.client.get(
-            reverse("posts:show_comments_api", kwargs={"current_pid": 7}),
+            reverse("posts:show_comments_api", kwargs={"current_pid": 1}),
             **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
         self.assertEqual(response.status_code, 200)
