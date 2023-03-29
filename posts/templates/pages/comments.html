@@ -1,3 +1,4 @@
+
 <div class = "comment-section">
 
 {% if show_comments_text %}
@@ -15,14 +16,14 @@
                 </div>
                 <div class="comment-info">
                     <p class="username"><a href="{% url 'account:profile_page' comment.commented_by %}">{{ comment.commented_by }}</a></p> 
-                    <p class="comment-text">{{ comment.comment_text | linebreaks }}</p>
+                    <p class="comment-text">{{ comment.comment_text | safe }}</p>
                     <span class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</span>
                 </div>
             </div>
             <div class="comment-action">
                 <a href="#" class="reply" data-username="{{ comment.commented_by.username }}">Reply</a>
                 <a href="#" class="report">Report</a>
-                <a href="#" class="like">Like</a>
+                <!-- <a href="#" class="like">Like</a> -->
             </div>
         </div>
         <script>
@@ -47,3 +48,4 @@
         });
     });
 </script>
+

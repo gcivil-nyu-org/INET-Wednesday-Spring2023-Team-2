@@ -8,7 +8,9 @@ from django.http import JsonResponse
 from django.template import loader
 from django.views import View
 from django.db.models import Q
+from django.utils.safestring import mark_safe
 from .forms import PollForm
+import re
 from django.views.generic import TemplateView
 
 # import datetime
@@ -412,6 +414,14 @@ class CommentsView(View):
                 comments_ = comments_form.save(commit=False)
                 comments_.question = post_
                 comments_.commented_by = request.user
+
+                comment_text = comments_form.cleaned_data['comment_text']
+                comment_text = re.sub(r'@(\w+)', r'<strong>@\1</strong>', comment_text)
+                comment_text = comment_text.replace('\r\n', '<br>')
+                comments_.comment_text = comment_text
+
+                comments_.comment_text = comment_text
+
                 comments_.save()
                 return JsonResponse({"commment": "success"})
 
