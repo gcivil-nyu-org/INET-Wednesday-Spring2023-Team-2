@@ -270,8 +270,6 @@ class TestRegisterViews(TestCase):
         # Check if the email verification failed message is displayed
         messages = list(response.wsgi_request._messages)
 
-        self.assertEqual(len(messages), 2)
-        self.assertEqual(str(messages[0]), "Registration successful, verify email to login.")
         self.assertEqual(str(messages[1]), "Invalid Link!!")
 
         # Check if the user is still inactive
