@@ -441,8 +441,8 @@ class CommentsView(View):
             pid = current_pid
             # print('whyyyy:', pid)
             post_ = Post_Model.objects.get(pk=pid)
-            user_choices = post_.options_model_set.get(chosen_by=request.user)
-            user_color_ = user_choices.color
+            # user_choices = post_.options_model_set.get(chosen_by=request.user)
+            # user_color_ = user_choices.color
             # comments_ = post_.comments_model_set.get(pk=pid)
             comments_ = post_.comments_model_set.all().order_by("-commented_time")
             template = loader.get_template("pages/comments.html")
@@ -450,7 +450,7 @@ class CommentsView(View):
                 "pid": pid,
                 "comments": comments_,
                 "show_comments_text": False,
-                "user_color": user_color_,
+                "user_color": "red",
             }
             if post_.viewed_by.filter(username=request.user.username).exists():
                 contents["show_comments_text"] = True
@@ -458,6 +458,7 @@ class CommentsView(View):
             return HttpResponse(template.render(contents, request))
         else:
             # return HttpResponse("Thou Shall not Enter!!")
+            template = loader.get_template("pages/comments.html")
             return HttpResponse(template.render(contents, request))
 
 
