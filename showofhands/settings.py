@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     "posts",
     "users",
     "rest_framework",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -222,3 +223,12 @@ TIME_ZONE = "America/New_York"
 
 # need to change later
 USE_TZ = False
+
+STORAGES = {"default": "my_django_app.custom_storage.MediaStorage"}
+
+
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')  
+
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')  
+
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
