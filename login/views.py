@@ -239,6 +239,10 @@ def register_view(request, login_form, register_form):
 
 def profile_picture_change(request, contents):
     profile_picture_change_form = ProfilePicForm(request.POST, request.FILES)
+   
+    if not request.FILES.get("profile_picture"):
+        messages.error(request, "No Image Chosen!")
+        return render(request, "pages/profile.html", contents)
 
     if profile_picture_change_form.is_valid():
         request.user.profile_picture = request.FILES.get("profile_picture")
