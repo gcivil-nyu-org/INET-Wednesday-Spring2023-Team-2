@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "users",
     "rest_framework",
     "storages",
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -82,6 +83,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, "login", "templates"),
             os.path.join(BASE_DIR, "posts", "templates"),
             os.path.join(BASE_DIR, "showofhands", "templates"),
+            os.path.join(BASE_DIR, "chat", "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -237,6 +239,7 @@ STATICFILES_DIRS = (
     str(BASE_DIR) + "/login/static/",
     str(BASE_DIR) + "/posts/static/",
     str(BASE_DIR) + "/showofhands/static/",
+    str(BASE_DIR) + "/chat/static/",
 )
 
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
