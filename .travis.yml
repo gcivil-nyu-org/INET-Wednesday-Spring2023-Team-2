@@ -53,7 +53,7 @@ deploy:
   region: "us-east-1"
   app: "ShowOfHands"
   env: "ShowofHands-dev"
-  bucket_name: "elasticbeanstalk-us-east-1-754415205510"
+  bucket_name: $AWS_STORAGE_BUCKET_NAME
   bucket_path: "ShowofHands/"
   on:
     repo: gcivil-nyu-org/INET-Wednesday-Spring2023-Team-2

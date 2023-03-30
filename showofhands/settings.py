@@ -36,7 +36,10 @@ else:
     SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if "SETTINGS_DEBUG" in os.environ:
+    DEBUG = bool(int(os.environ.get("SETTINGS_DEBUG")))
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS = [
     "ShowofHands-dev.us-east-1.elasticbeanstalk.com",
@@ -231,4 +234,6 @@ AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')  
 
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+# AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+
+AWS_S3_FILE_OVERWRITE = False
