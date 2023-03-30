@@ -183,16 +183,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
-STATIC_ROOT = ""
-STATIC_URL = "/static/"
-STATICFILES_DIRS = (
-    str(BASE_DIR) + "/login/static/",
-    str(BASE_DIR) + "/posts/static/",
-    str(BASE_DIR) + "/showofhands/static/",
-)
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
@@ -227,13 +217,26 @@ TIME_ZONE = "America/New_York"
 # need to change later
 USE_TZ = False
 
-STORAGES = {"default": "showofhands.custom_storage.MediaStorage"}
 
+if "AWS_ACCESS_KEY_ID" in os.environ:
+    DEFAULT_FILE_STORAGE = "showofhands.custom_storage.MediaStorage"
 
-AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 
-AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 
-# AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+    # AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
 
-AWS_S3_FILE_OVERWRITE = False
+    AWS_S3_FILE_OVERWRITE = False
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/4.1/howto/static-files/
+STATIC_ROOT = ""
+STATIC_URL = "/static/"
+STATICFILES_DIRS = (
+    str(BASE_DIR) + "/login/static/",
+    str(BASE_DIR) + "/posts/static/",
+    str(BASE_DIR) + "/showofhands/static/",
+)
+
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
