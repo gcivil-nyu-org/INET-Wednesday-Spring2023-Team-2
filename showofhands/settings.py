@@ -227,7 +227,7 @@ TIME_ZONE = "America/New_York"
 # need to change later
 USE_TZ = False
 
-STORAGES = {"default": "my_django_app.custom_storage.MediaStorage"}
+STORAGES = {"default": "showofhands.custom_storage.MediaStorage"}
 
 
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
