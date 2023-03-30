@@ -220,7 +220,7 @@ USE_TZ = False
 
 if "AWS_ACCESS_KEY_ID" in os.environ:
     DEFAULT_FILE_STORAGE = "showofhands.custom_storage.MediaStorage"
-    
+
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 
     AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
@@ -239,4 +239,4 @@ STATICFILES_DIRS = (
     str(BASE_DIR) + "/showofhands/static/",
 )
 
-STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage" 
+STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
