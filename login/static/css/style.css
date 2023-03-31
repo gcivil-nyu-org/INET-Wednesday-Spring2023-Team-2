@@ -360,13 +360,13 @@ select {
 } */
 .nav-tab:hover {
     background-color: #FED99B;
-    color: #ccc;
+    color: #57068c;
     border-radius: 5px;
 }
 
 .nav-tab.active {
     /* background-color: #FED99B; */
-    color: #ccc;
+    color: #57068c;
 
 }
 
