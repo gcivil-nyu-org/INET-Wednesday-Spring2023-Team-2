@@ -61,6 +61,7 @@ INSTALLED_APPS = [
     "users",
     "rest_framework",
     "storages",
+    "chat",
 ]
 
 MIDDLEWARE = [
@@ -82,6 +83,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, "login", "templates"),
             os.path.join(BASE_DIR, "posts", "templates"),
             os.path.join(BASE_DIR, "showofhands", "templates"),
+            os.path.join(BASE_DIR, "chat", "templates"),
         ],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -199,10 +201,6 @@ LOGIN_URL = "/account/login"
 LOGOUT_REDIRECT_URL = "/home"
 
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
-
-
 # REST_FRAMEWORK = {
 #     # Use Django's standard `django.contrib.auth` permissions,
 #     # or allow read-only access for unauthenticated users.
@@ -229,14 +227,19 @@ if "AWS_ACCESS_KEY_ID" in os.environ:
 
     AWS_S3_FILE_OVERWRITE = False
 
+else:
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
-STATIC_ROOT = ""
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 STATIC_URL = "/static/"
 STATICFILES_DIRS = (
     str(BASE_DIR) + "/login/static/",
     str(BASE_DIR) + "/posts/static/",
     str(BASE_DIR) + "/showofhands/static/",
+    str(BASE_DIR) + "/chat/static/",
 )
 
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
