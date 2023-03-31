@@ -56,12 +56,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # customs
     "login",
     "posts",
     "users",
+    "chat",
+    # builtins
     "rest_framework",
     "storages",
-    "chat",
+    "channels",
 ]
 
 MIDDLEWARE = [
