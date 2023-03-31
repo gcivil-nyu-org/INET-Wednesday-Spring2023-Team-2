@@ -42,4 +42,5 @@ urlpatterns = [
     # path("get_current_url/", views.get_current_url_api_view, name="get_current_url_api"),
     path("create_poll/", views.create_poll, name="create_poll"),
     path("search/", SearchPostsView.as_view(), name="search_posts"),
+    path('report_comment/', views.report_comment, name='report_comment'),
 ]

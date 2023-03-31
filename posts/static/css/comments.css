@@ -1,3 +1,5 @@
+/* comment section style here */
+
 .comment-section {
     position: relative;
     overflow: auto;
@@ -28,12 +30,12 @@
 .comment-box {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     word-wrap: break-word;
-    word-break: break-all;
+    word-break: break-word;
     background-color: #f1f1f1;
     border-radius: 10px;
     padding: 5px;
     margin-bottom: 10px;
-    min-width: 100%;
+    min-width: 350px;
 }
 
 .comment {
@@ -49,23 +51,10 @@
     overflow: hidden;
     width: 50px;
     height: 50px;
-    margin-left: 10px;
+    min-height: 50px;
+    min-width: 50px;
     margin-right: 10px;
     align-self: center;
-}
-
-.profile-picture-container::before {
-    content: "";
-    position: absolute;
-    top: -4px;
-    left: -4px;
-    right: -4px;
-    bottom: -4px;
-    border-radius: 50%;
-    z-index: -1;
-    background-image: linear-gradient(75deg, #ececec 1%);
-    border: 4px solid transparent;
-    background-clip: padding-box;
 }
 
 .avatar {
@@ -92,30 +81,35 @@
 }
 
 .comment-text {
-    font-size: 11px;
+    font-size: 15px;
     font-family: Arial, Helvetica;
 }
 
-.comment-info .timestamp {
-    font-size: 9px;
+.comment-action {
+    text-align: right;
+    margin-right: 2%;
+}
+
+.comment-action .timestamp {
+    font-size: 10px;
     color: #5a5a5a;
-    text-align: left;
+    margin-right: 1%;
 }
 
 .comment-action .reply {
-    font-size: 11px;
+    font-size: 12px;
     color: #5a5a5a;
     text-align: left;
 }
 
 .comment-action .report {
-    font-size: 11px;
+    font-size: 12px;
     color: #5a5a5a;
     text-align: left;
 }
 
 .comment-action .like {
-    font-size: 11px;
+    font-size: 10px;
     color: #5a5a5a;
     text-align: left;
 }
@@ -167,3 +161,6 @@ p {
     background-color: #e86c00;
     /* Darken orange on hover */
 }
+
+
+/* the voting section, not used yet */

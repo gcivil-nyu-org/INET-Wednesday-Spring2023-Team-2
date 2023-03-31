@@ -85,7 +85,8 @@ class Comments_Model(models.Model):
     )
     comment_text = models.CharField(max_length=500)
     commented_time = models.DateTimeField(default=datetime.now, blank=True)
-
+    reported_by = models.ManyToManyField(Custom_User, related_name="reported_comment_user", blank=True)
+    reported_count = models.IntegerField(default=0)
     def __str__(self):
         return (
             self.question.__str__()
