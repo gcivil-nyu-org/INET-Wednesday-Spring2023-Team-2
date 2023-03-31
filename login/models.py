@@ -27,7 +27,7 @@ class Custom_User(AbstractUser):
     # posts_viewed = models.ManyToManyField(Post_Model, related_name='viewed_by')
 
     profile_picture = models.ImageField(
-        upload_to="images/",
+        upload_to="Profile-Pictures/",
         default="default-profile.jpeg",
         validators=[validate_image_extension],
     )
