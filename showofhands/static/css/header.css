@@ -140,8 +140,6 @@ header .image-text .profession{
  
 }
 
-
-
 .sidebar header .image{
     display: flex;
     align-items: center;
@@ -187,7 +185,6 @@ body.dark .sidebar header .toggle{
 
 }
 
-
 .sidebar li.search-box{
     border-radius: 6px;
     background-color: var(--primary-color-light);
@@ -212,6 +209,7 @@ body.dark .sidebar header .toggle{
     font-weight: 500;
     transition: var(--tran-05);
 }
+
 .sidebar li a{
     list-style: none;
     height: 100%;

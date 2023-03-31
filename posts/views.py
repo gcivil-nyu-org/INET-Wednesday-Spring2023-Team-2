@@ -264,25 +264,34 @@ class SearchPostsView(TemplateView):
         query = request.GET.get("search", "")
 
         if query:
-            results = Options_Model.objects.filter(
-                Q(question__question_text__icontains=query)
-                | Q(choice_text__icontains=query)
+            results = Post_Model.objects.filter(
+                Q(question_text__icontains=query)
+                | Q(options_model__choice_text__icontains=query)
             ).distinct()
         else:
             results = Post_Model.objects.none()
 
-        return JsonResponse(
-            {
-                "search_results": [
+        search_results = []
+        for post in results:
+            options = []
+            # create an array for options based on the Options_Model.question=post
+            for option in Options_Model.objects.filter(question=post):
+                options.append(
                     {
-                        "id": option.question.id,
-                        "question_text": option.question.question_text,
                         "choice_text": option.choice_text,
                     }
-                    for option in results
-                ]
-            }
-        )
+                )
+
+            search_results.append(
+                {
+                    "id": post.id,
+                    "question_text": post.question_text,
+                    "category": post.category,
+                    "options": options,
+                }
+            )
+
+        return JsonResponse({"search_results": search_results})
 
 
 # def posts_view(request, pid, call="noapi"):
