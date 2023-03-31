@@ -102,7 +102,7 @@
 .comment-action .upvote {
     font-size: 15px;
     color: #5a5a5a;
-    text-align: left;
+    margin-right: 1%;
 }
 
 .comment-action .upvote:hover {
