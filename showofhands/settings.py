@@ -246,3 +246,13 @@ STATICFILES_DIRS = (
 )
 
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+
+
+
+#updates for chat application
+ASGI_APPLICATION = "chat.routing.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels.layers.InMemoryChannelLayer"
+        }
+    }
