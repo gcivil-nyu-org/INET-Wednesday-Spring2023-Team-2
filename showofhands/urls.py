@@ -28,7 +28,7 @@ urlpatterns = [
     path("", views.redirect_to_home_view, name="go_home"),
     path("posts/", include("posts.urls")),
     path("account/", include("login.urls")),
-    path("chat/", include("chat.urls")),
+    path("connections/", include("chat.urls")),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
