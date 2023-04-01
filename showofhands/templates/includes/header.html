@@ -94,37 +94,6 @@
                 </ul>
             </div>
 
-            <!----===== Autocomplete Search ===== -->
-            <script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
-            <script>
-                new Autocomplete('#autocomplete', {
-                    search: input => {
-                        if (input.length < 1) { return [] }
-                        return fetch(`/posts/search/?search=${input}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log(data);
-                                return data.search_results.map(result => {
-                                    return {
-                                        question: result.question_text,
-                                        options: result.options.map(option => option.choice_text)
-                                    }
-                                });
-                            });
-                    },
-                    renderResult: (result, props) => {
-                        return `<ul>
-                            <li>
-                                Question: ${result.question}
-                            </li>
-                            <li>
-                                Options: ${result.options.join(', ')}
-                            </li>
-                        </ul>`;
-                    }
-                })
-            </script>
-
             <div class="bottom-content">
                 <li class="">
                     {% if not user.is_authenticated %}
@@ -163,3 +132,41 @@
     </div>
 </body>
 </html>
+
+<!----===== Autocomplete Search ===== -->
+<script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
+<script>
+    new Autocomplete('#autocomplete', {
+        search: input => {
+            if (input.length < 1) { return [] }
+            return fetch(`/posts/search/?search=${input}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    return data.search_results.map(result => {
+                        return {
+                            postID: result.id,
+                            question: result.question_text,
+                            options: result.options.map(option => option.choice_text)
+                        }
+                    });
+                });
+        },
+        renderResult: (result, props) => {
+            return `
+            <a href="#" onclick="handleResultClick(${result.postID})">
+                <ul class="autocomplete-result" data-id="${result.postID}">
+                    <li class="autocomplete-question">
+                        ${result.question}
+                    </li>
+                    <li class="autocomplete-options">
+                        ${result.options.join(', ')}
+                    </li>
+                </ul>
+            </a>`;
+        },
+    });
+    function handleResultClick(id) {
+        window.location.href = `/posts/${id}/`;
+    }
+</script>
