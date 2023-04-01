@@ -250,17 +250,12 @@ STATICFILES_DIRS = (
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 
-
-#updates for chat application
+# updates for chat application
 ASGI_APPLICATION = "showofhands.asgi.application"
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': "channels.layers.InMemoryChannelLayer"
-        }
-    }
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 
-#Redis for AWS to be configured later
+# Redis for AWS to be configured later
 # CHANNEL_LAYERS = {
 #     "default": {
 #     'BACKEND': 'channels_redis.core.RedisChannelLayer',
