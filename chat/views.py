@@ -7,5 +7,5 @@ def chat_view(request):
 
 
 # delete later
-def chat_view_test(request, chat_box_name):
-    return render(request, "pages/chat_test.html", {"chat_box_name": chat_box_name})
+def chat_view_test(request, connection_id):
+    return render(request, "pages/chat_test.html", {"connection_id": connection_id})

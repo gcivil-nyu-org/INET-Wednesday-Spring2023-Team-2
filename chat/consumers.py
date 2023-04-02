@@ -1,10 +1,12 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
+from .models import Chat_History, Connection_Model
+from datetime import datetime, timedelta
 
-
+# chat_box_name = connection_id
 class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.chat_box_name = self.scope["url_route"]["kwargs"]["chat_box_name"]
+        self.chat_box_name = self.scope["url_route"]["kwargs"]["connection_id"]
         self.group_name = "chat_%s" % self.chat_box_name
 
         await self.channel_layer.group_add(self.group_name, self.channel_name)
@@ -19,6 +21,8 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         text_data_json = json.loads(text_data)
         message = text_data_json["message"]
         username = text_data_json["username"]
+        connection_id = text_data_json["connection_id"]
+        timestamp = datetime.now()
 
         print(message, username)
 
@@ -31,6 +35,16 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             },
         )
         ##todo: save data to db
+
+        try:
+            chat_history = Connection_Model.objects.get(id=connection_id).get_chat_history
+        except (KeyError, Chat_History.DoesNotExist):
+            chat_history = Chat_History.objects.create(connection = Connection_Model.objects.get(id=connection_id))
+            chat_history = chat_history
+
+        chat_history.history.append({"message": message,"username": username,"timestamp": timestamp},)
+        chat_history.save()
+
 
     # Receive message from room group.
     async def chatbox_message(self, event):

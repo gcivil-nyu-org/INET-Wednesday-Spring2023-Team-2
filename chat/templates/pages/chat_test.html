@@ -31,7 +31,7 @@
     </div>
     {% comment %} Get data for username and chatbox name{% endcomment %}
     {{ request.user.username|json_script:"user_username" }}
-    {{ chat_box_name|json_script:"room-name" }}
+    {{ connection_id|json_script:"room-name" }}
 
 
     <script>     
@@ -52,6 +52,7 @@
            chatSocket.send(JSON.stringify({
                'message': message,
                'username': user_username,
+               'connection_id': boxName,
            }));
            messageInputDom.value = '';
         };
