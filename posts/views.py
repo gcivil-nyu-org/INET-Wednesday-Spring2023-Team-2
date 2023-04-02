@@ -483,19 +483,19 @@ class CommentsView(View):
             # return render(request, "pages/comments.html", contents)
             
 def report_comment(request):
-    comment_id = request.POST["comment_id"]
-    try:
-        comment = Comments_Model.objects.get(id=comment_id)
-        if request.user not in comment.reported_by.all(): 
-            comment.reported_by.add(request.user)
-            comment.reported_count += 1
-            comment.save()
-            return JsonResponse({"report":"success"})
-        else:
-            return JsonResponse({"report": "already_reported"})
-        
-    except Comments_Model.DoesNotExist:
-        return JsonResponse({"report":"error"})
+    if is_ajax(request):
+        comment_id = request.POST["comment_id"]
+        try:
+            comment = Comments_Model.objects.get(id=comment_id)
+            if request.user not in comment.reported_by.all(): 
+                comment.reported_by.add(request.user)
+                comment.reported_count += 1
+                comment.save()
+                return JsonResponse({"report":"success"})
+            else:
+                return JsonResponse({"report": "already_reported"})
+        except Comments_Model.DoesNotExist:
+            return JsonResponse({"report":"error"})
     return JsonResponse({"report":"not ajax"})
         
             

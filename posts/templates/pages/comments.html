@@ -1,6 +1,6 @@
 
 <div class = "comment-section">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
     {% if show_comments_text %}
         
         <div>
@@ -23,15 +23,11 @@
                 </div>
                 <div class="comment-action">
                     {% if request.user == comment.commented_by %}
-                    <a href="#" class="delete">Delete</a>
+                    <a href="#" class="delete"><i class="fas fa-trash-alt"></i></a>
                     {% endif %}
                     <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
-                    <a href="#" class="reply" data-username="{{ comment.commented_by.username }}">Reply</a>
-                    <form method="post" action="{% url 'posts:report_comment' %}">
-                        {% csrf_token %}
-                        <input type="hidden" name="comment_id" value="{{ comment.id }}">
-                        <button type="submit" class="report">Report</button>
-                    </form>
+                    <a href="#" class="report" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
+                    <a href="#" class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-reply"></i></a>
                 </div>
             </div>
             <script>
@@ -55,6 +51,43 @@
                 commentField.focus();
             });
         });
+
+        function reportComment(event, commentId) {
+            event.preventDefault();
+            
+            // Add a confirmation message
+            var result = confirm("Do you want to report this comment for inappropriate content?");
+            if (!result) {
+                alert("Comment gets to live another day!")
+            }
+            else {                  
+                $.ajax({
+                    url: "{% url 'posts:report_comment' %}",
+                    type: "POST",
+                    data: {
+                        "comment_id": commentId,
+                        "csrfmiddlewaretoken": "{{ csrf_token }}"
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.report === "success") {
+                            // Handle a successful report here
+                            alert("Comment has been reported!");
+                        } else if (response.report === "already_reported") {
+                            // Handle the case when the user has already reported the comment
+                            alert("You have already reported this comment.");
+                        } else {
+                            // Handle any other errors
+                            alert("An error occurred while reporting the comment.");
+                        }
+                    },
+                    error: function(xhr, reported, error) {
+                        // Handle the error here
+                        alert("Request error");
+                    },
+                });
+            }
+        }  
     </script>
     
     
