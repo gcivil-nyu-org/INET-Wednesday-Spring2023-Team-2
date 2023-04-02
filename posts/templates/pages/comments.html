@@ -105,14 +105,14 @@
                     },
                     success: function (response) {
                         if (response.delete === "success") {
-                            location.reload()
+                            $("#commentDisp").html(response);
                             alert("Comment has been deleted!")
                         } else {
                             alert("Something went wrong")
                         }
                     },
                     error: function () {
-                        alert("Request error");
+                        console.log("Comment delete error");
                     },
                   });
                 }
