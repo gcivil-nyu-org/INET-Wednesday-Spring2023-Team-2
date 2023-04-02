@@ -5,6 +5,7 @@ from login.models import Custom_User
 
 from datetime import datetime, timedelta
 
+
 # chat_box_name = connection_id
 class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -39,17 +40,23 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         ##todo: save data to db
 
         try:
-            chat_history = Connection_Model.objects.get(id=connection_id).get_chat_history
+            chat_history = Connection_Model.objects.get(
+                id=connection_id
+            ).get_chat_history
         except (KeyError, Chat_History.DoesNotExist):
-            chat_history = Chat_History.objects.create(connection = Connection_Model.objects.get(id=connection_id))
+            chat_history = Chat_History.objects.create(
+                connection=Connection_Model.objects.get(id=connection_id)
+            )
             chat_history = chat_history
 
         # chat_history.history.append({"message": message,"username": username, "timestamp": timestamp},)
         # chat_history.save()
-        
-        chat_history.history.create(user=Custom_User.objects.get(username=username), message=message, timestamp=timestamp)
-       
 
+        chat_history.history.create(
+            user=Custom_User.objects.get(username=username),
+            message=message,
+            timestamp=timestamp,
+        )
 
     # Receive message from room group.
     async def chatbox_message(self, event):
