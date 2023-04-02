@@ -6,16 +6,16 @@ from datetime import datetime, timedelta
 # Create your models here.
 
 class Connection_Model(models.Model):
-    from_user = models.ForeignKey(Custom_User, on_delete=models.CASCADE)
-    to_user = models.ForeignKey(Custom_User, on_delete=models.CASCADE)
+    from_user = models.ForeignKey(Custom_User, on_delete=models.CASCADE, related_name="connection_requests_sent")
+    to_user = models.ForeignKey(Custom_User, on_delete=models.CASCADE, related_name="connection_requsts_received")
 
     connection_request_time = models.DateTimeField(default=datetime.now, blank=True)
     connection_answer_time = models.DateTimeField(default=datetime.now, blank=True)
 
     conection_answer_options = [
         ("Pending", "Pending"),
-        ("Accept", "Accept"),
-        ("Decline", "Decline"),
+        ("Accepted", "Accept"),
+        ("Declined", "Decline"),
     ]
 
     connection_status = models.CharField(max_length=20, choices=conection_answer_options, default="Pending")

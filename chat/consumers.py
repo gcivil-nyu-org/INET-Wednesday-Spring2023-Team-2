@@ -42,7 +42,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             chat_history = Chat_History.objects.create(connection = Connection_Model.objects.get(id=connection_id))
             chat_history = chat_history
 
-        chat_history.history.append({"message": message,"username": username,"timestamp": timestamp},)
+        chat_history.history.append({"message": message,"username": username, "timestamp": timestamp},)
         chat_history.save()
 
 
