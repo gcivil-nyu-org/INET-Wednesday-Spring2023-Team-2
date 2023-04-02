@@ -44,4 +44,6 @@ urlpatterns = [
     path("search/", SearchPostsView.as_view(), name="search_posts"),
     path('report_comment/', views.report_comment, name='report_comment'),
     path('delete_comment/', views.delete_comment, name='delete_comment'),
+    path('upvote_comment/', views.upvote_comment, name='upvote_comment'),
+    path('downvote_comment/', views.downvote_comment, name='downvote_comment'),
 ]
