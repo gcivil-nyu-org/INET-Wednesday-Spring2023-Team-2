@@ -1,4 +1,4 @@
-/* comment section style here */
+/* comment section and box style here */
 
 .comment-section {
     position: relative;
@@ -90,20 +90,29 @@
     margin-right: 2%;
 }
 
+
+/* the interactive section of comment box is here*/
+
 .comment-action .timestamp {
     font-size: 10px;
     color: #5a5a5a;
     margin-right: 1%;
 }
 
+.comment-action .delete {
+    font-size: 15px;
+    color: #5a5a5a;
+    text-align: left;
+}
+
 .comment-action .reply {
-    font-size: 12px;
+    font-size: 15px;
     color: #5a5a5a;
     text-align: left;
 }
 
 .comment-action .report {
-    font-size: 12px;
+    font-size: 15px;
     color: #5a5a5a;
     text-align: left;
 }
