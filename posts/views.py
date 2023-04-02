@@ -555,23 +555,25 @@ class CommentsView(View):
             contents["show_comments_text"] = True
             return HttpResponse(template.render(contents, request))
             # return render(request, "pages/comments.html", contents)
-            
+
+
 def report_comment(request):
     if is_ajax(request):
         comment_id = request.POST["comment_id"]
         try:
             comment = Comments_Model.objects.get(id=comment_id)
-            if request.user not in comment.reported_by.all(): 
+            if request.user not in comment.reported_by.all():
                 comment.reported_by.add(request.user)
                 comment.reported_count += 1
                 comment.save()
-                return JsonResponse({"report":"success"})
+                return JsonResponse({"report": "success"})
             else:
                 return JsonResponse({"report": "already_reported"})
         except Comments_Model.DoesNotExist:
-            return JsonResponse({"report":"error"})
-    return JsonResponse({"report":"not ajax"})
-        
+            return JsonResponse({"report": "error"})
+    return JsonResponse({"report": "not ajax"})
+
+
 def delete_comment(request):
     if is_ajax(request):
         comment_id = request.POST["comment_id"]
@@ -579,63 +581,84 @@ def delete_comment(request):
 
         if comment.commented_by == request.user:
             comment.delete()
-            return JsonResponse({'delete': 'success'})
+            return JsonResponse({"delete": "success"})
         else:
-            return JsonResponse({'delete': 'fail'})
-    return JsonResponse({'delete': 'error'})            
+            return JsonResponse({"delete": "fail"})
+    return JsonResponse({"delete": "error"})
+
 
 def upvote_comment(request):
     if is_ajax(request):
         comment_id = request.POST["comment_id"]
         try:
             comment = Comments_Model.objects.get(id=comment_id)
-            if request.user not in comment.upvoted_by.all() and request.user not in comment.downvoted_by.all(): 
+            if (
+                request.user not in comment.upvoted_by.all()
+                and request.user not in comment.downvoted_by.all()
+            ):
                 comment.upvoted_by.add(request.user)
                 comment.vote_count += 1
                 comment.save()
-                return JsonResponse({"upvote":"success"})
-            elif request.user in comment.upvoted_by.all() and request.user not in comment.downvoted_by.all():
+                return JsonResponse({"upvote": "success"})
+            elif (
+                request.user in comment.upvoted_by.all()
+                and request.user not in comment.downvoted_by.all()
+            ):
                 comment.upvoted_by.remove(request.user)
                 comment.vote_count -= 1
                 comment.save()
-            elif request.user not in comment.upvoted_by.all() and request.user in comment.downvoted_by.all():
+            elif (
+                request.user not in comment.upvoted_by.all()
+                and request.user in comment.downvoted_by.all()
+            ):
                 comment.upvoted_by.add(request.user)
                 comment.vote_count += 2
                 comment.downvoted_by.remove(request.user)
                 comment.save()
-                return JsonResponse({"upvote":"change vote success"})
+                return JsonResponse({"upvote": "change vote success"})
             else:
                 return JsonResponse({"upvote": "already upvoted"})
-            
+
         except Comments_Model.DoesNotExist:
-            return JsonResponse({"upvote":"error"})
-    return JsonResponse({"upvote":"not ajax"})
+            return JsonResponse({"upvote": "error"})
+    return JsonResponse({"upvote": "not ajax"})
+
 
 def downvote_comment(request):
     if is_ajax(request):
         comment_id = request.POST["comment_id"]
         try:
             comment = Comments_Model.objects.get(id=comment_id)
-            if request.user not in comment.downvoted_by.all() and request.user not in comment.upvoted_by.all():
+            if (
+                request.user not in comment.downvoted_by.all()
+                and request.user not in comment.upvoted_by.all()
+            ):
                 comment.downvoted_by.add(request.user)
                 comment.vote_count -= 1
                 comment.save()
-                return JsonResponse({"downvote":"success"})
-            elif request.user in comment.downvoted_by.all() and request.user not in comment.upvoted_by.all():
+                return JsonResponse({"downvote": "success"})
+            elif (
+                request.user in comment.downvoted_by.all()
+                and request.user not in comment.upvoted_by.all()
+            ):
                 comment.downvoted_by.remove(request.user)
                 comment.vote_count += 1
                 comment.save()
-            elif request.user not in comment.downvoted_by.all() and request.user in comment.upvoted_by.all(): 
+            elif (
+                request.user not in comment.downvoted_by.all()
+                and request.user in comment.upvoted_by.all()
+            ):
                 comment.downvoted_by.add(request.user)
                 comment.vote_count -= 2
                 comment.upvoted_by.remove(request.user)
                 comment.save()
-                return JsonResponse({"downvote":"change vote success"})
-            else :
-                return JsonResponse({"downvote":"already downvoted"})
+                return JsonResponse({"downvote": "change vote success"})
+            else:
+                return JsonResponse({"downvote": "already downvoted"})
         except Comments_Model.DoesNotExist:
-            return JsonResponse({"downvote":"error"})
-    return JsonResponse({"downvote":"not ajax"})
+            return JsonResponse({"downvote": "error"})
+    return JsonResponse({"downvote": "not ajax"})
+
 
 def report_comment(request, comment_id):
     if is_ajax(request):
