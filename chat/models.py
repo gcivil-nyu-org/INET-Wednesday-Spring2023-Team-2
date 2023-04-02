@@ -22,6 +22,16 @@ class Connection_Model(models.Model):
 
     def __str__(self):
         return str(self.id) + " => " + str(self.from_user) + " + " + str(self.to_user)
+    
+
+class Chat_Message(models.Model):
+    user = models.ForeignKey(Custom_User, on_delete=models.CASCADE)
+    message = models.CharField(max_length=10000)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.id) + " => " + str(self.user) + " " + str(self.timestamp)
+
 
 class Chat_History(models.Model):
     # user1 = models.ForeignKey(Custom_User, on_delete=models.CASCADE)
@@ -29,6 +39,8 @@ class Chat_History(models.Model):
 
     connection = models.ForeignKey(Connection_Model, on_delete=models.CASCADE, related_name="get_chat_history")
 
-    history = models.JSONField(blank=True, default=list)
+    # history = models.JSONField(blank=True, default=list)
+
+    history = models.ManyToManyField(Chat_Message, blank=True)
 
     # REQUIRED_FIELDS = ["user1", "user2", "history"]

@@ -1,6 +1,8 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import Chat_History, Connection_Model
+from login.models import Custom_User
+
 from datetime import datetime, timedelta
 
 # chat_box_name = connection_id
@@ -42,8 +44,11 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             chat_history = Chat_History.objects.create(connection = Connection_Model.objects.get(id=connection_id))
             chat_history = chat_history
 
-        chat_history.history.append({"message": message,"username": username, "timestamp": timestamp},)
-        chat_history.save()
+        # chat_history.history.append({"message": message,"username": username, "timestamp": timestamp},)
+        # chat_history.save()
+        
+        chat_history.history.create(user=Custom_User.objects.get(username=username), message=message, timestamp=timestamp)
+       
 
 
     # Receive message from room group.

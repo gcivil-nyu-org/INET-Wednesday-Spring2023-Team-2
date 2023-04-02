@@ -13,6 +13,14 @@ def chat_view(request):
     return render(request, "pages/chat.html")
 
 
+
+def fetch_chat_history(connection_id):
+    chat_history = Connection_Model.objects.get(id=connection_id).get_chat_history
+    history_list = chat_history.history.order_by("-timestamp").all()    #[:100] ##todo: return top 100msg everytime to reduce query time
+    return history_list
+
+
+
 # delete later
 def chat_view_test(request, connection_id):
     #if connection doesn't exists (i.e. users don't know each other) or 
