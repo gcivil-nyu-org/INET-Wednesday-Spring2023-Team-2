@@ -99,6 +99,43 @@
     margin-right: 1%;
 }
 
+.comment-action .upvote {
+    font-size: 15px;
+    color: #5a5a5a;
+    text-align: left;
+}
+
+.comment-action .upvote {
+    font-size: 15px;
+    color: #5a5a5a;
+    text-align: left;
+}
+
+.comment-action .upvote.active {
+    font-size: 15px;
+    color: green;
+    text-align: left;
+}
+
+.comment-action .react {
+    font-size: 14px;
+    font-weight: bold;
+    color: #5a5a5a;
+    text-align: left;
+}
+
+.comment-action .downvote {
+    font-size: 15px;
+    color: #5a5a5a;
+    text-align: left;
+}
+
+.comment-action .downvote.after {
+    font-size: 15px;
+    color: red;
+    text-align: left;
+}
+
 .comment-action .delete {
     font-size: 15px;
     color: #5a5a5a;

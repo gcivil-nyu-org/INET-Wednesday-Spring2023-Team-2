@@ -9,10 +9,7 @@
     
             <div class="comment-box">
                 <div class="comment">
-                    {% comment %} <div class="votes">
-                        <a class="upvote"></a><br/>
-                        <a class="downvote"></a>
-                      </div> {% endcomment %}
+
                     <div class="profile-picture-container"  id="pfp{{ forloop.counter }}">
                         <img src="{{ comment.commented_by.profile_picture.url }}" alt="User Avatar" class="avatar">
                     </div>
@@ -22,6 +19,9 @@
                     </div>
                 </div>
                 <div class="comment-action">
+                    <a href="#" class= "upvote" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
+                    <span class = "react">{{ comment.vote_count }}</span>
+                    <a href="#" class = "downvote" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
                     <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
                     {% if request.user == comment.commented_by %}
                     <a href="#" class="delete" onclick="deleteComment(event, {{ comment.id }})"><i class="fas fa-trash-alt"></i></a>
@@ -105,7 +105,7 @@
                     },
                     success: function (response) {
                         if (response.delete === "success") {
-                            $("#commentDisp").html(response);
+                            location.reload()
                             alert("Comment has been deleted!")
                         } else {
                             alert("Something went wrong")
@@ -117,6 +117,43 @@
                   });
                 }
             }   
+
+        function upvoteComment(event, commentId) {             
+            $.ajax({
+                url: "{% url 'posts:upvote_comment' %}",
+                type: "POST",
+                data: {
+                    "comment_id": commentId,
+                    "csrfmiddlewaretoken": "{{ csrf_token }}"
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        location.reload()
+                    },
+                    error: function(xhr, reported, error) {
+                        // Handle the error here
+                        console.log(response)
+                    },
+                });    
+        }  
+        function downvoteComment(event, commentId) {              
+            $.ajax({
+                url: "{% url 'posts:downvote_comment' %}",
+                type: "POST",
+                data: {
+                    "comment_id": commentId,
+                    "csrfmiddlewaretoken": "{{ csrf_token }}"
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        location.reload()
+                    },
+                    error: function(xhr, reported, error) {
+                        // Handle the error here
+                        console.log(response)
+                    },
+                });    
+        }  
     </script>
     
     
