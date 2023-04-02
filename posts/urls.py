@@ -43,4 +43,5 @@ urlpatterns = [
     path("create_poll/", views.create_poll, name="create_poll"),
     path("search/", SearchPostsView.as_view(), name="search_posts"),
     path('report_comment/', views.report_comment, name='report_comment'),
+    path('delete_comment/', views.delete_comment, name='delete_comment'),
 ]

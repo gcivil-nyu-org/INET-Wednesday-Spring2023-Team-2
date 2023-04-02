@@ -489,7 +489,17 @@ def report_comment(request):
             return JsonResponse({"report":"error"})
     return JsonResponse({"report":"not ajax"})
         
-            
+def delete_comment(request):
+    if is_ajax(request):
+        comment_id = request.POST["comment_id"]
+        comment = Comments_Model.objects.get(id=comment_id)
+
+        if comment.commented_by == request.user:
+            comment.delete()
+            return JsonResponse({'delete': 'success'})
+        else:
+            return JsonResponse({'delete': 'fail'})
+    return JsonResponse({'delete': 'error'})            
 
 
 def show_comments_text_api(request, current_pid):
