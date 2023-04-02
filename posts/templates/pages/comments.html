@@ -22,12 +22,12 @@
                     </div>
                 </div>
                 <div class="comment-action">
+                    <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
                     {% if request.user == comment.commented_by %}
                     <a href="#" class="delete"><i class="fas fa-trash-alt"></i></a>
                     {% endif %}
-                    <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
                     <a href="#" class="report" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
-                    <a href="#" class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-reply"></i></a>
+                    <a href="#" class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
                 </div>
             </div>
             <script>
