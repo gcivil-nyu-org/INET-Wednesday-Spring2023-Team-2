@@ -24,7 +24,7 @@
                 <div class="comment-action">
                     <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
                     {% if request.user == comment.commented_by %}
-                    <a href="#" class="delete"><i class="fas fa-trash-alt"></i></a>
+                    <a href="#" class="delete" onclick="deleteComment(event, {{ comment.id }})"><i class="fas fa-trash-alt"></i></a>
                     {% endif %}
                     <a href="#" class="report" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
                     <a href="#" class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
@@ -58,7 +58,7 @@
             // Add a confirmation message
             var result = confirm("Do you want to report this comment for inappropriate content?");
             if (!result) {
-                alert("Comment gets to live another day!")
+                alert("Report has been canceled!")
             }
             else {                  
                 $.ajax({
@@ -88,6 +88,35 @@
                 });
             }
         }  
+
+        function deleteComment(event, commentId) {
+            event.preventDefault();
+            var result = confirm("Do you want to delete your comment?");
+            if (!result) {
+                alert("Comment gets to live another day!")
+            }
+            else {
+                $.ajax({
+                    url: "{% url 'posts:delete_comment' %}",
+                    type: "POST",
+                    data: {
+                      "comment_id": commentId,
+                      "csrfmiddlewaretoken":  "{{ csrf_token }}"
+                    },
+                    success: function (response) {
+                        if (response.delete === "success") {
+                            location.reload()
+                            alert("Comment has been deleted!")
+                        } else {
+                            alert("Something went wrong")
+                        }
+                    },
+                    error: function () {
+                        alert("Request error");
+                    },
+                  });
+                }
+            }   
     </script>
     
     
