@@ -13,7 +13,7 @@ class Connection_Model(models.Model):
     to_user = models.ForeignKey(
         Custom_User,
         on_delete=models.CASCADE,
-        related_name="connection_requsts_received",
+        related_name="connection_requests_received",
     )
 
     connection_request_time = models.DateTimeField(auto_now_add=True)
@@ -31,7 +31,7 @@ class Connection_Model(models.Model):
 
     def __str__(self):
         return str(self.id) + " => " + str(self.from_user) + " + " + str(self.to_user)
-    
+
     def get_friend(self, user):
         if user == self.from_user:
             return self.to_user
