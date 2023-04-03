@@ -31,6 +31,11 @@ class Connection_Model(models.Model):
 
     def __str__(self):
         return str(self.id) + " => " + str(self.from_user) + " + " + str(self.to_user)
+    
+    def get_friend(self, user):
+        if user == self.from_user:
+            return self.to_user
+        return self.from_user
 
 
 class Chat_Message(models.Model):
