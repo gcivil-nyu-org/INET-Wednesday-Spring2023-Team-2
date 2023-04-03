@@ -181,9 +181,10 @@
 .chat .chat-message {
     padding: 20px;
     position:absolute;
-    bottom: 0; /* Set the bottom offset to 0 to place it at the bottom */
-    left: 30%; /* Align the box to the left */
-    right: 0; /* Align the box to the right */
+    bottom: 0; 
+    /* left: 30%;  */
+    right: 0; 
+    max-width: 80%;
 }
 
 .online,

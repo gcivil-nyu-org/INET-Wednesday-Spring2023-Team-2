@@ -32,34 +32,6 @@
                             <div class="status"> <i class="fa fa-circle online"></i> online </div>
                         </div>
                     </li>
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Mike Thomas</div>
-                            <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                        </div>
-                    </li>                                    
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Christian Kelly</div>
-                            <div class="status"> <i class="fa fa-circle offline"></i> left 10 hours ago </div>
-                        </div>
-                    </li>
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar8.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Monica Ward</div>
-                            <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                        </div>
-                    </li>
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar3.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Dean Henry</div>
-                            <div class="status"> <i class="fa fa-circle offline"></i> offline since Oct 28 </div>
-                        </div>
-                    </li>
                 </ul>
             </div>
             <div class="chat">
@@ -84,24 +56,20 @@
                 </div>
                 <div class="chat-history">
                     <ul class="m-b-0">
+                        {% for message in messages %}
                         <li class="clearfix">
-                            <div class="message-data-right">
-                                <span class="message-data-time">10:10 AM, Today</span>
+                            <div class="message-data {% if message.user == current_user %}align-right{% endif %}">
+                                <span class="message-data-time">{{ message.timestamp }}</span>
                             </div>
-                            <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
+                            <div class="message {% if message.user == current_user %}my-message{% else %}other-message float-right{% endif %}">{{ message.message }} </div>
                         </li>
                         <li class="clearfix">
                             <div class="message-data">
                                 <span class="message-data-time">10:12 AM, Today</span>
                             </div>
                             <div class="message my-message">Are we meeting today?</div>                                    
-                        </li>                               
-                        <li class="clearfix">
-                            <div class="message-data">
-                                <span class="message-data-time">10:15 AM, Today</span>
-                            </div>
-                            <div class="message my-message">Project has been already finished and I have results to show you.</div>
                         </li>
+                        {% endfor %}                               
                     </ul>
                 </div>
                 <div class="chat-message clearfix">
@@ -109,11 +77,29 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-send"></i></span>
                         </div>
-                        <input type="text" class="form-control" placeholder="Enter text here...">                                    
+                        <input type="text" class="form-control" id="input" placeholder="Enter text here...">                                    
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% comment %} Get data for username and chatbox name{% endcomment %}
+    {{ request.user.username|json_script:"user_username" }}
+    {{ connection_id|json_script:"room-name" }}
 </div>
 </div>
+
+<!-- JS stuff -->
+
+<!-- display message history, todo: need to make it always auto-scroll to the bottom -->
+{% for message in messages %}
+    <script>
+        document.querySelector('#chat-text').value += ("{{ message.message|safe }}" + 
+                                                        " sent by " + 
+                                                        "{{ message.user.username|safe }}" + 
+                                                        "\n")
+    </script>
+{% endfor %}
+
+<!-- import chatSocket.js -->
+<script type="text/javascript" src="{% static '../static/js/chatSocket.js' %}"></script>
