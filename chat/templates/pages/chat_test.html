@@ -33,8 +33,16 @@
     {{ request.user.username|json_script:"user_username" }}
     {{ connection_id|json_script:"room-name" }}
 
+    {% for message in messages %}
+    <script>
+        document.querySelector('#chat-text').value += ("{{ message.message|safe }}" + 
+                                                        " sent by " + 
+                                                        "{{ message.user.username|safe }}" + 
+                                                        "\n")
+    </script>
+    {% endfor %}
 
-    <script>     
+    <script>
         const boxName = JSON.parse(document.getElementById('room-name').textContent);
         // Create a WebSocket in JavaScript.
         const chatSocket = new WebSocket(

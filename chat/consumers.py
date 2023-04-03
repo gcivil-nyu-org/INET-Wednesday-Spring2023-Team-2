@@ -5,6 +5,8 @@ from login.models import Custom_User
 
 from datetime import datetime, timedelta
 
+from asgiref.sync import sync_to_async
+
 
 # chat_box_name = connection_id
 class ChatRoomConsumer(AsyncWebsocketConsumer):
@@ -19,35 +21,16 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
-    # This function receive messages from WebSocket.
-    async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json["message"]
-        username = text_data_json["username"]
-        connection_id = text_data_json["connection_id"]
-        timestamp = datetime.now()
-
-        print(message, username)
-
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "chatbox_message",
-                "message": message,
-                "username": username,
-            },
-        )
-        ##todo: save data to db
-
+    @sync_to_async
+    def store_info_db(self, message, username, connection_id, timestamp):
         try:
-            chat_history = Connection_Model.objects.get(
-                id=connection_id
-            ).get_chat_history
+            chat_history = Chat_History.objects.get(
+                connection=Connection_Model.objects.get(id=connection_id)
+            )
         except (KeyError, Chat_History.DoesNotExist):
             chat_history = Chat_History.objects.create(
                 connection=Connection_Model.objects.get(id=connection_id)
             )
-            chat_history = chat_history
 
         # chat_history.history.append({"message": message,"username": username, "timestamp": timestamp},)
         # chat_history.save()
@@ -57,6 +40,25 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             message=message,
             timestamp=timestamp,
         )
+
+    # This function receive messages from WebSocket.
+    async def receive(self, text_data):
+        text_data_json = json.loads(text_data)
+        message = text_data_json["message"]
+        username = text_data_json["username"]
+        connection_id = text_data_json["connection_id"]
+        timestamp = datetime.now()
+
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "chatbox_message",
+                "message": message,
+                "username": username,
+            },
+        )
+
+        await self.store_info_db(message, username, connection_id, timestamp)
 
     # Receive message from room group.
     async def chatbox_message(self, event):

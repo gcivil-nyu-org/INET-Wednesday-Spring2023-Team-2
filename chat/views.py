@@ -14,11 +14,13 @@ def chat_view(request):
 
 
 def fetch_chat_history(connection_id):
-    chat_history = Connection_Model.objects.get(id=connection_id).get_chat_history
+    chat_history = Chat_History.objects.get(
+        connection=Connection_Model.objects.get(id=connection_id)
+    )
     history_list = chat_history.history.order_by(
         "-timestamp"
     ).all()  # [:100] ##todo: return top 100msg everytime to reduce query time
-    return history_list
+    return history_list[::-1]
 
 
 # delete later
@@ -29,10 +31,15 @@ def chat_view_test(request, connection_id):
 
     if (
         Connection_Model.objects.filter(id=connection_id).exists()
-        and Connection_Model.objects.filter(id=connection_id).connection_status
+        and Connection_Model.objects.get(id=connection_id).connection_status
         == "Accepted"
     ):  # and is_ajax(request):
-        return render(request, "pages/chat_test.html", {"connection_id": connection_id})
+        messages = fetch_chat_history(connection_id)
+        return render(
+            request,
+            "pages/chat_test.html",
+            {"connection_id": connection_id, "messages": messages},
+        )
 
     else:
         return HttpResponse("Thou Shall not Enter!!")

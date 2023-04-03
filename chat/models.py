@@ -16,8 +16,8 @@ class Connection_Model(models.Model):
         related_name="connection_requsts_received",
     )
 
-    connection_request_time = models.DateTimeField(default=datetime.now, blank=True)
-    connection_answer_time = models.DateTimeField(default=datetime.now, blank=True)
+    connection_request_time = models.DateTimeField(auto_now_add=True)
+    connection_answer_time = models.DateTimeField(default=datetime.now)
 
     conection_answer_options = [
         ("Pending", "Pending"),
@@ -40,6 +40,9 @@ class Chat_Message(models.Model):
 
     def __str__(self):
         return str(self.id) + " => " + str(self.user) + " " + str(self.timestamp)
+
+    def disp_msg(self):
+        return str(self.message) + " by " + str(self.user) + "\n"
 
 
 class Chat_History(models.Model):
