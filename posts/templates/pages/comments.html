@@ -50,6 +50,23 @@
                 commentField.val("@" + username + " ");
                 commentField.focus();
             });
+            $("#commentTextDisp2 .comment-input").keydown(function(e) {
+                if (e.key === "Backspace") {
+                    var inputField = $(this);
+                    var cursorPosition = inputField.prop("selectionStart");
+                    var inputValue = inputField.val();
+                    var mentionRegex = /@\w+\s?$/;
+                    var textBeforeCursor = inputValue.slice(0, cursorPosition);
+        
+                    if (mentionRegex.test(textBeforeCursor)) {
+                        e.preventDefault();
+                        var newValue = textBeforeCursor.replace(mentionRegex, "") + inputValue.slice(cursorPosition);
+                        inputField.val(newValue);
+                        inputField.prop("selectionStart", cursorPosition - 1);
+                        inputField.prop("selectionEnd", cursorPosition - 1);
+                    }
+                }
+            });
         });
 
         function reportComment(event, commentId) {
