@@ -33,9 +33,13 @@ def get_friends_info(request):
 
 
 def get_chat_history(connection_id):
-    chat_history = Chat_History.objects.get(
-        connection=Connection_Model.objects.get(id=connection_id)
-    )
+    try:
+        chat_history = Chat_History.objects.get(
+            connection=Connection_Model.objects.get(id=connection_id)
+        )
+    except (KeyError, Chat_History.DoesNotExist):
+        return []
+
     history_list = chat_history.history.order_by(
         "-timestamp"
     ).all()  # [:100] ##todo: return top 100msg everytime to reduce query time
