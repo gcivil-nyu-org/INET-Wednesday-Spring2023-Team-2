@@ -19,15 +19,15 @@
                     </div>
                 </div>
                 <div class="comment-action">
-                    <a href="#" class= "upvote" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
+                    <a class= "upvote" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
                     <span class = "react">{{ comment.vote_count }}</span>
-                    <a href="#" class = "downvote" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
+                    <a class = "downvote" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
                     <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
                     {% if request.user == comment.commented_by %}
-                    <a href="#" class="delete" onclick="deleteComment(event, {{ comment.id }})"><i class="fas fa-trash-alt"></i></a>
+                    <a class="delete" onclick="deleteComment(event, {{ comment.id }})"><i class="fas fa-trash-alt"></i></a>
                     {% endif %}
-                    <a href="#" class="report" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
-                    <a href="#" class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
+                    <a class="report" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
+                    <a class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
                 </div>
             </div>
             <script>
@@ -62,12 +62,8 @@
             }
             else {                  
                 $.ajax({
-                    url: "{% url 'posts:report_comment' %}",
-                    type: "POST",
-                    data: {
-                        "comment_id": commentId,
-                        "csrfmiddlewaretoken": "{{ csrf_token }}"
-                    },
+                    url: "{% url 'posts:report_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
+                    type: "GET",
                     dataType: "json",
                     success: function(response) {
                         if (response.report === "success") {
@@ -97,15 +93,11 @@
             }
             else {
                 $.ajax({
-                    url: "{% url 'posts:delete_comment' %}",
-                    type: "POST",
-                    data: {
-                      "comment_id": commentId,
-                      "csrfmiddlewaretoken":  "{{ csrf_token }}"
-                    },
+                    url: "{% url 'posts:delete_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
+                    type: "GET",
                     success: function (response) {
                         if (response.delete === "success") {
-                            location.reload()
+                            getComments()
                             alert("Comment has been deleted!")
                         } else {
                             alert("Something went wrong")
@@ -118,17 +110,13 @@
                 }
             }   
 
-        function upvoteComment(event, commentId) {             
+        function upvoteComment(event, commentId) {            
             $.ajax({
-                url: "{% url 'posts:upvote_comment' %}",
-                type: "POST",
-                data: {
-                    "comment_id": commentId,
-                    "csrfmiddlewaretoken": "{{ csrf_token }}"
-                    },
+                url: "{% url 'posts:upvote_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
+                type: "GET",
                     dataType: "json",
                     success: function(response) {
-                        location.reload()
+                        getComments()
                     },
                     error: function(xhr, reported, error) {
                         // Handle the error here
@@ -138,15 +126,11 @@
         }  
         function downvoteComment(event, commentId) {              
             $.ajax({
-                url: "{% url 'posts:downvote_comment' %}",
-                type: "POST",
-                data: {
-                    "comment_id": commentId,
-                    "csrfmiddlewaretoken": "{{ csrf_token }}"
-                    },
+                url: "{% url 'posts:downvote_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
+                type: "GET",
                     dataType: "json",
                     success: function(response) {
-                        location.reload()
+                        getComments()
                     },
                     error: function(xhr, reported, error) {
                         // Handle the error here
