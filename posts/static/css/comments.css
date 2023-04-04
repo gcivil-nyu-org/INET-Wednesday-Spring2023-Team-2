@@ -105,16 +105,11 @@
     text-align: left;
 }
 
-.comment-action .upvote {
-    font-size: 15px;
-    color: #5a5a5a;
-    text-align: left;
-}
-
-.comment-action .upvote.active {
+.comment-action .upvote:hover {
     font-size: 15px;
     color: green;
     text-align: left;
+    cursor: pointer;
 }
 
 .comment-action .react {
@@ -130,10 +125,11 @@
     text-align: left;
 }
 
-.comment-action .downvote.after {
+.comment-action .downvote:hover {
     font-size: 15px;
     color: red;
     text-align: left;
+    cursor: pointer;
 }
 
 .comment-action .delete {
@@ -142,10 +138,24 @@
     text-align: left;
 }
 
+.comment-action .delete:hover {
+    font-size: 15px;
+    color: black;
+    text-align: left;
+    cursor: pointer;
+}
+
 .comment-action .reply {
     font-size: 15px;
     color: #5a5a5a;
     text-align: left;
+}
+
+.comment-action .reply:hover {
+    font-size: 15px;
+    color: lightskyblue;
+    text-align: left;
+    cursor: pointer;
 }
 
 .comment-action .report {
@@ -154,10 +164,11 @@
     text-align: left;
 }
 
-.comment-action .like {
-    font-size: 10px;
-    color: #5a5a5a;
+.comment-action .report:hover {
+    font-size: 15px;
+    color: red;
     text-align: left;
+    cursor: pointer;
 }
 
 p {
