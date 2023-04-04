@@ -202,7 +202,11 @@ class ViewsFunctions(TestCase):
             comment_text="Test Comment 2", question=post4, commented_by=user
         )
         response = self.client.get(
+<<<<<<< HEAD
             reverse("posts:report_post", kwargs={"post_id": post4.id}),
+=======
+            reverse("posts:report_post", args=[post4.id]),
+>>>>>>> 8ca9bbc (unit tests + black)
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
 
