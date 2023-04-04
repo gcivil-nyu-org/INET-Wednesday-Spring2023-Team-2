@@ -572,6 +572,20 @@ def report_comment(request, comment_id):
             return JsonResponse({"report": "error"})
     return JsonResponse({"report": "not ajax"})
 
+def report_post(request, post_id):
+    if is_ajax(request):
+        try:
+            post = Post_Model.objects.get(id=post_id)
+            if request.user not in post.reported_by.all():
+                post.reported_by.add(request.user)
+                post.reported_count += 1
+                post.save()
+                return JsonResponse({"report": "success"})
+            else:
+                return JsonResponse({"report": "already_reported"})
+        except Comments_Model.DoesNotExist:
+            return JsonResponse({"report": "error"})
+    return JsonResponse({"report": "not ajax"})
 
 def delete_comment(request, comment_id):
     if is_ajax(request):
