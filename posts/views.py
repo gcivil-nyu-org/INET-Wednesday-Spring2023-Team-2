@@ -572,6 +572,7 @@ def report_comment(request, comment_id):
             return JsonResponse({"report": "error"})
     return JsonResponse({"report": "not ajax"})
 
+
 def report_post(request, post_id):
     if is_ajax(request):
         try:
@@ -586,6 +587,7 @@ def report_post(request, post_id):
         except Comments_Model.DoesNotExist:
             return JsonResponse({"report": "error"})
     return JsonResponse({"report": "not ajax"})
+
 
 def delete_comment(request, comment_id):
     if is_ajax(request):
