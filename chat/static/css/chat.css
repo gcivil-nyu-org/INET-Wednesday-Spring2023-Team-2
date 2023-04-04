@@ -33,9 +33,10 @@
 }
 
 .people-list .chat-list li {
-    padding: 10px 15px;
-    list-style: none;
-    border-radius: 3px
+    border-radius: 3px;
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
 }
 
 .people-list .chat-list li:hover {
@@ -182,9 +183,6 @@
     padding: 20px;
     position:absolute;
     bottom: 0; 
-    /* left: 30%;  */
-    right: 0; 
-    max-width: 80%;
 }
 
 .online,

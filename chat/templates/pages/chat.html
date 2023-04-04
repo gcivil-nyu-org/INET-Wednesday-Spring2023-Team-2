@@ -18,12 +18,12 @@
                     <input type="text" class="form-control" placeholder="Search...">
                 </div>
                 <ul class="list-unstyled chat-list mt-2 mb-0">
-                    {% for friend in friends %}
+                    {% for friend in friend_object %}
                         <li class="cleafix">
-                            <a href="{% url 'connections:chat_page_test' 1 %}">
-                                <img src="{{ friend_pic|first }}" alt="avatar">
+                            <a href="{% url 'connections:chat_page_test' friend.1.id %}">
+                                <img src="{{ friend.0.profile_picture.url }}" alt="avatar">
                                 <div class="about">
-                                    <div class="name">{{ friend_username|first }}</div>
+                                    <div class="name">{{ friend.0 }}</div>
                                     <div class="status"> <i class="fa fa-circle online"></i> online </div>
                                 </div>
                             </a>

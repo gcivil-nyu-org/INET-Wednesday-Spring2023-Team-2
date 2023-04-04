@@ -39,15 +39,17 @@ def chat_get_friends_info(request):
     )
 
     friends = connections_sent | connections_recieved
-    friend_username = [friend.get_friend(request.user).username for friend in friends]
-    friend_pic = [
-        friend.get_friend(request.user).profile_picture.url for friend in friends
+    friend_object = [
+        (
+            friend.get_friend(request.user),
+            friend,
+        )
+        for friend in friends
     ]
 
     context = {
         "friends": friends,
-        "friend_username": friend_username,
-        "friend_pic": friend_pic,
+        "friend_object": friend_object,
     }
 
     return render(request, "pages/chat.html", context)
