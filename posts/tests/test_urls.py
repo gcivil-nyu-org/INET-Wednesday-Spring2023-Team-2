@@ -194,17 +194,20 @@ class ViewsFunctions(TestCase):
         comment2 = Comments_Model.objects.create(
             comment_text="Test Comment 2", question=post4, commented_by=user
         )
-        response = self.client.get(reverse('posts:report_post', args=[post4.id]), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        
+        response = self.client.get(
+            reverse("posts:report_post", args=[post4.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
         # Check response status code
         self.assertEqual(response.status_code, 200)
-        
+
         # Check response data
         self.assertEqual(response.json(), {"report": "success"})
-        
+
         # Refresh the post object from the database
         post4.refresh_from_db()
-        
+
         # Check if the post was reported and reported count was incremented
         self.assertIn(user, post4.reported_by.all())
         self.assertEqual(post4.reported_count, 1)
@@ -222,17 +225,20 @@ class ViewsFunctions(TestCase):
             comment_text="Test Comment 2", question=post4, commented_by=user
         )
         post4.reported_by.add(user)
-        response = self.client.get(reverse('posts:report_post', args=[post4.id]), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        
+        response = self.client.get(
+            reverse("posts:report_post", args=[post4.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
         # Check response status code
         self.assertEqual(response.status_code, 200)
-        
+
         # Check response data
         self.assertEqual(response.json(), {"report": "already_reported"})
-        
+
         # Refresh the post object from the database
         post4.refresh_from_db()
-        
+
         # Check if reported count remains unchanged
         self.assertEqual(post4.reported_count, 0)
 
@@ -250,20 +256,19 @@ class ViewsFunctions(TestCase):
         )
 
         # Send a non-AJAX request to report the post
-        response = self.client.get(reverse('posts:report_post', args=[post4.id]))
-        
+        response = self.client.get(reverse("posts:report_post", args=[post4.id]))
+
         # Check response status code
         self.assertEqual(response.status_code, 200)
-        
+
         # Check response data
         self.assertEqual(response.json(), {"report": "not ajax"})
-        
+
         # Refresh the post object from the database
         post4.refresh_from_db()
-        
+
         # Check if reported count remains unchanged
         self.assertEqual(post4.reported_count, 0)
-
 
     def test_report_comment(self):
         user = Custom_User.objects.create_user(username="test3", password="test1234")
@@ -277,17 +282,20 @@ class ViewsFunctions(TestCase):
         comment2 = Comments_Model.objects.create(
             comment_text="Test Comment 2", question=post4, commented_by=user
         )
-        response = self.client.get(reverse('posts:report_comment', args=[comment2.id]), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        
+        response = self.client.get(
+            reverse("posts:report_comment", args=[comment2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
         # Check response status code
         self.assertEqual(response.status_code, 200)
-        
+
         # Check response data
         self.assertEqual(response.json(), {"report": "success"})
-        
+
         # Refresh the post object from the database
         comment2.refresh_from_db()
-        
+
         # Check if the post was reported and reported count was incremented
         self.assertIn(user, comment2.reported_by.all())
         self.assertEqual(comment2.reported_count, 1)
@@ -305,17 +313,20 @@ class ViewsFunctions(TestCase):
             comment_text="Test Comment 2", question=post4, commented_by=user
         )
         comment2.reported_by.add(user)
-        response = self.client.get(reverse('posts:report_comment', args=[comment2.id]), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
-        
+        response = self.client.get(
+            reverse("posts:report_comment", args=[comment2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
         # Check response status code
         self.assertEqual(response.status_code, 200)
-        
+
         # Check response data
         self.assertEqual(response.json(), {"report": "already_reported"})
-        
+
         # Refresh the post object from the database
         post4.refresh_from_db()
-        
+
         # Check if reported count remains unchanged
         self.assertEqual(comment2.reported_count, 0)
 
@@ -333,20 +344,19 @@ class ViewsFunctions(TestCase):
         )
 
         # Send a non-AJAX request to report the post
-        response = self.client.get(reverse('posts:report_comment', args=[comment2.id]))
-        
+        response = self.client.get(reverse("posts:report_comment", args=[comment2.id]))
+
         # Check response status code
         self.assertEqual(response.status_code, 200)
-        
+
         # Check response data
         self.assertEqual(response.json(), {"report": "not ajax"})
-        
+
         # Refresh the post object from the database
         post4.refresh_from_db()
-        
+
         # Check if reported count remains unchanged
         self.assertEqual(comment2.reported_count, 0)
-
 
     def test_delete_comment_success(self):
         user = Custom_User.objects.create_user(username="test3", password="test1234")
@@ -362,7 +372,10 @@ class ViewsFunctions(TestCase):
         )
 
         # Send an AJAX request to delete the comment
-        response = self.client.get(reverse('posts:delete_comment', args=[comment2.id]), HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        response = self.client.get(
+            reverse("posts:delete_comment", args=[comment2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
 
         # Check response status code
         self.assertEqual(response.status_code, 200)
