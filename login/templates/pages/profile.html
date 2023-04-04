@@ -148,9 +148,9 @@
        
     </div>
 
-	<div class="form-container tabcontent user-requests-container" id="nav-requests" style="display: none;">
+	<div class="form-container tabcontent user-history-container" id="nav-requests" style="display: none;">
 		<h2>Friend Requests</h2>
-		<div class="requests-content">
+		<div class="history-content">
 			<ul>
 				<!-- this div will contain the friend requests for the user -->
 				<div id="friendRequests">
@@ -252,15 +252,16 @@ function changeurlProfile(page)
         });
   }
 
-  function getFriendRequests(evt) {
-    openTab(evt, 'nav-requests');
-    changeurlProfile("friend_requests");
+  function getFriendRequests() {
+    openTab(event, 'nav-requests');
+    
 
     // Fetch and display friend requests using AJAX
     $.ajax({
-        url: "{% url 'account:friend_requests' profile.username%}",
+        url: "{% url 'account:friend_requests' profile.username %}",
         type: "GET",
         success: function(resp) {
+			// changeurlProfile("friend_requests");
             $("#friendRequests").html(resp);
         },
         error: function(resp) {
@@ -268,6 +269,8 @@ function changeurlProfile(page)
         }
     });
 }
+
+
  
 
 document.getElementById("{{ tab_to_click }}").click();
