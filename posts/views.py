@@ -557,9 +557,8 @@ class CommentsView(View):
             # return render(request, "pages/comments.html", contents)
 
 
-def report_comment(request):
+def report_comment(request, comment_id):
     if is_ajax(request):
-        comment_id = request.POST["comment_id"]
         try:
             comment = Comments_Model.objects.get(id=comment_id)
             if request.user not in comment.reported_by.all():
@@ -574,9 +573,8 @@ def report_comment(request):
     return JsonResponse({"report": "not ajax"})
 
 
-def delete_comment(request):
+def delete_comment(request, comment_id):
     if is_ajax(request):
-        comment_id = request.POST["comment_id"]
         comment = Comments_Model.objects.get(id=comment_id)
 
         if comment.commented_by == request.user:
@@ -587,9 +585,8 @@ def delete_comment(request):
     return JsonResponse({"delete": "error"})
 
 
-def upvote_comment(request):
+def upvote_comment(request, comment_id):
     if is_ajax(request):
-        comment_id = request.POST["comment_id"]
         try:
             comment = Comments_Model.objects.get(id=comment_id)
             if (
@@ -624,9 +621,8 @@ def upvote_comment(request):
     return JsonResponse({"upvote": "not ajax"})
 
 
-def downvote_comment(request):
+def downvote_comment(request, comment_id):
     if is_ajax(request):
-        comment_id = request.POST["comment_id"]
         try:
             comment = Comments_Model.objects.get(id=comment_id)
             if (
