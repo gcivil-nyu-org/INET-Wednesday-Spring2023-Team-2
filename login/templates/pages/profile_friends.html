@@ -1,0 +1,10 @@
+<div>
+{% for friend in friends %}
+
+<div>
+    <li><a href="{% url 'account:profile_page' friend %}">{{ friend }}</a></li>
+</div>
+
+{% endfor %}
+
+</div>
