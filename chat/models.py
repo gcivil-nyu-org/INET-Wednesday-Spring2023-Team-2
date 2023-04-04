@@ -1,5 +1,6 @@
 from django.db import models
 from login.models import Custom_User
+from django.core.exceptions import ValidationError
 
 from datetime import datetime, timedelta
 
@@ -36,6 +37,17 @@ class Connection_Model(models.Model):
         if user == self.from_user:
             return self.to_user
         return self.from_user
+
+    def save(self, *args, **kwargs):
+        if (
+            Connection_Model.objects.filter(from_user=self.from_user).exists()
+            and Connection_Model.objects.filter(to_user=self.to_user).exists()
+        ) or (
+            Connection_Model.objects.filter(to_user=self.from_user).exists()
+            and Connection_Model.objects.filter(from_user=self.to_user).exists()
+        ):
+            raise ValidationError("Connection between specified users already exists!!")
+        super(Connection_Model, self).save(*args, **kwargs)
 
 
 class Chat_Message(models.Model):
