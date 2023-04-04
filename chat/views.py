@@ -9,8 +9,6 @@ def is_ajax(request):
 
 
 # Create your views here.
-def chat_view(request):
-    return render(request, "pages/chat.html")
 
 
 ##todo: similiar function to get friends list for each user show up in profile page
@@ -30,6 +28,29 @@ def get_friends_info(request):
     # friends = get_friends_info(request)
     #  for i in friends:
     #      print(i.get_friend(request.user), i.id)
+
+
+def chat_get_friends_info(request):
+    connections_sent = request.user.connection_requests_sent.filter(
+        connection_status="Accepted"
+    )
+    connections_recieved = request.user.connection_requests_received.filter(
+        connection_status="Accepted"
+    )
+
+    friends = connections_sent | connections_recieved
+    friend_username = [friend.get_friend(request.user).username for friend in friends]
+    friend_pic = [
+        friend.get_friend(request.user).profile_picture.url for friend in friends
+    ]
+
+    context = {
+        "friends": friends,
+        "friend_username": friend_username,
+        "friend_pic": friend_pic,
+    }
+
+    return render(request, "pages/chat.html", context)
 
 
 def get_chat_history(connection_id):

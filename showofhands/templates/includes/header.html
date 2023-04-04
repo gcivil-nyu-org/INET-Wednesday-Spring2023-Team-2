@@ -79,14 +79,14 @@
 
                     <li class="nav-link">
                         <!-- modify link later -->
-                        <a href={% url 'connections:chat_page_test' 1 %}>
+                        <a href={% url 'connections:chat_page' %}>
                             <i class='bx bx-chat icon'></i>
                             <span class="text nav-text">Chat</span>
                         </a>
                     </li>
 
                     <li class="nav-link">
-                        <a href="#">
+                        <a href={% url 'connections:chat_page_test' 1 %}>
                             <i class='bx bx-pie-chart-alt icon' ></i>
                             <span class="text nav-text">Analytics</span>
                         </a>

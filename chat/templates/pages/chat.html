@@ -18,20 +18,17 @@
                     <input type="text" class="form-control" placeholder="Search...">
                 </div>
                 <ul class="list-unstyled chat-list mt-2 mb-0">
-                    <li class="clearfix">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Vincent Porter</div>
-                            <div class="status"> <i class="fa fa-circle offline"></i> left 7 mins ago </div>                                            
-                        </div>
-                    </li>
-                    <li class="clearfix active">
-                        <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="avatar">
-                        <div class="about">
-                            <div class="name">Aiden Chavez</div>
-                            <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                        </div>
-                    </li>
+                    {% for friend in friends %}
+                        <li class="cleafix">
+                            <a href="{% url 'connections:chat_page_test' 1 %}">
+                                <img src="{{ friend_pic|first }}" alt="avatar">
+                                <div class="about">
+                                    <div class="name">{{ friend_username|first }}</div>
+                                    <div class="status"> <i class="fa fa-circle online"></i> online </div>
+                                </div>
+                            </a>
+                        </li>
+                    {% endfor %}
                 </ul>
             </div>
             <div class="chat">
@@ -46,30 +43,28 @@
                                 <small>Last seen: 2 hours ago</small>
                             </div>
                         </div>
-                        <div class="col-lg-6 hidden-sm text-right">
-                            <a href="javascript:void(0);" class="btn btn-outline-secondary"><i class="fa fa-camera"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-primary"><i class="fa fa-image"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-info"><i class="fa fa-cogs"></i></a>
-                            <a href="javascript:void(0);" class="btn btn-outline-warning"><i class="fa fa-question"></i></a>
-                        </div>
                     </div>
                 </div>
                 <div class="chat-history">
                     <ul class="m-b-0">
-                        {% for message in messages %}
                         <li class="clearfix">
-                            <div class="message-data {% if message.user == current_user %}align-right{% endif %}">
-                                <span class="message-data-time">{{ message.timestamp }}</span>
+                            <div class="message-data-right">
+                                <span class="message-data-time">10:10 AM, Today</span>
                             </div>
-                            <div class="message {% if message.user == current_user %}my-message{% else %}other-message float-right{% endif %}">{{ message.message }} </div>
+                            <div class="message other-message float-right"> Hi Aiden, how are you? How is the project coming along? </div>
                         </li>
                         <li class="clearfix">
                             <div class="message-data">
                                 <span class="message-data-time">10:12 AM, Today</span>
                             </div>
                             <div class="message my-message">Are we meeting today?</div>                                    
+                        </li>                               
+                        <li class="clearfix">
+                            <div class="message-data">
+                                <span class="message-data-time">10:15 AM, Today</span>
+                            </div>
+                            <div class="message my-message">Project has been already finished and I have results to show you.</div>
                         </li>
-                        {% endfor %}                               
                     </ul>
                 </div>
                 <div class="chat-message clearfix">
@@ -77,29 +72,11 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-send"></i></span>
                         </div>
-                        <input type="text" class="form-control" id="input" placeholder="Enter text here...">                                    
+                        <input type="text" class="form-control" placeholder="Enter text here...">                                    
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    {% comment %} Get data for username and chatbox name{% endcomment %}
-    {{ request.user.username|json_script:"user_username" }}
-    {{ connection_id|json_script:"room-name" }}
 </div>
 </div>
-
-<!-- JS stuff -->
-
-<!-- display message history, todo: need to make it always auto-scroll to the bottom -->
-{% for message in messages %}
-    <script>
-        document.querySelector('#chat-text').value += ("{{ message.message|safe }}" + 
-                                                        " sent by " + 
-                                                        "{{ message.user.username|safe }}" + 
-                                                        "\n")
-    </script>
-{% endfor %}
-
-<!-- import chatSocket.js -->
-<script type="text/javascript" src="{% static '../static/js/chatSocket.js' %}"></script>
