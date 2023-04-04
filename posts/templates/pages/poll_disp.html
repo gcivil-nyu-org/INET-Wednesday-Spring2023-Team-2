@@ -52,6 +52,7 @@
        <section class="footer">
         <div class="text-center">
         Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
+        <a class="report" onclick="reportPost(event, {{ post.id }})"><i class="fas fa-exclamation-triangle"></i></a>
         </div>
       </section>
        
@@ -102,4 +103,38 @@
 
 <script>
   changeurl();
+
+  function reportPost(event, postId) {
+    event.preventDefault();
+    
+    // Add a confirmation message
+    var result = confirm("Do you want to report this post for inappropriate content?");
+    if (!result) {
+        alert("Report has been canceled!")
+    }
+    else {
+        $.ajax({
+            url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
+            type: "GET",
+            dataType: "json",
+            success: function(response) {
+                if (response.report === "success") {
+                    // Handle a successful report here
+                    alert("Post has been reported!");
+                } else if (response.report === "already_reported") {
+                    // Handle the case when the user has already reported the comment
+                    alert("You have already reported this post.");
+                } else {
+                    // Handle any other errors
+                    alert("An error occurred while reporting the post.");
+                }
+            },
+            error: function(xhr, reported, error) {
+                // Handle the error here
+                alert("Request error");
+            },
+        });
+    }
+  } 
+
 </script>
