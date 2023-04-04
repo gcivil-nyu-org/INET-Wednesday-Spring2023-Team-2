@@ -49,4 +49,9 @@ urlpatterns = [
         views.send_friend_request,
         name="send_friend_request",
     ),
+    path(
+        "friend_requests/<str:username_>/",
+        views.friend_requests,
+        name="friend_requests",
+    ),
 ]

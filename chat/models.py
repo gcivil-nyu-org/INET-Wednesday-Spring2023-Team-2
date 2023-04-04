@@ -37,9 +37,12 @@ class Connection_Model(models.Model):
         if user == self.from_user:
             return self.to_user
         return self.from_user
-    
+
     def connection_exists(cls, from_user, to_user):
-        return cls.objects.filter(from_user=from_user, to_user=to_user).exists() or cls.objects.filter(from_user=to_user, to_user=from_user).exists()
+        return (
+            cls.objects.filter(from_user=from_user, to_user=to_user).exists()
+            or cls.objects.filter(from_user=to_user, to_user=from_user).exists()
+        )
 
     def save(self, *args, **kwargs):
         if (

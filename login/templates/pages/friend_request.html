@@ -1,0 +1,15 @@
+{% for request in pending_requests %}
+    <li>
+        {{ request.from_user.username }} wants to be your friend.
+        <form method="POST" action="{% url 'account:accept_friend_request' request.id %}">
+            {% csrf_token %}
+            <button type="submit">Accept</button>
+        </form>
+        <form method="POST" action="{% url 'account:decline_friend_request' request.id %}">
+            {% csrf_token %}
+            <button type="submit">Decline</button>
+        </form>
+    </li>
+{% empty %}
+    <li>You have no pending friend requests.</li>
+{% endfor %}

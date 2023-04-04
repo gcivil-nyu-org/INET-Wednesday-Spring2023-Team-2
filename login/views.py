@@ -314,7 +314,6 @@ def profile_page_contents(request, username_):
         # contents['email'] = requested_user_details.email
         contents["profile"] = requested_user_details
         contents["edit_access"] = False
-    
 
     profile = Custom_User.objects.get(username=username_)
 
@@ -351,8 +350,6 @@ def profile_view(request, username_):
         return func_map[request.POST["account_info"]](request, contents)
 
     contents["tab_to_click"] = "nav-profile-tab"
-
-    
 
     return render(request, "pages/profile.html", contents)
 
@@ -468,23 +465,34 @@ def get_user_friends_list(user):
 @login_required
 def send_friend_request(request, uid):
     from_user = request.user
-    to_user = Custom_User.objects.get(id = uid)
-    friend_request, created  = Connection_Model.objects.get_or_create(
-        from_user = from_user, to_user = to_user
+    to_user = Custom_User.objects.get(id=uid)
+    friend_request, created = Connection_Model.objects.get_or_create(
+        from_user=from_user, to_user=to_user
     )
 
-
     if created:
-        messages.success(request, f'Friend request sent to {to_user.username}!')
+        messages.success(request, f"Friend request sent to {to_user.username}!")
     else:
-        messages.info(request, f'You have already sent a friend request to {to_user.username}.')
+        messages.info(
+            request, f"You have already sent a friend request to {to_user.username}."
+        )
     return redirect("account:profile_page", username_=to_user.username)
+
+
+@login_required
+def friend_requests(request):
+    pending_requests = Connection_Model.objects.filter(
+        to_user=request.user, connection_status="Pending"
+    )
+    context = {"pending_requests": pending_requests}
+    return render(request, "account/friend_requests.html", context)
+
 
 # def send_friend_request(request, uid):
 #     if request.method == 'POST':
 #         from_user = request.user
 #         to_user = get_object_or_404(Custom_User, id=uid)
-        
+
 
 #         # Avoid sending multiple requests or sending a request to oneself
 #         if from_user != to_user and not Connection_Model.objects.filter(from_user=from_user, to_user=to_user).exists():

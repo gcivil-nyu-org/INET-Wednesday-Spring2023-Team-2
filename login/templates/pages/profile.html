@@ -30,6 +30,8 @@
 			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends();">Friends</a>
 		</div>
 
+			<a class="nav-tab" id="nav-requests-tab" onclick="getFriendRequests();">Friend Requests</a>
+		</div>
 	</div>
 
 	{% if edit_access %}
@@ -146,6 +148,17 @@
        
     </div>
 
+	<div class="form-container tabcontent user-requests-container" id="nav-requests" style="display: none;">
+		<h2>Friend Requests</h2>
+		<div class="requests-content">
+			<ul>
+				<!-- this div will contain the friend requests for the user -->
+				<div id="friendRequests">
+	
+				</div>
+			</ul>
+		</div>
+	</div>
 
 </div>
 
@@ -239,6 +252,23 @@ function changeurlProfile(page)
         });
   }
 
+  function getFriendRequests(evt) {
+    openTab(evt, 'nav-requests');
+    changeurlProfile("friend_requests");
+
+    // Fetch and display friend requests using AJAX
+    $.ajax({
+        url: "{% url 'account:friend_requests' profile.username%}",
+        type: "GET",
+        success: function(resp) {
+            $("#friendRequests").html(resp);
+        },
+        error: function(resp) {
+            console.log("getFriendRequests error");
+        }
+    });
+}
+ 
 
 document.getElementById("{{ tab_to_click }}").click();
 
