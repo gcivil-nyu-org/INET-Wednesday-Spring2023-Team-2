@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.conf import settings
@@ -18,6 +18,8 @@ from .forms import PasswordChangeForm, ProfilePicForm
 from .forms import PasswordResetConfirmationForm
 from .tokens import account_activation_token, password_reset_token
 from .models import Custom_User
+from chat.models import Connection_Model
+from chat.views import get_friends_info
 
 
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
@@ -312,6 +314,26 @@ def profile_page_contents(request, username_):
         # contents['email'] = requested_user_details.email
         contents["profile"] = requested_user_details
         contents["edit_access"] = False
+    
+
+    profile = Custom_User.objects.get(username=username_)
+
+    # Check if the request already exists
+    request_exists = Connection_Model.objects.filter(
+        from_user=request.user, to_user=profile, connection_status="Pending"
+    ).exists()
+
+    # Get friends list
+    friends_list = get_friends_info(request)
+
+    contents["request_exists"] = request_exists
+    contents["friends_list"] = friends_list
+
+    # context = {
+    #     # 'profile': profile,
+    #     'request_exists': request_exists,
+    #     'friends_list': friends_list
+    # }
 
     return contents
 
@@ -329,6 +351,8 @@ def profile_view(request, username_):
         return func_map[request.POST["account_info"]](request, contents)
 
     contents["tab_to_click"] = "nav-profile-tab"
+
+    
 
     return render(request, "pages/profile.html", contents)
 
@@ -441,3 +465,31 @@ def get_user_friends_list(user):
 
     # returns all connection models that has from_user = user or to_user=user
     return friends
+@login_required
+def send_friend_request(request, uid):
+    from_user = request.user
+    to_user = Custom_User.objects.get(id = uid)
+    friend_request, created  = Connection_Model.objects.get_or_create(
+        from_user = from_user, to_user = to_user
+    )
+
+
+    if created:
+        messages.success(request, f'Friend request sent to {to_user.username}!')
+    else:
+        messages.info(request, f'You have already sent a friend request to {to_user.username}.')
+    return redirect("account:profile_page", username_=to_user.username)
+
+# def send_friend_request(request, uid):
+#     if request.method == 'POST':
+#         from_user = request.user
+#         to_user = get_object_or_404(Custom_User, id=uid)
+        
+
+#         # Avoid sending multiple requests or sending a request to oneself
+#         if from_user != to_user and not Connection_Model.objects.filter(from_user=from_user, to_user=to_user).exists():
+#             connection_request = Connection_Model(from_user=from_user, to_user=to_user)
+#             connection_request.save()
+#             messages.success(request, 'Friend request sent successfully.')
+
+#     return redirect('account:profile_page', username_=to_user.username)

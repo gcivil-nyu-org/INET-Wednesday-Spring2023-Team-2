@@ -29,6 +29,7 @@
 		<div class="tab-wrapper">
 			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends();">Friends</a>
 		</div>
+
 	</div>
 
 	{% if edit_access %}
@@ -56,10 +57,26 @@
 			</div>
 			<a></a>
 			<!--add change picture option-->
+
 			{% if edit_access %}
 			{{ profile_picture_change_form.profile_picture }}
 			<button type="submit" value="profile_pic" name="account_info">Change Picture</button>
 			{% endif %}
+
+			{% if not profile.is_superuser %}
+			{% if profile != request.user and profile not in friends_list and not request_exists %}
+			
+
+			<!-- <form method="POST" action="{% url 'account:send_friend_request' profile.id %}">
+				{% csrf_token %}
+				<button type="submit" class="friend_request_button">Send Friend Request</button>
+			</form> -->
+				<p class="friend_request">
+					<a href="{% url 'account:send_friend_request' profile.id %}" class="friend_request_button">Send Friend Request</a>
+				</p>
+			{% endif %}
+			{% endif %}
+	
 		</form>
 		</div>
 		<div class="profile-container tabcontent profile-info-container"> 

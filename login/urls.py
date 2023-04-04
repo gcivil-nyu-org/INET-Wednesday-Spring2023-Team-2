@@ -44,4 +44,9 @@ urlpatterns = [
     )
     # re_path("^profile/(?:name=(?P<username_>\w+))/$", views.UserHistory.as_view(), name="profile_page"),
     # re_path("profile/", login_required(views.UserHistory.as_view()), name="profile_page"),
+    path(
+        "send_friend_request/<int:uid>/",
+        views.send_friend_request,
+        name="send_friend_request",
+    ),
 ]
