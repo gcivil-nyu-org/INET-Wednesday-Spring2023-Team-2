@@ -416,19 +416,21 @@ class CommentsView(View):
                 comments_.commented_by = request.user
 
                 comment_text = comments_form.cleaned_data["comment_text"]
-                comment_text = re.sub(
-                    r"@(\w+)",
-                    lambda match: f'<a href="{reverse("account:profile_page", args=[match.group(1)])}"><strong>@{match.group(1)}</strong></a>',
-                    comment_text,
-                )
 
-                comment_text = comment_text.replace("\r\n", "<br>")
-                comments_.comment_text = comment_text
+            def check_mention_user_exist(match):
+                username = match.group(1)
+                try:
+                    Custom_User.objects.get(username=username)
+                    return f'<a href="{reverse("account:profile_page", args=[username])}"><strong>@{username}</strong></a>'
+                except Custom_User.DoesNotExist:
+                    return f"@{username}"
 
-                comments_.comment_text = comment_text
+            comment_text = re.sub(r"@(\w+)", check_mention_user_exist, comment_text)
 
-                comments_.save()
-                return JsonResponse({"commment": "success"})
+            comment_text = comment_text.replace("\r\n", "<br>")
+            comments_.comment_text = comment_text
+            comments_.save()
+            return JsonResponse({"commment": "success"})
 
         else:
             return HttpResponse("Thou Shall not Enter!!")
