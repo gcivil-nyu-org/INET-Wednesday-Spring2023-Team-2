@@ -50,6 +50,10 @@ class Post_Model(models.Model):
         default=datetime.now, editable=False, blank=True
     )
     result_reveal_time = models.DateTimeField(default=resut_reveal_time_function)
+    reported_by = models.ManyToManyField(
+        Custom_User, related_name="reported_post_user", blank=True
+    )
+    reported_count = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.id) + " => " + self.question_text
