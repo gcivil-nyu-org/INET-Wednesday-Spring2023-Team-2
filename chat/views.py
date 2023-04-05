@@ -2,6 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Chat_History, Connection_Model
 
+from django.contrib.auth.decorators import login_required
+
 
 # to check if request is form ajax
 def is_ajax(request):
@@ -30,7 +32,8 @@ def get_friends_info(request):
     #      print(i.get_friend(request.user), i.id)
 
 
-def chat_get_friends_info(request):
+@login_required
+def chat_page(request):
     connections_sent = request.user.connection_requests_sent.filter(
         connection_status="Accepted"
     )
@@ -70,6 +73,7 @@ def get_chat_history(connection_id):
 
 
 # delete later
+@login_required
 def chat_view_test(request, connection_id):
     # if connection doesn't exists (i.e. users don't know each other) or
     # if connection is not in accepted status (i.e. users agreed to chat with each other) or
