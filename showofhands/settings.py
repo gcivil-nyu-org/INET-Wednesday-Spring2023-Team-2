@@ -36,13 +36,14 @@ else:
     SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if "SETTINGS_DEBUG" in os.environ:
-    DEBUG = bool(int(os.environ.get("SETTINGS_DEBUG")))
-else:
-    DEBUG = True
+# if "SETTINGS_DEBUG" in os.environ:
+#     DEBUG = bool(int(os.environ.get("SETTINGS_DEBUG")))
+# else:
+DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS = [
     "ShowofHands-dev.us-east-1.elasticbeanstalk.com",
+    "ShowofHands-dev-2.us-east-1.elasticbeanstalk.com",
     "localhost",
     "0.0.0.0",
 ]
@@ -254,12 +255,14 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 ASGI_APPLICATION = "showofhands.asgi.application"
 
 ## Redis for AWS
-if "REDIS_ENDPOINT" in os.environ:
+if "USE_REDIS_ENDPOINT" in os.environ and os.environ["USE_REDIS_ENDPOINT"]:
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",
             "CONFIG": {
-                "hosts": [(os.environ["REDIS_ENDPOINT"], 6379)],
+                "hosts": [
+                    ("aws-my-1sw7m30jtg0i4.yxaols.0001.use1.cache.amazonaws.com", 6379)
+                ],
             },
         },
     }
