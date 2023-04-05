@@ -46,13 +46,44 @@ class Connection_Model(models.Model):
 
     def save(self, *args, **kwargs):
         if (
-            Connection_Model.objects.filter(from_user=self.from_user).exists()
-            and Connection_Model.objects.filter(to_user=self.to_user).exists()
+            Connection_Model.objects.filter(
+                from_user=self.from_user, to_user=self.to_user
+            ).exists()
+            and Connection_Model.objects.get(
+                from_user=self.from_user, to_user=self.to_user
+            ).connection_status
+            == "Pending"
+            and self.connection_status != "Pending"
+        ):
+            Connection_Model.objects.get(
+                from_user=self.from_user, to_user=self.to_user
+            ).delete()
+            super(Connection_Model, self).save(*args, **kwargs)
+        elif (
+            Connection_Model.objects.filter(
+                to_user=self.from_user, from_user=self.to_user
+            ).exists()
+            and Connection_Model.objects.get(
+                to_user=self.from_user, from_user=self.to_user
+            ).connection_status
+            == "Pending"
+            and self.connection_status != "Pending"
+        ):
+            Connection_Model.objects.get(
+                to_user=self.from_user, from_user=self.to_user
+            ).delete()
+            super(Connection_Model, self).save(*args, **kwargs)
+        elif (
+            Connection_Model.objects.filter(
+                from_user=self.from_user, to_user=self.to_user
+            ).exists()
         ) or (
-            Connection_Model.objects.filter(to_user=self.from_user).exists()
-            and Connection_Model.objects.filter(from_user=self.to_user).exists()
+            Connection_Model.objects.filter(
+                to_user=self.from_user, from_user=self.to_user
+            ).exists()
         ):
             raise ValidationError("Connection between specified users already exists!!")
+
         super(Connection_Model, self).save(*args, **kwargs)
 
 

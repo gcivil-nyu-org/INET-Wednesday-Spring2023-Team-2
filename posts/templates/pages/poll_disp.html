@@ -52,7 +52,7 @@
        <section class="footer">
         <div class="text-center">
         Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
-        <a class="report" onclick="reportPost(event, {{ post.id }})"><i class="fas fa-exclamation-triangle"></i></a>
+        <a class="report" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
         </div>
       </section>
        

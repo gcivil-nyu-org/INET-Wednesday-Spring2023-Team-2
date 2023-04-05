@@ -26,11 +26,12 @@
 		<div class="tab-wrapper">
 		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
 		</div>
-		{% if edit_access %}
+	
 		<div class="tab-wrapper">
 			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends();">Friends</a>
 		</div>
-
+		{% if edit_access %}
+		<div class="tab-wrapper">
 			<a class="nav-tab" id="nav-requests-tab" onclick="getFriendRequests();">Friend Requests</a>
 		</div>
 		{% endif %}
@@ -68,7 +69,7 @@
 			{% endif %}
 
 
-			{% if profile != request.user and profile not in friends_list and not request_exists %}
+			{% if profile != request.user and not friend_exists and not request_exists %}
 			
 
 			<!-- <form method="POST" action="{% url 'account:send_friend_request' profile.id %}">

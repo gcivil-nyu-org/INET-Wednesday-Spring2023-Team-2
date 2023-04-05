@@ -319,15 +319,36 @@ def profile_page_contents(request, username_):
     profile = Custom_User.objects.get(username=username_)
 
     # Check if the request already exists
-    request_exists = Connection_Model.objects.filter(
-        from_user=request.user, to_user=profile, connection_status="Pending"
-    ).exists()
+    request_exists = (
+        Connection_Model.objects.filter(
+            from_user=request.user, to_user=profile, connection_status="Pending"
+        ).exists()
+        or Connection_Model.objects.filter(
+            from_user=profile, to_user=request.user, connection_status="Pending"
+        ).exists()
+    )
 
     # Get friends list
-    friends_list = get_friends_info(request)
+    # user_ = Custom_User.objects.get(username=username_)
+    # friends = get_user_friends_list(user_).order_by("-connection_answer_time")
+    # friends_list = [friend.get_friend(user_) for friend in friends]
+    friend_exists = (
+        Connection_Model.objects.filter(
+            from_user=request.user, to_user=profile, connection_status="Accepted"
+        ).exists()
+        or Connection_Model.objects.filter(
+            from_user=request.user, to_user=profile, connection_status="Declined"
+        ).exists()
+        or Connection_Model.objects.filter(
+            from_user=profile, to_user=request.user, connection_status="Accepted"
+        ).exists()
+        or Connection_Model.objects.filter(
+            from_user=profile, to_user=request.user, connection_status="Declined"
+        ).exists()
+    )
 
     contents["request_exists"] = request_exists
-    contents["friends_list"] = friends_list
+    contents["friend_exists"] = friend_exists
 
     # context = {
     #     # 'profile': profile,
@@ -463,6 +484,8 @@ def get_user_friends_list(user):
 
     # returns all connection models that has from_user = user or to_user=user
     return friends
+
+
 @login_required
 def send_friend_request(request, uid):
     from_user = request.user
@@ -560,7 +583,9 @@ def decline_friend_request(request, uid):
         try:
             friend_request = Connection_Model.objects.get(id=uid)
             if friend_request.to_user == request.user:
-                friend_request.delete()
+                friend_request.connection_status = "Declined"
+                friend_request.save()
+                # friend_request.delete()
                 return JsonResponse({"status": "success"})
             else:
                 return JsonResponse(

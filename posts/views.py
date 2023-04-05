@@ -163,10 +163,8 @@ def results_view(request, pid):
     # print(post_.result_reveal_time - timedelta(hours=5), datetime.now())
 
     ##Need to change timezone to fix this ig...this is temporary fix
-    if (
-        post_.result_reveal_time.replace(tzinfo=None) - timedelta(hours=5)
-        < datetime.now()
-    ):
+    print(post_.result_reveal_time.replace(tzinfo=None), datetime.now())
+    if post_.result_reveal_time.replace(tzinfo=None) < datetime.now():
         contents["show_poll_results"] = True
 
     return HttpResponse(template.render(contents, request))
