@@ -386,3 +386,155 @@ class ViewsFunctions(TestCase):
         # Check if the comment is deleted from the database
         with self.assertRaises(Comments_Model.DoesNotExist):
             Comments_Model.objects.get(id=comment2.id)
+
+    def test_redirect_to_home_view(self):
+        # Generate URL for named view "go_home"
+        url = reverse("go_home")
+
+        # Perform a GET request to the URL
+        response = self.client.get(url)
+
+        # Assert that the response status code is 200
+        self.assertEqual(response.status_code, 302)
+
+    def test_upvote_comment_success(self):
+        user = Custom_User.objects.create_user(username="test3", password="test1234")
+        self.client.force_login(user=user)
+        post4 = Post_Model.objects.create(
+            question_text="bye", created_by=self.user1, id=7
+        )
+        option1 = Options_Model.objects.create(question=post4, choice_text="option1")
+        option2 = Options_Model.objects.create(question=post4, choice_text="option2")
+        option1.chosen_by.add(user)
+        comment2 = Comments_Model.objects.create(
+            comment_text="Test Comment 2", question=post4, commented_by=user
+        )
+
+        # Send an AJAX request to upvote the comment
+        response = self.client.get(
+            reverse("posts:upvote_comment", args=[comment2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        # Check response status code
+        self.assertEqual(response.status_code, 200)
+
+        # Check response data
+        self.assertEqual(response.json(), {"upvote": "success"})
+
+        # Refresh the comment object from the database
+        comment2.refresh_from_db()
+
+        # Check if the user1 is added to upvoted_by and vote_count is updated
+        self.assertIn(user, comment2.upvoted_by.all())
+        self.assertEqual(comment2.vote_count, 1)
+
+    def test_downvote_comment_success(self):
+        user = Custom_User.objects.create_user(username="test3", password="test1234")
+        self.client.force_login(user=user)
+        post4 = Post_Model.objects.create(
+            question_text="bye", created_by=self.user1, id=7
+        )
+        option1 = Options_Model.objects.create(question=post4, choice_text="option1")
+        option2 = Options_Model.objects.create(question=post4, choice_text="option2")
+        option1.chosen_by.add(user)
+        comment2 = Comments_Model.objects.create(
+            comment_text="Test Comment 2", question=post4, commented_by=user
+        )
+
+        # Send an AJAX request to upvote the comment
+        response = self.client.get(
+            reverse("posts:downvote_comment", args=[comment2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        # Check response status code
+        self.assertEqual(response.status_code, 200)
+
+        # Check response data
+        self.assertEqual(response.json(), {"downvote": "success"})
+
+        # Refresh the comment object from the database
+        comment2.refresh_from_db()
+
+        # Check if the user1 is added to upvoted_by and vote_count is updated
+        self.assertIn(user, comment2.downvoted_by.all())
+        self.assertEqual(comment2.vote_count, -1)
+
+    def test_upvote_comment_change_success(self):
+        user = Custom_User.objects.create_user(username="test3", password="test1234")
+        self.client.force_login(user=user)
+        post4 = Post_Model.objects.create(
+            question_text="bye", created_by=self.user1, id=7
+        )
+        option1 = Options_Model.objects.create(question=post4, choice_text="option1")
+        option2 = Options_Model.objects.create(question=post4, choice_text="option2")
+        option1.chosen_by.add(user)
+        comment2 = Comments_Model.objects.create(
+            comment_text="Test Comment 2", question=post4, commented_by=user
+        )
+
+        response = self.client.get(
+            reverse("posts:downvote_comment", args=[comment2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        comment2.refresh_from_db()
+
+        self.assertEqual(comment2.vote_count, -1)
+
+        response = self.client.get(
+            reverse("posts:upvote_comment", args=[comment2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Refresh the comment object from the database
+
+        self.assertEqual(response.json(), {"upvote": "change vote success"})
+
+        comment2.refresh_from_db()
+
+        self.assertNotIn(user, comment2.downvoted_by.all())
+        self.assertIn(user, comment2.upvoted_by.all())
+        self.assertEqual(comment2.vote_count, 1)
+
+    def test_downvote_comment_change_success(self):
+        user = Custom_User.objects.create_user(username="test3", password="test1234")
+        self.client.force_login(user=user)
+        post4 = Post_Model.objects.create(
+            question_text="bye", created_by=self.user1, id=7
+        )
+        option1 = Options_Model.objects.create(question=post4, choice_text="option1")
+        option2 = Options_Model.objects.create(question=post4, choice_text="option2")
+        option1.chosen_by.add(user)
+        comment2 = Comments_Model.objects.create(
+            comment_text="Test Comment 2", question=post4, commented_by=user
+        )
+
+        response = self.client.get(
+            reverse("posts:upvote_comment", args=[comment2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        comment2.refresh_from_db()
+
+        self.assertEqual(comment2.vote_count, 1)
+
+        response = self.client.get(
+            reverse("posts:downvote_comment", args=[comment2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Refresh the comment object from the database
+
+        self.assertEqual(response.json(), {"downvote": "change vote success"})
+
+        comment2.refresh_from_db()
+
+        self.assertNotIn(user, comment2.upvoted_by.all())
+        self.assertIn(user, comment2.downvoted_by.all())
+        self.assertEqual(comment2.vote_count, -1)

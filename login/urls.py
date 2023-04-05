@@ -41,7 +41,27 @@ urlpatterns = [
         "profile/<str:username_>/friends",
         login_required(views.UserFriends.as_view()),
         name="profile_friends_page",
-    )
+    ),
     # re_path("^profile/(?:name=(?P<username_>\w+))/$", views.UserHistory.as_view(), name="profile_page"),
     # re_path("profile/", login_required(views.UserHistory.as_view()), name="profile_page"),
+    path(
+        "send_friend_request/<int:uid>/",
+        views.send_friend_request,
+        name="send_friend_request",
+    ),
+    path(
+        "friend_requests/<str:username_>/",
+        views.friend_requests,
+        name="friend_requests",
+    ),
+    path(
+        "accept_friend_request/<int:uid>>/",
+        views.accept_friend_request,
+        name="accept_friend_request",
+    ),
+    path(
+        "decline_friend_request/<int:uid>>/",
+        views.decline_friend_request,
+        name="decline_friend_request",
+    ),
 ]
