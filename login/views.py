@@ -482,8 +482,10 @@ def send_friend_request(request, uid):
 
 @login_required
 def friend_requests(request, username_):
+
+    user = Custom_User.objects.get(username=username_)
     pending_requests = Connection_Model.objects.filter(
-        to_user=request.user, connection_status="Pending"
+        to_user=user, connection_status="Pending"
     )
     context = {"pending_requests": pending_requests}
     return render(request, "pages/friend_request.html", context)
