@@ -1,15 +1,51 @@
-{% for request in pending_requests %}
+
+{% for friend_request in pending_requests %}
     <li>
-        {{ request.from_user.username }} wants to be your friend.
-        <form method="POST" action="{% url 'account:accept_friend_request' request.id %}">
-            {% csrf_token %}
-            <button type="submit">Accept</button>
-        </form>
-        <form method="POST" action="{% url 'account:decline_friend_request' request.id %}">
-            {% csrf_token %}
-            <button type="submit">Decline</button>
-        </form>
+
+      <a href="{% url 'account:profile_page' friend_request.from_user.username %}">
+        <img src="{{ friend_request.from_user.profile_picture.url }}" alt="{{ friend_request.from_user.username }}" height="50px" width="50px" >
+      </a>
+      <p>{{ friend_request.from_user.username }}</p>
+
+      <a class="accept" onclick="acceptFriendRequest(event, {{ friend_request.id }})">Accept</a>
+
+      <a class="decline" onclick="declineFriendRequest(event, {{ friend_request.id }})">Decline</a>
     </li>
+
+
 {% empty %}
     <li>You have no pending friend requests.</li>
 {% endfor %}
+
+<script>
+    function acceptFriendRequest(event, uid) {
+    event.preventDefault();
+    $.ajax({
+        url: "{% url 'account:accept_friend_request' uid=1 %}".replace('1', uid.toString()),
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            getFriendRequests();
+        },
+        error: function(xhr, reported, error) {
+            console.log("Error accepting friend request");
+        },
+    });
+}
+
+function declineFriendRequest(event, uid) {
+    event.preventDefault();
+    $.ajax({
+        url: "{% url 'account:decline_friend_request' uid=1 %}".replace('1', uid.toString()),
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            getFriendRequests();
+        },
+        error: function(xhr, reported, error) {
+            console.log("Error declining friend request");
+        },
+    });
+}
+
+</script>

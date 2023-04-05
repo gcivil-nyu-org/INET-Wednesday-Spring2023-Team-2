@@ -10,6 +10,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.hashers import make_password, check_password
+from django.http import JsonResponse
 
 from .forms import LoginForm
 from .forms import RegisterForm
@@ -501,3 +502,74 @@ def friend_requests(request, username_):
 #             messages.success(request, 'Friend request sent successfully.')
 
 #     return redirect('account:profile_page', username_=to_user.username)
+
+
+# @login_required
+# def accept_friend_request(request, request_id):
+#     try:
+#         friend_request = Connection_Model.objects.get(id=request_id, to_user=request.user, connection_status="Pending")
+#         friend_request.connection_status = "Accepted"
+#         friend_request.save()
+#         messages.success(request, f'You are now friends with {friend_request.from_user.username}!')
+#     except Connection_Model.DoesNotExist:
+#         messages.error(request, 'Friend request not found.')
+
+#     return redirect('account:profile_page', username_=request.user.username)
+
+
+# @login_required
+# def decline_friend_request(request, request_id):
+#     try:
+#         friend_request = Connection_Model.objects.get(id=request_id, to_user=request.user, connection_status="Pending")
+#         friend_request.delete()
+#         messages.success(request, f'Friend request from {friend_request.from_user.username} has been declined.')
+#     except Connection_Model.DoesNotExist:
+#         messages.error(request, 'Friend request not found.')
+
+#     return redirect('account:profile_page', username_=request.user.username)
+
+
+@login_required
+def accept_friend_request(request, uid):
+    if is_ajax(request):
+        try:
+            friend_request = Connection_Model.objects.get(id=uid)
+            if friend_request.to_user == request.user:
+                friend_request.connection_status = "Accepted"
+                friend_request.save()
+
+                return JsonResponse({"status": "success"})
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "You don't have permission to accept this friend request.",
+                    }
+                )
+        except Connection_Model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Friend request not found."}
+            )
+    return JsonResponse({"status": "error", "message": "Not an AJAX request."})
+
+
+@login_required
+def decline_friend_request(request, uid):
+    if is_ajax(request):
+        try:
+            friend_request = Connection_Model.objects.get(id=uid)
+            if friend_request.to_user == request.user:
+                friend_request.delete()
+                return JsonResponse({"status": "success"})
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "You don't have permission to decline this friend request.",
+                    }
+                )
+        except Connection_Model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Friend request not found."}
+            )
+    return JsonResponse({"status": "error", "message": "Not an AJAX request."})

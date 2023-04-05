@@ -54,4 +54,14 @@ urlpatterns = [
         views.friend_requests,
         name="friend_requests",
     ),
+    path(
+        "accept_friend_request/<int:uid>>/",
+        views.accept_friend_request,
+        name="accept_friend_request",
+    ),
+    path(
+        "decline_friend_request/<int:uid>>/",
+        views.decline_friend_request,
+        name="decline_friend_request",
+    ),
 ]
