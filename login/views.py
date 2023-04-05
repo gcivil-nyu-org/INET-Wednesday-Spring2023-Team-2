@@ -482,7 +482,6 @@ def send_friend_request(request, uid):
 
 @login_required
 def friend_requests(request, username_):
-
     user = Custom_User.objects.get(username=username_)
     pending_requests = Connection_Model.objects.filter(
         to_user=user, connection_status="Pending"
