@@ -252,15 +252,17 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 
 # updates for chat application
 ASGI_APPLICATION = "showofhands.asgi.application"
-CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
+## Redis for AWS
+if "REDIS_ENDPOINT" in os.environ:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [(os.environ["REDIS_ENDPOINT"], 6379)],
+            },
+        },
+    }
 
-# Redis for AWS to be configured later
-# CHANNEL_LAYERS = {
-#     "default": {
-#     'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#     "CONFIG": {
-#         "hosts": [('127.0.0.1', 6379)],
-#         },
-#     },
-# }
+else:
+    CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
