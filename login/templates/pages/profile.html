@@ -26,6 +26,9 @@
 		<div class="tab-wrapper">
 		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
 		</div>
+		<div class="tab-wrapper">
+			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends();">Friends</a>
+		</div>
 	</div>
 
 	{% if edit_access %}
@@ -110,6 +113,22 @@
        
     </div>
 
+	<!-- Friends Tab -->
+	<div class="form-container tabcontent user-history-container" id="nav-friends" style="display: none;">
+        <h2>Friends</h2>
+		<div class="history-content">
+			<ul>
+				<!-- this div will contain user friends, called from ajax -->
+				<div id="userFriends">
+
+				</div>
+				
+			</ul>
+
+		</div>
+       
+    </div>
+
 
 </div>
 
@@ -164,6 +183,23 @@ function getPostsCreated(){
             },
             error: function(resp){
                 console.log("getPostsCreated error");
+            }
+        });
+}
+
+
+function getFriends(){
+	openTab(event, 'nav-friends');
+        $.ajax({
+            url: "{% url 'account:profile_friends_page' profile.username %}",
+            type: "GET",
+            success: function(resp){
+				changeurlProfile("friends");
+                $("#userFriends").html(resp);
+				console.log(resp);
+            },
+            error: function(resp){
+                console.log("getFriends error");
             }
         });
 }

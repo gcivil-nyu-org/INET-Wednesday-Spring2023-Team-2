@@ -391,11 +391,12 @@ class CurrentProfileURL(APIView):
     renderer_classes = [JSONRenderer]
     # permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request, username, page):
+    def get(self, request, page, username):
         url_page_map = {
             "history": "account:profile_history_page",
             "posts_created": "account:profile_postscreated_page",
             "profile": "account:profile_page",
+            "friends": "account:profile_friends_page",
         }
         current_url = request.build_absolute_uri(
             reverse(url_page_map[page], kwargs={"username_": username})
@@ -403,3 +404,40 @@ class CurrentProfileURL(APIView):
         content = {"current_url": current_url}
         # print(content)
         return Response(content)
+
+
+class UserFriends(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    # permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, username_):
+        if is_ajax(request):
+            user_ = Custom_User.objects.get(username=username_)
+            friends = get_user_friends_list(user_).order_by("-connection_answer_time")
+            # print(get_user_friends_list(user_), friends)
+
+            friends = [friend.get_friend(user_) for friend in friends]
+
+            return Response(
+                {"friends": friends}, template_name="pages/profile_friends.html"
+            )
+
+        else:
+            contents = profile_page_contents(request, username_)
+
+            contents["tab_to_click"] = "nav-friends-tab"
+            return Response(contents, template_name="pages/profile.html")
+
+
+def get_user_friends_list(user):
+    connections_sent = user.connection_requests_sent.filter(
+        connection_status="Accepted"
+    )
+    connections_recieved = user.connection_requests_received.filter(
+        connection_status="Accepted"
+    )
+
+    friends = connections_sent | connections_recieved
+
+    # returns all connection models that has from_user = user or to_user=user
+    return friends

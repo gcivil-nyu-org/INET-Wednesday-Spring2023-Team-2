@@ -44,24 +44,29 @@ else:
 ALLOWED_HOSTS = ALLOWED_HOSTS = [
     "ShowofHands-dev.us-east-1.elasticbeanstalk.com",
     "localhost",
+    "0.0.0.0",
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # customs
     "login",
     "posts",
     "users",
+    "chat",
+    # builtins
     "rest_framework",
     "storages",
-    "chat",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -243,3 +248,19 @@ STATICFILES_DIRS = (
 )
 
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+
+
+# updates for chat application
+ASGI_APPLICATION = "showofhands.asgi.application"
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
+
+
+# Redis for AWS to be configured later
+# CHANNEL_LAYERS = {
+#     "default": {
+#     'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#     "CONFIG": {
+#         "hosts": [('127.0.0.1', 6379)],
+#         },
+#     },
+# }

@@ -1,51 +1,160 @@
 
 <div class = "comment-section">
-
-{% if show_comments_text %}
-    
-    <div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.0/css/all.min.css">
+    {% if show_comments_text %}
         
-        {% for comment in comments %}
+        <div>
+            
+            {% for comment in comments %}
+    
+            <div class="comment-box">
+                <div class="comment">
 
-        <div class="comment-box">
-            <div class="comment">
-                <!-- query user model and get profile_picture -->
-                <!-- <img src="https://via.placeholder.com/40" alt="User Avatar" class="avatar"> -->
-                <div class="profile-picture-container"  id="pfp{{ forloop.counter }}">
-                    <img src="{{ comment.commented_by.profile_picture.url }}" alt="User Avatar" class="avatar">
+                    <div class="profile-picture-container"  id="pfp{{ forloop.counter }}">
+                        <img src="{{ comment.commented_by.profile_picture.url }}" alt="User Avatar" class="avatar">
+                    </div>
+                    <div class="comment-info">
+                        <p class="username"><a href="{% url 'account:profile_page' comment.commented_by %}">{{ comment.commented_by }}</a></p> 
+                        <p class="comment-text">{{ comment.comment_text | safe }}</p>
+                    </div>
                 </div>
-                <div class="comment-info">
-                    <p class="username"><a href="{% url 'account:profile_page' comment.commented_by %}">{{ comment.commented_by }}</a></p> 
-                    <p class="comment-text">{{ comment.comment_text | safe }}</p>
-                    <span class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</span>
+                <div class="comment-action">
+                    <a class= "upvote" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
+                    <span class = "react">{{ comment.vote_count }}</span>
+                    <a class = "downvote" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
+                    <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
+                    {% if request.user == comment.commented_by %}
+                    <a class="delete" onclick="deleteComment(event, {{ comment.id }})"><i class="fas fa-trash-alt"></i></a>
+                    {% endif %}
+                    <a class="report" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
+                    <a class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
                 </div>
             </div>
-            <div class="comment-action">
-                <a href="#" class="reply" data-username="{{ comment.commented_by.username }}">Reply</a>
-                <a href="#" class="report">Report</a>
-                <!-- <a href="#" class="like">Like</a> -->
-            </div>
+            <script>
+                document.getElementById('pfp{{ forloop.counter }}').style.borderColor = "#{{user_color}}";
+            </script>
+            {% endfor %}
+        
         </div>
-        <script>
-            document.getElementById('pfp{{ forloop.counter }}').style.borderColor = "#{{user_color}}";
-        </script>
-        {% endfor %}
+        
+    {% endif %}
     
     </div>
     
-{% endif %}
-
-</div>
-
-<script>
-    $(document).ready(function() {
-        $(".reply").click(function(e) {
-            e.preventDefault();
-            var username = $(this).data("username");
-            var commentField = $("#commentTextDisp2 .comment-input");
-            commentField.val("@" + username + " ");
-            commentField.focus();
+    <script>
+        $(document).ready(function() {
+            $(".reply").click(function(e) {
+                e.preventDefault();
+                var username = $(this).data("username");
+                var commentField = $("#commentTextDisp2 .comment-input");
+                commentField.val("@" + username + " ");
+                commentField.focus();
+            });
+            $("#commentTextDisp2 .comment-input").keydown(function(e) {
+                if (e.key === "Backspace") {
+                    var inputField = $(this);
+                    var cursorPosition = inputField.prop("selectionStart");
+                    var inputValue = inputField.val();
+                    var mentionRegex = /@\w+\s?$/;
+                    var textBeforeCursor = inputValue.slice(0, cursorPosition);
+        
+                    if (mentionRegex.test(textBeforeCursor)) {
+                        e.preventDefault();
+                        var newValue = textBeforeCursor.replace(mentionRegex, "") + inputValue.slice(cursorPosition);
+                        inputField.val(newValue);
+                        inputField.prop("selectionStart", cursorPosition - 1);
+                        inputField.prop("selectionEnd", cursorPosition - 1);
+                    }
+                }
+            });
         });
-    });
-</script>
 
+        function reportComment(event, commentId) {
+            event.preventDefault();
+            
+            // Add a confirmation message
+            var result = confirm("Do you want to report this comment for inappropriate content?");
+            if (!result) {
+                alert("Report has been canceled!")
+            }
+            else {                  
+                $.ajax({
+                    url: "{% url 'posts:report_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
+                    type: "GET",
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.report === "success") {
+                            // Handle a successful report here
+                            alert("Comment has been reported!");
+                        } else if (response.report === "already_reported") {
+                            // Handle the case when the user has already reported the comment
+                            alert("You have already reported this comment.");
+                        } else {
+                            // Handle any other errors
+                            alert("An error occurred while reporting the comment.");
+                        }
+                    },
+                    error: function(xhr, reported, error) {
+                        // Handle the error here
+                        alert("Request error");
+                    },
+                });
+            }
+        }  
+
+        function deleteComment(event, commentId) {
+            event.preventDefault();
+            var result = confirm("Do you want to delete your comment?");
+            if (!result) {
+                alert("Comment gets to live another day!")
+            }
+            else {
+                $.ajax({
+                    url: "{% url 'posts:delete_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
+                    type: "GET",
+                    success: function (response) {
+                        if (response.delete === "success") {
+                            getComments()
+                            alert("Comment has been deleted!")
+                        } else {
+                            alert("Something went wrong")
+                        }
+                    },
+                    error: function () {
+                        console.log("Comment delete error");
+                    },
+                  });
+                }
+            }   
+
+        function upvoteComment(event, commentId) {            
+            $.ajax({
+                url: "{% url 'posts:upvote_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
+                type: "GET",
+                    dataType: "json",
+                    success: function(response) {
+                        getComments()
+                    },
+                    error: function(xhr, reported, error) {
+                        // Handle the error here
+                        console.log(response)
+                    },
+                });    
+        }  
+        function downvoteComment(event, commentId) {              
+            $.ajax({
+                url: "{% url 'posts:downvote_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
+                type: "GET",
+                    dataType: "json",
+                    success: function(response) {
+                        getComments()
+                    },
+                    error: function(xhr, reported, error) {
+                        // Handle the error here
+                        console.log(response)
+                    },
+                });    
+        }  
+    </script>
+    
+    

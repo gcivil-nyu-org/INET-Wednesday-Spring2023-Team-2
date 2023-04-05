@@ -264,25 +264,34 @@ class SearchPostsView(TemplateView):
         query = request.GET.get("search", "")
 
         if query:
-            results = Options_Model.objects.filter(
-                Q(question__question_text__icontains=query)
-                | Q(choice_text__icontains=query)
+            results = Post_Model.objects.filter(
+                Q(question_text__icontains=query)
+                | Q(options_model__choice_text__icontains=query)
             ).distinct()
         else:
             results = Post_Model.objects.none()
 
-        return JsonResponse(
-            {
-                "search_results": [
+        search_results = []
+        for post in results:
+            options = []
+            # create an array for options based on the Options_Model.question=post
+            for option in Options_Model.objects.filter(question=post):
+                options.append(
                     {
-                        "id": option.question.id,
-                        "question_text": option.question.question_text,
                         "choice_text": option.choice_text,
                     }
-                    for option in results
-                ]
-            }
-        )
+                )
+
+            search_results.append(
+                {
+                    "id": post.id,
+                    "question_text": post.question_text,
+                    "category": post.category,
+                    "options": options,
+                }
+            )
+
+        return JsonResponse({"search_results": search_results})
 
 
 # def posts_view(request, pid, call="noapi"):
@@ -416,19 +425,21 @@ class CommentsView(View):
                 comments_.commented_by = request.user
 
                 comment_text = comments_form.cleaned_data["comment_text"]
-                comment_text = re.sub(
-                    r"@(\w+)",
-                    lambda match: f'<a href="{reverse("account:profile_page", args=[match.group(1)])}"><strong>@{match.group(1)}</strong></a>',
-                    comment_text,
-                )
 
-                comment_text = comment_text.replace("\r\n", "<br>")
-                comments_.comment_text = comment_text
+            def check_mention_user_exist(match):
+                username = match.group(1)
+                try:
+                    Custom_User.objects.get(username=username)
+                    return f'<a href="{reverse("account:profile_page", args=[username])}"><strong>@{username}</strong></a>'
+                except Custom_User.DoesNotExist:
+                    return f"@{username}"
 
-                comments_.comment_text = comment_text
+            comment_text = re.sub(r"@(\w+)", check_mention_user_exist, comment_text)
 
-                comments_.save()
-                return JsonResponse({"commment": "success"})
+            comment_text = comment_text.replace("\r\n", "<br>")
+            comments_.comment_text = comment_text
+            comments_.save()
+            return JsonResponse({"commment": "success"})
 
         else:
             return HttpResponse("Thou Shall not Enter!!")
@@ -472,6 +483,121 @@ class CommentsView(View):
             contents["show_comments_text"] = True
             return HttpResponse(template.render(contents, request))
             # return render(request, "pages/comments.html", contents)
+
+
+def report_comment(request, comment_id):
+    if is_ajax(request):
+        try:
+            comment = Comments_Model.objects.get(id=comment_id)
+            if request.user not in comment.reported_by.all():
+                comment.reported_by.add(request.user)
+                comment.reported_count += 1
+                comment.save()
+                return JsonResponse({"report": "success"})
+            else:
+                return JsonResponse({"report": "already_reported"})
+        except Comments_Model.DoesNotExist:
+            return JsonResponse({"report": "error"})
+    return JsonResponse({"report": "not ajax"})
+
+
+def report_post(request, post_id):
+    if is_ajax(request):
+        try:
+            post = Post_Model.objects.get(id=post_id)
+            if request.user not in post.reported_by.all():
+                post.reported_by.add(request.user)
+                post.reported_count += 1
+                post.save()
+                return JsonResponse({"report": "success"})
+            else:
+                return JsonResponse({"report": "already_reported"})
+        except Comments_Model.DoesNotExist:
+            return JsonResponse({"report": "error"})
+    return JsonResponse({"report": "not ajax"})
+
+
+def delete_comment(request, comment_id):
+    if is_ajax(request):
+        comment = Comments_Model.objects.get(id=comment_id)
+
+        if comment.commented_by == request.user:
+            comment.delete()
+            return JsonResponse({"delete": "success"})
+        else:
+            return JsonResponse({"delete": "fail"})
+    return JsonResponse({"delete": "error"})
+
+
+def upvote_comment(request, comment_id):
+    if is_ajax(request):
+        try:
+            comment = Comments_Model.objects.get(id=comment_id)
+            if (
+                request.user not in comment.upvoted_by.all()
+                and request.user not in comment.downvoted_by.all()
+            ):
+                comment.upvoted_by.add(request.user)
+                comment.vote_count += 1
+                comment.save()
+                return JsonResponse({"upvote": "success"})
+            elif (
+                request.user in comment.upvoted_by.all()
+                and request.user not in comment.downvoted_by.all()
+            ):
+                comment.upvoted_by.remove(request.user)
+                comment.vote_count -= 1
+                comment.save()
+            elif (
+                request.user not in comment.upvoted_by.all()
+                and request.user in comment.downvoted_by.all()
+            ):
+                comment.upvoted_by.add(request.user)
+                comment.vote_count += 2
+                comment.downvoted_by.remove(request.user)
+                comment.save()
+                return JsonResponse({"upvote": "change vote success"})
+            else:
+                return JsonResponse({"upvote": "already upvoted"})
+
+        except Comments_Model.DoesNotExist:
+            return JsonResponse({"upvote": "error"})
+    return JsonResponse({"upvote": "not ajax"})
+
+
+def downvote_comment(request, comment_id):
+    if is_ajax(request):
+        try:
+            comment = Comments_Model.objects.get(id=comment_id)
+            if (
+                request.user not in comment.downvoted_by.all()
+                and request.user not in comment.upvoted_by.all()
+            ):
+                comment.downvoted_by.add(request.user)
+                comment.vote_count -= 1
+                comment.save()
+                return JsonResponse({"downvote": "success"})
+            elif (
+                request.user in comment.downvoted_by.all()
+                and request.user not in comment.upvoted_by.all()
+            ):
+                comment.downvoted_by.remove(request.user)
+                comment.vote_count += 1
+                comment.save()
+            elif (
+                request.user not in comment.downvoted_by.all()
+                and request.user in comment.upvoted_by.all()
+            ):
+                comment.downvoted_by.add(request.user)
+                comment.vote_count -= 2
+                comment.upvoted_by.remove(request.user)
+                comment.save()
+                return JsonResponse({"downvote": "change vote success"})
+            else:
+                return JsonResponse({"downvote": "already downvoted"})
+        except Comments_Model.DoesNotExist:
+            return JsonResponse({"downvote": "error"})
+    return JsonResponse({"downvote": "not ajax"})
 
 
 def show_comments_text_api(request, current_pid):

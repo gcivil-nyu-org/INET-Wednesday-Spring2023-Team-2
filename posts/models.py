@@ -50,6 +50,10 @@ class Post_Model(models.Model):
         default=datetime.now, editable=False, blank=True
     )
     result_reveal_time = models.DateTimeField(default=resut_reveal_time_function)
+    reported_by = models.ManyToManyField(
+        Custom_User, related_name="reported_post_user", blank=True
+    )
+    reported_count = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.id) + " => " + self.question_text
@@ -85,6 +89,17 @@ class Comments_Model(models.Model):
     )
     comment_text = models.CharField(max_length=500)
     commented_time = models.DateTimeField(default=datetime.now, blank=True)
+    reported_by = models.ManyToManyField(
+        Custom_User, related_name="reported_comment_user", blank=True
+    )
+    reported_count = models.IntegerField(default=0)
+    upvoted_by = models.ManyToManyField(
+        Custom_User, related_name="upvoted_comment_user", blank=True
+    )
+    downvoted_by = models.ManyToManyField(
+        Custom_User, related_name="downvoted_comment_user", blank=True
+    )
+    vote_count = models.IntegerField(default=0)
 
     def __str__(self):
         return (
