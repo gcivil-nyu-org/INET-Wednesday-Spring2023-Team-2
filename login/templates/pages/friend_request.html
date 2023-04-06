@@ -1,15 +1,22 @@
 
 {% for friend_request in pending_requests %}
     <li>
+        <div class="friend-request-container">
+            <div class="profile-picture-container">
 
-      <a href="{% url 'account:profile_page' friend_request.from_user.username %}">
-        <img src="{{ friend_request.from_user.profile_picture.url }}" alt="{{ friend_request.from_user.username }}" height="50px" width="50px" >
-      </a>
-      <p>{{ friend_request.from_user.username }}</p>
+                <a href="{% url 'account:profile_page' friend_request.from_user.username %}">
+                <img src="{{ friend_request.from_user.profile_picture.url }}" class="profile-picture" alt="{{ friend_request.from_user.username }}">
+                </a>
+                <p>{{ friend_request.from_user.username }}</p>
 
-      <a class="accept" onclick="acceptFriendRequest(event, '{{ friend_request.id }}')">Accept</a>
+            </div>
+            <div>
 
-      <a class="decline" onclick="declineFriendRequest(event, '{{ friend_request.id }}')">Decline</a>
+                <a class="accept" onclick="acceptFriendRequest(event, '{{ friend_request.id }}')">Accept</a>
+
+                <a class="decline" onclick="declineFriendRequest(event, '{{ friend_request.id }}')">Decline</a>
+            </div>
+        </div>
     </li>
 
 

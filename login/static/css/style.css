@@ -349,8 +349,11 @@ select {
 	align-items: center;
 	display: flex;
 	line-height: 24px;
-	text-align: center;
+
+	width: 100%;
 }
+
+
 
 .tab-wrapper {
     flex: 1;
@@ -423,6 +426,25 @@ select {
 	z-index: 2;
 	padding-top: 50px;
 }
+
+
+/* Styles for smaller screens */
+@media (max-width: 768px) {
+	.nav-tabs {
+	  flex-direction: column;
+	}
+  
+	.tab-wrapper {
+	  width: 100%;
+	  margin-bottom: 8px;
+	}
+  
+	.nav-tab {
+	  font-size: 14px;
+	  padding: 8px 16px;
+	  text-align: center;
+	}
+  }
 
 .profile-info-container{
 	/* height: 100%; */
@@ -594,3 +616,71 @@ select {
     background-color: transparent;
     border-color: #FFFFFF;
 }
+
+.accept, .decline {
+    border-radius: 20px;
+    border: 1px solid #FED18C;
+    background-color: #ffb20f;
+    color: #FFFFFF;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 5px 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+    cursor: pointer;
+    text-decoration: none;
+	margin-left: 0px;
+}
+
+.decline {
+
+    margin-left: 10px;
+}
+
+.accept:hover, .decline:hover {
+    background-color: #FF9A00;
+}
+
+.accept:active, .decline:active {
+    transform: scale(0.95);
+}
+
+.accept:focus, .decline:focus {
+    outline: none;
+}
+
+.decline {
+    background-color: #f44336;
+    border-color: #f44336;
+}
+
+.decline:hover {
+    background-color: #e53935;
+}
+
+.profile-picture-container {
+    /* display: flex; */
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+}
+
+.profile-picture {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 10px;
+	margin-left: 5px;
+}
+
+
+
+.friend-request-container {
+    /* display: flex; */
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
