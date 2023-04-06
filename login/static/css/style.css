@@ -378,9 +378,6 @@ select {
 	line-height: 24px;
 
 	width: 100%;
-
-	/* white-space: nowrap; */
-
 }
 
 
@@ -498,6 +495,66 @@ select {
 	}
   }
 
+
+.user-history-container2,
+.polls-created-container {
+  width: 50%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.user-history-container2 {
+  float: left;
+}
+
+.polls-created-container {
+  float: right;
+}
+
+.history-content,
+.polls-content {
+  height: calc(100% - 40px); /* Subtract the height of the header */
+  overflow-y: auto;
+}
+
+
+
+
+  @media (max-width: 767px) {
+	.nav-tabs {
+	  overflow-x: auto;
+	  white-space: nowrap;
+	  display: flex;
+	  justify-content: flex-start;
+	  -webkit-overflow-scrolling: touch;
+	}
+  
+	.nav-tab {
+	  font-size: 14px;
+	  padding: 8px 16px;
+	}
+  }
+
+
+
+/* Styles for smaller screens */
+@media (max-width: 768px) {
+	.nav-tabs {
+	  flex-direction: column;
+	}
+  
+	.tab-wrapper {
+	  width: 100%;
+	  margin-bottom: 8px;
+	}
+  
+	.nav-tab {
+	  font-size: 14px;
+	  padding: 8px 16px;
+	  text-align: center;
+	}
+  }
 
 .profile-info-container{
 	/* height: 100%; */
