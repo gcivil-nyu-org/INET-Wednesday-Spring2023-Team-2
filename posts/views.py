@@ -1,4 +1,4 @@
-from datetime import timedelta, timezone, datetime
+from datetime import timedelta, datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -12,6 +12,8 @@ from django.utils.safestring import mark_safe
 from .forms import PollForm
 import re
 from django.views.generic import TemplateView
+
+from django.utils import timezone
 
 # import datetime
 
@@ -147,6 +149,7 @@ def results_view(request, pid):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
+    print(post_.result_reveal_time)
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color_ = user_choice.color
     contents = {
@@ -165,9 +168,11 @@ def results_view(request, pid):
 
     # print(post_.result_reveal_time - timedelta(hours=5), datetime.now())
 
-    ##Need to change timezone to fix this ig...this is temporary fix
-    print(post_.result_reveal_time.replace(tzinfo=None), datetime.now())
-    if post_.result_reveal_time.replace(tzinfo=None) < datetime.now():
+    # print(timezone.localtime(post_.result_reveal_time).replace(tzinfo=None), post_.result_reveal_time.replace(tzinfo=None), datetime.now())
+    if (
+        timezone.localtime(post_.result_reveal_time).replace(tzinfo=None)
+        < datetime.now()
+    ):
         contents["show_poll_results"] = True
 
     return HttpResponse(template.render(contents, request))
@@ -658,6 +663,7 @@ def create_poll(request):
                 created_by=request.user,
                 category=category,
                 created_time=datetime.now(),
+                # created_time=timezone.now(),
             )
 
             color_list = ["AED9E0", "8CB369", "D7A5E4", "5D6DD3"]
@@ -670,7 +676,12 @@ def create_poll(request):
                     )
 
             result_reveal_time = post.created_time + timedelta(hours=delay)
-            post.result_reveal_time = result_reveal_time
+            print(
+                post.created_time,
+                datetime.now(),
+                result_reveal_time.replace(tzinfo=None),
+            )
+            post.result_reveal_time = result_reveal_time.replace(tzinfo=None)
             post.save()
 
             post_id = post.id

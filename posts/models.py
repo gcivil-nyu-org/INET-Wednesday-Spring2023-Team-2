@@ -11,10 +11,10 @@ from django.utils.timezone import make_aware
 
 from django.utils.timezone import get_current_timezone
 
-naive_datetime = datetime.now()
-settings.TIME_ZONE
-aware_datetime = make_aware(naive_datetime)
-aware_datetime.tzinfo
+# naive_datetime = datetime.now()
+# settings.TIME_ZONE
+# aware_datetime = make_aware(naive_datetime)
+# aware_datetime.tzinfo
 
 
 def resut_reveal_time_function():

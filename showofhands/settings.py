@@ -218,9 +218,6 @@ LOGOUT_REDIRECT_URL = "/home"
 
 TIME_ZONE = "America/New_York"
 
-# need to change later
-USE_TZ = False
-
 
 if "AWS_ACCESS_KEY_ID" in os.environ:
     DEFAULT_FILE_STORAGE = "showofhands.custom_storage.MediaStorage"
