@@ -50,7 +50,10 @@ def is_ajax(request):
 def get_random_pid(current_pid=None, category=None):
     if category:
         # pids = Post_Model.objects.filter(category=category)
-        pids = Post_Model.objects.filter(category__iexact=category).filter(
+        # pids = Post_Model.objects.filter(category__iexact=category).filter(
+        #     ~Q(id=current_pid)
+        # )
+        pids = Post_Model.objects.filter(category__contains=category).filter(
             ~Q(id=current_pid)
         )
         # pids = Post_Model.objects.filter(~Q(id=current_pid))
@@ -645,7 +648,6 @@ def create_poll(request):
 
             delay = int(form.cleaned_data["delay"])
             # print(delay)
-            category = form.cleaned_data["category"]
 
             post = Post_Model.objects.create(
                 question_text=question_text,
