@@ -236,15 +236,18 @@ class PostsView(View):
                 messages.error(request, "Select an option to submit!")
                 return JsonResponse({"voting": "Wrong request"})
 
-            selected_choice.votes += 1
-            selected_choice.chosen_by.add(request.user)
-            selected_choice.save()
+            if request.user.is_authenticated:
+                selected_choice.votes += 1
+                selected_choice.chosen_by.add(request.user)
+                post_.viewed_by.add(request.user)
+                post_.save()
+                selected_choice.save()
 
-            post_.viewed_by.add(request.user)
-            post_.save()
-
-            if not request.user.posts_view_time.filter(post=post_).exists():
-                print(request.user.posts_view_time.all())
+            if (
+                request.user.is_authenticated
+                and not request.user.posts_view_time.filter(post=post_).exists()
+            ):
+                # print(request.user.posts_view_time.all())
                 user_post_view_time_model = UserPostViewTime.objects.create(
                     user=request.user, post=post_
                 )
