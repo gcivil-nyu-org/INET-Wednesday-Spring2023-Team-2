@@ -264,7 +264,7 @@ function changeurlProfile(page)
         url: "{% url 'account:friend_requests' profile.username %}",
         type: "GET",
         success: function(resp) {
-			// changeurlProfile("friend_requests");
+			changeurlProfile("friend_requests");
             $("#friendRequests").html(resp);
         },
         error: function(resp) {

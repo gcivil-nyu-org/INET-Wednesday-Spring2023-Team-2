@@ -440,6 +440,7 @@ class CurrentProfileURL(APIView):
             "posts_created": "account:profile_postscreated_page",
             "profile": "account:profile_page",
             "friends": "account:profile_friends_page",
+            "friend_requests": "account:friend_requests",
         }
         current_url = request.build_absolute_uri(
             reverse(url_page_map[page], kwargs={"username_": username})

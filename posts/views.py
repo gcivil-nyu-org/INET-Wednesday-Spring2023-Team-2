@@ -679,6 +679,7 @@ def create_poll(request):
             print(
                 post.created_time,
                 datetime.now(),
+                timezone.now(),
                 result_reveal_time.replace(tzinfo=None),
             )
             post.result_reveal_time = result_reveal_time.replace(tzinfo=None)
