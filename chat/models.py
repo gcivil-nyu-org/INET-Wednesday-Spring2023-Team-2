@@ -24,6 +24,7 @@ class Connection_Model(models.Model):
         ("Pending", "Pending"),
         ("Accepted", "Accept"),
         ("Declined", "Decline"),
+        ("Blocked", "Block"),
     ]
 
     connection_status = models.CharField(

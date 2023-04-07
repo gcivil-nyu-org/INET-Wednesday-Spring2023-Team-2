@@ -202,7 +202,7 @@ AUTH_USER_MODEL = "login.Custom_User"
 
 # LOGIN_URL = redirect(reverse("login:login_page"))
 
-LOGIN_URL = "/account/login"
+LOGIN_URL = "/account/login/"
 
 LOGOUT_REDIRECT_URL = "/home"
 
