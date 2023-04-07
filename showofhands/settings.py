@@ -36,32 +36,38 @@ else:
     SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if "SETTINGS_DEBUG" in os.environ:
-    DEBUG = bool(int(os.environ.get("SETTINGS_DEBUG")))
-else:
-    DEBUG = True
+# if "SETTINGS_DEBUG" in os.environ:
+#     DEBUG = bool(int(os.environ.get("SETTINGS_DEBUG")))
+# else:
+DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS = [
     "ShowofHands-dev.us-east-1.elasticbeanstalk.com",
+    "ShowofHands-dev-2.us-east-1.elasticbeanstalk.com",
     "localhost",
+    "0.0.0.0",
 ]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # customs
     "login",
     "posts",
     "users",
+    "chat",
+    # builtins
     "rest_framework",
     "storages",
-    "chat",
+    "channels",
 ]
 
 MIDDLEWARE = [
@@ -212,9 +218,6 @@ LOGOUT_REDIRECT_URL = "/home"
 
 TIME_ZONE = "America/New_York"
 
-# need to change later
-USE_TZ = False
-
 
 if "AWS_ACCESS_KEY_ID" in os.environ:
     DEFAULT_FILE_STORAGE = "showofhands.custom_storage.MediaStorage"
@@ -243,3 +246,23 @@ STATICFILES_DIRS = (
 )
 
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+
+
+# updates for chat application
+ASGI_APPLICATION = "showofhands.asgi.application"
+
+## Redis for AWS
+if "USE_REDIS_ENDPOINT" in os.environ and os.environ["USE_REDIS_ENDPOINT"]:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [
+                    ("aws-my-1sw7m30jtg0i4.yxaols.0001.use1.cache.amazonaws.com", 6379)
+                ],
+            },
+        },
+    }
+
+else:
+    CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}

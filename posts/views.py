@@ -1,4 +1,4 @@
-from datetime import timedelta, timezone, datetime
+from datetime import timedelta, datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -12,6 +12,8 @@ from django.utils.safestring import mark_safe
 from .forms import PollForm
 import re
 from django.views.generic import TemplateView
+
+from django.utils import timezone
 
 # import datetime
 
@@ -50,7 +52,10 @@ def is_ajax(request):
 def get_random_pid(current_pid=None, category=None):
     if category:
         # pids = Post_Model.objects.filter(category=category)
-        pids = Post_Model.objects.filter(category__iexact=category).filter(
+        # pids = Post_Model.objects.filter(category__iexact=category).filter(
+        #     ~Q(id=current_pid)
+        # )
+        pids = Post_Model.objects.filter(category__contains=category).filter(
             ~Q(id=current_pid)
         )
         # pids = Post_Model.objects.filter(~Q(id=current_pid))
@@ -144,6 +149,7 @@ def results_view(request, pid):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
+    print(post_.result_reveal_time)
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color_ = user_choice.color
     contents = {
@@ -162,9 +168,9 @@ def results_view(request, pid):
 
     # print(post_.result_reveal_time - timedelta(hours=5), datetime.now())
 
-    ##Need to change timezone to fix this ig...this is temporary fix
+    # print(timezone.localtime(post_.result_reveal_time).replace(tzinfo=None), post_.result_reveal_time.replace(tzinfo=None), datetime.now())
     if (
-        post_.result_reveal_time.replace(tzinfo=None) - timedelta(hours=5)
+        timezone.localtime(post_.result_reveal_time).replace(tzinfo=None)
         < datetime.now()
     ):
         contents["show_poll_results"] = True
@@ -235,15 +241,18 @@ class PostsView(View):
                 messages.error(request, "Select an option to submit!")
                 return JsonResponse({"voting": "Wrong request"})
 
-            selected_choice.votes += 1
-            selected_choice.chosen_by.add(request.user)
-            selected_choice.save()
+            if request.user.is_authenticated:
+                selected_choice.votes += 1
+                selected_choice.chosen_by.add(request.user)
+                post_.viewed_by.add(request.user)
+                post_.save()
+                selected_choice.save()
 
-            post_.viewed_by.add(request.user)
-            post_.save()
-
-            if not request.user.posts_view_time.filter(post=post_).exists():
-                print(request.user.posts_view_time.all())
+            if (
+                request.user.is_authenticated
+                and not request.user.posts_view_time.filter(post=post_).exists()
+            ):
+                # print(request.user.posts_view_time.all())
                 user_post_view_time_model = UserPostViewTime.objects.create(
                     user=request.user, post=post_
                 )
@@ -264,25 +273,34 @@ class SearchPostsView(TemplateView):
         query = request.GET.get("search", "")
 
         if query:
-            results = Options_Model.objects.filter(
-                Q(question__question_text__icontains=query)
-                | Q(choice_text__icontains=query)
+            results = Post_Model.objects.filter(
+                Q(question_text__icontains=query)
+                | Q(options_model__choice_text__icontains=query)
             ).distinct()
         else:
             results = Post_Model.objects.none()
 
-        return JsonResponse(
-            {
-                "search_results": [
+        search_results = []
+        for post in results:
+            options = []
+            # create an array for options based on the Options_Model.question=post
+            for option in Options_Model.objects.filter(question=post):
+                options.append(
                     {
-                        "id": option.question.id,
-                        "question_text": option.question.question_text,
                         "choice_text": option.choice_text,
                     }
-                    for option in results
-                ]
-            }
-        )
+                )
+
+            search_results.append(
+                {
+                    "id": post.id,
+                    "question_text": post.question_text,
+                    "category": post.category,
+                    "options": options,
+                }
+            )
+
+        return JsonResponse({"search_results": search_results})
 
 
 # def posts_view(request, pid, call="noapi"):
@@ -646,6 +664,7 @@ def create_poll(request):
                 created_by=request.user,
                 category=category,
                 created_time=datetime.now(),
+                # created_time=timezone.now(),
             )
 
             color_list = ["AED9E0", "8CB369", "D7A5E4", "5D6DD3"]
@@ -658,7 +677,13 @@ def create_poll(request):
                     )
 
             result_reveal_time = post.created_time + timedelta(hours=delay)
-            post.result_reveal_time = result_reveal_time
+            print(
+                post.created_time,
+                datetime.now(),
+                timezone.now(),
+                result_reveal_time.replace(tzinfo=None),
+            )
+            post.result_reveal_time = result_reveal_time.replace(tzinfo=None)
             post.save()
 
             post_id = post.id

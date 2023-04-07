@@ -140,8 +140,6 @@ header .image-text .profession{
  
 }
 
-
-
 .sidebar header .image{
     display: flex;
     align-items: center;
@@ -187,31 +185,6 @@ body.dark .sidebar header .toggle{
 
 }
 
-
-.sidebar li.search-box{
-    border-radius: 6px;
-    background-color: var(--primary-color-light);
-    cursor: pointer;
-    transition: var(--tran-05);
-}
-
-/* set the search icon color */
-.sidebar li.search-box i.icon{
-    color: var(--mode-text-color);
-}
-
-.sidebar li.search-box input{
-    height: 100%;
-    width: 100%;
-    outline: none;
-    border: none;
-    background-color: var(--primary-color-light);
-    color: var(--mode-text-color);
-    border-radius: 6px;
-    font-size: 17px;
-    font-weight: 500;
-    transition: var(--tran-05);
-}
 .sidebar li a{
     list-style: none;
     height: 100%;
@@ -370,10 +343,10 @@ body.dark .home .text{
 .header {
     overflow: hidden;
     padding: 20px 10px;
-  }
+}
   
   /* Style the header links */
-  .header a {
+.header a {
     float: left;
     color: black;
     text-align: center;
@@ -382,4 +355,85 @@ body.dark .home .text{
     font-size: 18px;
     line-height: 25px;
     border-radius: 4px;
-  }
+}
+
+.sidebar li.search-box{
+    border-radius: 6px;
+    background-color: var(--primary-color-light);
+    cursor: pointer;
+    transition: var(--tran-05);
+}
+
+/* set the search icon color */
+.sidebar li.search-box i.icon{
+    color: var(--mode-text-color);
+}
+
+.sidebar li.search-box input{
+    height: 100%;
+    width: 100%;
+    outline: none;
+    border: none;
+    background-color: var(--primary-color-light);
+    color: var(--mode-text-color);
+    border-radius: 6px;
+    font-size: 17px;
+    font-weight: 500;
+    transition: var(--tran-05);
+}
+
+.autocomplete {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.autocomplete-input {
+    height: 40px;
+    width: 100%;
+    padding: 0 45px 0 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 17px;
+    font-weight: 500;
+    background-color: var(--primary-color-light);
+    color: var(--mode-text-color);
+    transition: var(--tran-05);
+}
+
+.autocomplete-input:focus {
+    outline: none;
+}
+
+.autocomplete .autocomplete-result-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: var(--primary-color-light);
+    border-radius: 6px;
+    box-shadow: var(--bs);
+}
+
+.autocomplete-result {
+    list-style: none;
+    padding: 5px 15px;
+    cursor: pointer;
+}
+
+.autocomplete-result:hover {
+    background-color: var(--primary-color-lightest);
+}
+
+.autocomplete-question {
+    font-weight: bold;
+}
+
+.autocomplete-options {
+    font-style: italic;
+    color: var(--secondary-color);
+    margin-top: 5px;
+}

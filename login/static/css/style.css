@@ -360,13 +360,13 @@ select {
 } */
 .nav-tab:hover {
     background-color: #FED99B;
-    color: #ccc;
+    color: #57068c;
     border-radius: 5px;
 }
 
 .nav-tab.active {
     /* background-color: #FED99B; */
-    color: #ccc;
+    color: #57068c;
 
 }
 
@@ -558,4 +558,33 @@ select {
 .text-center{
 	bottom: 0;
 	position: relative;
+}
+
+.friend_request_button {
+    display: inline-block;
+    border-radius: 20px;
+    border: 1px solid #FED18C;
+    background-color: #ffb20f;
+    color: #FFFFFF;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 12px 45px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: transform 80ms ease-in;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.friend_request_button:active {
+    transform: scale(0.95);
+}
+
+.friend_request_button:focus {
+    outline: none;
+}
+
+.friend_request_button.ghost {
+    background-color: transparent;
+    border-color: #FFFFFF;
 }

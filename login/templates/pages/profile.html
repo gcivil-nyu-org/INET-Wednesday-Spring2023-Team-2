@@ -26,6 +26,15 @@
 		<div class="tab-wrapper">
 		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
 		</div>
+	
+		<div class="tab-wrapper">
+			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends();">Friends</a>
+		</div>
+		{% if edit_access %}
+		<div class="tab-wrapper">
+			<a class="nav-tab" id="nav-requests-tab" onclick="getFriendRequests();">Friend Requests</a>
+		</div>
+		{% endif %}
 	</div>
 
 	{% if edit_access %}
@@ -53,10 +62,26 @@
 			</div>
 			<a></a>
 			<!--add change picture option-->
+
 			{% if edit_access %}
 			{{ profile_picture_change_form.profile_picture }}
 			<button type="submit" value="profile_pic" name="account_info">Change Picture</button>
 			{% endif %}
+
+
+			{% if profile != request.user and not friend_exists and not request_exists %}
+			
+
+			<!-- <form method="POST" action="{% url 'account:send_friend_request' profile.id %}">
+				{% csrf_token %}
+				<button type="submit" class="friend_request_button">Send Friend Request</button>
+			</form> -->
+				<p class="friend_request">
+					<a href="{% url 'account:send_friend_request' profile.id %}" class="friend_request_button">Send Friend Request</a>
+				</p>
+
+			{% endif %}
+	
 		</form>
 		</div>
 		<div class="profile-container tabcontent profile-info-container"> 
@@ -110,6 +135,33 @@
        
     </div>
 
+	<!-- Friends Tab -->
+	<div class="form-container tabcontent user-history-container" id="nav-friends" style="display: none;">
+        <h2>Friends</h2>
+		<div class="history-content">
+			<ul>
+				<!-- this div will contain user friends, called from ajax -->
+				<div id="userFriends">
+
+				</div>
+				
+			</ul>
+
+		</div>
+       
+    </div>
+
+	<div class="form-container tabcontent user-history-container" id="nav-requests" style="display: none;">
+		<h2>Friend Requests</h2>
+		<div class="history-content">
+			<ul>
+				<!-- this div will contain the friend requests for the user -->
+				<div id="friendRequests">
+	
+				</div>
+			</ul>
+		</div>
+	</div>
 
 </div>
 
@@ -169,6 +221,23 @@ function getPostsCreated(){
 }
 
 
+function getFriends(){
+	openTab(event, 'nav-friends');
+        $.ajax({
+            url: "{% url 'account:profile_friends_page' profile.username %}",
+            type: "GET",
+            success: function(resp){
+				changeurlProfile("friends");
+                $("#userFriends").html(resp);
+				console.log(resp);
+            },
+            error: function(resp){
+                console.log("getFriends error");
+            }
+        });
+}
+
+
 
 function changeurlProfile(page)
   {
@@ -186,6 +255,55 @@ function changeurlProfile(page)
         });
   }
 
+  function getFriendRequests() {
+    openTab(event, 'nav-requests');
+    
+
+    // Fetch and display friend requests using AJAX
+    $.ajax({
+        url: "{% url 'account:friend_requests' profile.username %}",
+        type: "GET",
+        success: function(resp) {
+			changeurlProfile("friend_requests");
+            $("#friendRequests").html(resp);
+        },
+        error: function(resp) {
+            console.log("getFriendRequests error");
+        }
+    });
+}
+
+function acceptFriendRequest(event, requestId) {
+    event.preventDefault();
+    $.ajax({
+        url: "{% url 'account:accept_friend_request' uid=1 %}".replace(/1/, requestId.toString()),
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            getFriendRequests();
+        },
+        error: function(xhr, reported, error) {
+            console.log("Error accepting friend request");
+        },
+    });
+}
+
+function declineFriendRequest(event, requestId) {
+    event.preventDefault();
+    $.ajax({
+        url: "{% url 'account:decline_friend_request' uid=1 %}".replace(/1/, requestId.toString()),
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            getFriendRequests();
+        },
+        error: function(xhr, reported, error) {
+            console.log("Error declining friend request");
+        },
+    });
+}
+
+ 
 
 document.getElementById("{{ tab_to_click }}").click();
 

@@ -11,10 +11,10 @@ from django.utils.timezone import make_aware
 
 from django.utils.timezone import get_current_timezone
 
-naive_datetime = datetime.now()
-settings.TIME_ZONE
-aware_datetime = make_aware(naive_datetime)
-aware_datetime.tzinfo
+# naive_datetime = datetime.now()
+# settings.TIME_ZONE
+# aware_datetime = make_aware(naive_datetime)
+# aware_datetime.tzinfo
 
 
 def resut_reveal_time_function():
@@ -42,7 +42,7 @@ class Post_Model(models.Model):
         ("misc", "Misc"),
     ]
     category = MultiSelectField(
-        max_length=20, choices=category_list, max_choices=3, default="misc"
+        max_length=100, choices=category_list, max_choices=3, default="misc"
     )
 
     # created_time = models.DateTimeField(auto_now_add=True, blank=True)

@@ -78,6 +78,7 @@
                  
 
                     <li class="nav-link">
+                        <!-- modify link later -->
                         <a href={% url 'connections:chat_page' %}>
                             <i class='bx bx-chat icon'></i>
                             <span class="text nav-text">Chat</span>
@@ -85,72 +86,13 @@
                     </li>
 
                     <li class="nav-link">
-                        <a href="#">
+                        <a href={% url 'connections:chat_page_test' 1 %}>
                             <i class='bx bx-pie-chart-alt icon' ></i>
                             <span class="text nav-text">Analytics</span>
                         </a>
                     </li>
                 </ul>
             </div>
-
-            <!----===== Autocomplete Search ===== -->
-            <script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
-            <script>
-                const searchInput = document.getElementById('search-input');
-                const resultList = document.querySelector('.autocomplete-result-list');
-
-                searchInput.addEventListener('input', event => {
-                    const query = event.target.value;
-
-                    if (query.length < 1) {
-                    resultList.innerHTML = '';
-                    return;
-                    }
-
-                    fetch(`/posts/search/?search=${query}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        resultList.innerHTML = data.search_results.map(
-                        result => `<li>${result.question_text}</li>`
-                        ).join('');
-                    });
-                });
-                new Autocomplete('#autocomplete', {
-                    search: input => {
-                        if (input.length < 1) { return [] }
-                        return fetch(`/posts/search/?search=${input}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log(data);
-                                return data.search_results.map(result => result.question_text);
-                            });
-                    }
-                })
-                //     function getPostList(request, response) {
-                //     var postArray = [
-                //       {% for post in post_list %}
-                //         "{{post.question_text|safe}}",
-                //       {% endfor %}
-                //     ];
-                
-                //     var results = $.ui.autocomplete.filter(postArray, request.term);
-                
-                //     response(results.slice(0, 5));
-                //   };
-                // $(function() {
-                //     $("#search-input").autocomplete({
-                //         minLength: 2,
-                //         select: function(event, ui) {
-                //             window.location.href = ui.item.url;
-                //             return false;
-                //         }
-                //     }).autocomplete("instance")._renderItem = function(ul, item) {
-                //         return $("<li>")
-                //             .append("<div><a href='" + item.url + "'>" + item.label + "</a></div>")
-                //             .appendTo(ul);
-                //     };
-                // });
-            </script>
 
             <div class="bottom-content">
                 <li class="">
@@ -190,3 +132,41 @@
     </div>
 </body>
 </html>
+
+<!----===== Autocomplete Search ===== -->
+<script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
+<script>
+    new Autocomplete('#autocomplete', {
+        search: input => {
+            if (input.length < 1) { return [] }
+            return fetch(`/posts/search/?search=${input}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    return data.search_results.map(result => {
+                        return {
+                            postID: result.id,
+                            question: result.question_text,
+                            options: result.options.map(option => option.choice_text)
+                        }
+                    });
+                });
+        },
+        renderResult: (result, props) => {
+            return `
+            <a href="#" onclick="handleResultClick(${result.postID})">
+                <ul class="autocomplete-result" data-id="${result.postID}">
+                    <li class="autocomplete-question">
+                        ${result.question}
+                    </li>
+                    <li class="autocomplete-options">
+                        ${result.options.join(', ')}
+                    </li>
+                </ul>
+            </a>`;
+        },
+    });
+    function handleResultClick(id) {
+        window.location.href = `/posts/${id}/`;
+    }
+</script>
