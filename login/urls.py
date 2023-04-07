@@ -69,4 +69,5 @@ urlpatterns = [
         views.backactivetab_view,
         name="profile_backactivetab",
     ),
+    path('profile/block_friend/<int:uid>/', views.block_friend, name='block_friend'),
 ]

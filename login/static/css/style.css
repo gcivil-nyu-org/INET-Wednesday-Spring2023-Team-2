@@ -684,3 +684,13 @@ select {
     flex-wrap: wrap;
 }
 
+
+.friend-container {
+	display: flex;
+	align-items: center;
+	margin-bottom: 10px;
+  }
+  
+  .username-container {
+	margin-left: 10px;
+  }

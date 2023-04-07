@@ -501,6 +501,18 @@ def get_user_friends_list(user):
     # returns all connection models that has from_user = user or to_user=user
     return friends
 
+def block_friend(request, uid):
+    if request.user.is_authenticated:
+        friend = Custom_User.objects.get(id=uid)
+        connection = Connection_Model.objects.filter(from_user=request.user, to_user=friend).first()
+        if connection:
+            connection.status = 'declined'
+            connection.save()
+            return JsonResponse({'status': 'success'}, status=200)
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Friend not found.'}, status=404)
+    return JsonResponse({'status': 'error', 'message': 'User not authenticated.'}, status=401)
+
 
 @login_required
 def send_friend_request(request, uid):
@@ -528,45 +540,6 @@ def friend_requests(request, username_):
     context = {"pending_requests": pending_requests}
     return render(request, "pages/friend_request.html", context)
 
-
-# def send_friend_request(request, uid):
-#     if request.method == 'POST':
-#         from_user = request.user
-#         to_user = get_object_or_404(Custom_User, id=uid)
-
-
-#         # Avoid sending multiple requests or sending a request to oneself
-#         if from_user != to_user and not Connection_Model.objects.filter(from_user=from_user, to_user=to_user).exists():
-#             connection_request = Connection_Model(from_user=from_user, to_user=to_user)
-#             connection_request.save()
-#             messages.success(request, 'Friend request sent successfully.')
-
-#     return redirect('account:profile_page', username_=to_user.username)
-
-
-# @login_required
-# def accept_friend_request(request, request_id):
-#     try:
-#         friend_request = Connection_Model.objects.get(id=request_id, to_user=request.user, connection_status="Pending")
-#         friend_request.connection_status = "Accepted"
-#         friend_request.save()
-#         messages.success(request, f'You are now friends with {friend_request.from_user.username}!')
-#     except Connection_Model.DoesNotExist:
-#         messages.error(request, 'Friend request not found.')
-
-#     return redirect('account:profile_page', username_=request.user.username)
-
-
-# @login_required
-# def decline_friend_request(request, request_id):
-#     try:
-#         friend_request = Connection_Model.objects.get(id=request_id, to_user=request.user, connection_status="Pending")
-#         friend_request.delete()
-#         messages.success(request, f'Friend request from {friend_request.from_user.username} has been declined.')
-#     except Connection_Model.DoesNotExist:
-#         messages.error(request, 'Friend request not found.')
-
-#     return redirect('account:profile_page', username_=request.user.username)
 
 
 @login_required

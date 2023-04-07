@@ -1,10 +1,23 @@
 <div>
 {% for friend in friends %}
+<li>
+    <div class="friend-request-container">
+    
+        <div class="profile-picture-container">
+            <a href="{% url 'account:profile_page' friend.username %}">
+            <img src="{{ friend.profile_picture.url }}" class="profile-picture" alt="{{ friend.username }}" height="50px" width="50px">
+            </a>
+            <p>{{ friend.username }}</p>
+        </div>
+        <div>
 
-<div>
-    <li><a href="{% url 'account:profile_page' friend %}">{{ friend }}</a></li>
-</div>
+            <a class="accept" onclick="blockFriend(event, '{{ friend_request.id }}')">Block</a>
+
+        </div>
+    </div>
+</li>
 
 {% endfor %}
 
 </div>
+
