@@ -487,11 +487,10 @@ class UserFriends(APIView):
             else:
                 block_access = False
 
-
             return Response(
                 # {"friends": friends}, template_name="pages/profile_friends.html"
-                {"friends_data": friends_data,
-                 "block_access": block_access}, template_name="pages/profile_friends.html"
+                {"friends_data": friends_data, "block_access": block_access},
+                template_name="pages/profile_friends.html",
             )
 
         else:
@@ -514,6 +513,7 @@ def get_user_friends_list(user):
     # returns all connection models that has from_user = user or to_user=user
     return friends
 
+
 # def block_friend(request, uid):
 #     if request.user.is_authenticated:
 #         friend = Custom_User.objects.get(id=uid)
@@ -526,13 +526,17 @@ def get_user_friends_list(user):
 #             return JsonResponse({'status': 'error', 'message': 'Friend not found.'}, status=404)
 #     return JsonResponse({'status': 'error', 'message': 'User not authenticated.'}, status=401)
 
+
 @login_required
 def block_friend(request, connection_id):
     if is_ajax(request):
         try:
             # friend = Custom_User.objects.get(id=uid)
             connection = Connection_Model.objects.get(id=connection_id)
-            if (connection.to_user == request.user or connection.from_user == request.user) and connection.connection_status == "Accepted" :
+            if (
+                connection.to_user == request.user
+                or connection.from_user == request.user
+            ) and connection.connection_status == "Accepted":
                 connection.connection_status = "Blocked"
                 connection.save()
 
@@ -576,7 +580,6 @@ def friend_requests(request, username_):
     )
     context = {"pending_requests": pending_requests}
     return render(request, "pages/friend_request.html", context)
-
 
 
 @login_required
