@@ -112,6 +112,12 @@
     cursor: pointer;
 }
 
+.comment-action .upvoted {
+    font-size: 15px;
+    color: green;
+    text-align: left;
+}
+
 .comment-action .react {
     font-size: 14px;
     font-weight: bold;
@@ -130,6 +136,12 @@
     color: red;
     text-align: left;
     cursor: pointer;
+}
+
+.comment-action .downvoted {
+    font-size: 15px;
+    color: red;
+    text-align: left;
 }
 
 .comment-action .delete {

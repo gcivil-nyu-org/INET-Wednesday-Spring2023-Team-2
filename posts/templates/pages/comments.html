@@ -19,9 +19,17 @@
                     </div>
                 </div>
                 <div class="comment-action">
+                    {% if comment.user_upvoted %}
+                    <a class= "upvoted" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
+                    {% else %}
                     <a class= "upvote" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
+                    {% endif %}
                     <span class = "react">{{ comment.vote_count }}</span>
+                    {% if comment.user_downvoted %}
+                    <a class = "downvoted" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
+                    {% else %}
                     <a class = "downvote" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
+                    {% endif %}
                     <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
                     {% if request.user == comment.commented_by %}
                     <a class="delete" onclick="deleteComment(event, {{ comment.id }})"><i class="fas fa-trash-alt"></i></a>

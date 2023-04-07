@@ -443,16 +443,17 @@ class CommentsView(View):
             pid = current_pid
             # print('whyyyy:', pid)
             post_ = Post_Model.objects.get(pk=pid)
-            # user_choices = post_.options_model_set.get(chosen_by=request.user)
-            # user_color_ = user_choices.color
-            # comments_ = post_.comments_model_set.get(pk=pid)
+
             comments_ = post_.comments_model_set.all().order_by("-commented_time")
+            for comment in comments_:
+                comment.user_upvoted = request.user in comment.upvoted_by.all()
+                comment.user_downvoted = request.user in comment.downvoted_by.all()
+                
             template = loader.get_template("pages/comments.html")
             contents = {
                 "pid": pid,
                 "comments": comments_,
                 "show_comments_text": False,
-                "user_color": "red",
             }
             if post_.viewed_by.filter(username=request.user.username).exists():
                 contents["show_comments_text"] = True
