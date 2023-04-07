@@ -474,11 +474,24 @@ class UserFriends(APIView):
             user_ = Custom_User.objects.get(username=username_)
             friends = get_user_friends_list(user_).order_by("-connection_answer_time")
             # print(get_user_friends_list(user_), friends)
+            friends_data = []
 
-            friends = [friend.get_friend(user_) for friend in friends]
+            # friends = [friend.get_friend(user_) for friend in friends]
+
+            for connection in friends:
+                friend = connection.get_friend(user_)
+                friends_data.append({"friend": friend, "connection_id": connection.id})
+
+            if request.user == user_:
+                block_access = True
+            else:
+                block_access = False
+
 
             return Response(
-                {"friends": friends}, template_name="pages/profile_friends.html"
+                # {"friends": friends}, template_name="pages/profile_friends.html"
+                {"friends_data": friends_data,
+                 "block_access": block_access}, template_name="pages/profile_friends.html"
             )
 
         else:
@@ -501,17 +514,41 @@ def get_user_friends_list(user):
     # returns all connection models that has from_user = user or to_user=user
     return friends
 
-def block_friend(request, uid):
-    if request.user.is_authenticated:
-        friend = Custom_User.objects.get(id=uid)
-        connection = Connection_Model.objects.filter(from_user=request.user, to_user=friend).first()
-        if connection:
-            connection.status = 'declined'
-            connection.save()
-            return JsonResponse({'status': 'success'}, status=200)
-        else:
-            return JsonResponse({'status': 'error', 'message': 'Friend not found.'}, status=404)
-    return JsonResponse({'status': 'error', 'message': 'User not authenticated.'}, status=401)
+# def block_friend(request, uid):
+#     if request.user.is_authenticated:
+#         friend = Custom_User.objects.get(id=uid)
+#         connection = Connection_Model.objects.filter(from_user=request.user, to_user=friend).first()
+#         if connection:
+#             connection.status = 'declined'
+#             connection.save()
+#             return JsonResponse({'status': 'success'}, status=200)
+#         else:
+#             return JsonResponse({'status': 'error', 'message': 'Friend not found.'}, status=404)
+#     return JsonResponse({'status': 'error', 'message': 'User not authenticated.'}, status=401)
+
+@login_required
+def block_friend(request, connection_id):
+    if is_ajax(request):
+        try:
+            # friend = Custom_User.objects.get(id=uid)
+            connection = Connection_Model.objects.get(id=connection_id)
+            if (connection.to_user == request.user or connection.from_user == request.user) and connection.connection_status == "Accepted" :
+                connection.connection_status = "Blocked"
+                connection.save()
+
+                return JsonResponse({"status": "success"})
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "You don't have permission to block this user.",
+                    }
+                )
+        except Connection_Model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Friend request not found."}
+            )
+    return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
 @login_required

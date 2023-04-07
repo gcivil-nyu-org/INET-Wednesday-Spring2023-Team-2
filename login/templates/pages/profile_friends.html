@@ -1,19 +1,21 @@
 <div>
-{% for friend in friends %}
+{% for friend in friends_data %}
 <li>
     <div class="friend-request-container">
     
         <div class="profile-picture-container">
-            <a href="{% url 'account:profile_page' friend.username %}">
-            <img src="{{ friend.profile_picture.url }}" class="profile-picture" alt="{{ friend.username }}" height="50px" width="50px">
+            <a href="{% url 'account:profile_page' friend.friend.username %}">
+            <img src="{{ friend.friend.profile_picture.url }}" class="profile-picture" alt="{{ friend.username }}" height="50px" width="50px">
             </a>
-            <p>{{ friend.username }}</p>
+            <p>{{ friend.friend.username }}</p>
         </div>
+        {% if block_access %}
         <div>
-
-            <a class="accept" onclick="blockFriend(event, '{{ friend_request.id }}')">Block</a>
+            
+            <a class="accept" onclick="blockFriend(event, '{{ friend.connection_id }}')">Block</a>
 
         </div>
+        {% endif %}
     </div>
 </li>
 
@@ -21,3 +23,23 @@
 
 </div>
 
+
+<script>
+
+function blockFriend(event, connection_id) {
+    event.preventDefault();
+    $.ajax({
+        url: "{% url 'account:block_friend' connection_id=1 %}".replace(/1/, connection_id.toString()),
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            getFriends();
+        },
+        error: function(xhr, reported, error) {
+            console.log("Error accepting friend request");
+        },
+    });
+}
+
+
+</script>
