@@ -19,23 +19,31 @@
                     </div>
                 </div>
                 <div class="comment-action">
-                    {% if request.user in comment.upvoted_by.all %}
-                    <a class= "upvoted" id = "Upvoted" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
-                    {% else %}
-                    <a class= "upvote" id = "Upvote" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
-                    {% endif %}
+                    <a id = "Upvote{{ comment.id }}" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
                     <span class = "react">{{ comment.vote_count }}</span>
-                    {% if request.user in comment.downvoted_by.all %}
-                    <a class = "downvoted" id = "Downvoted" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
-                    {% else %}
-                    <a class = "downvote" id = "Downvote" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
-                    {% endif %}
+                    <a id = "Downvote{{ comment.id }}" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
                     <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
                     {% if request.user == comment.commented_by %}
                     <a class="delete" onclick="deleteComment(event, {{ comment.id }})"><i class="fas fa-trash-alt"></i></a>
                     {% endif %}
                     <a class="report" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
                     <a class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
+
+                    <script>
+                        {% if comment.commented_by in comment.upvoted_by.all %}
+                        $("#Upvote{{ comment.id }}").addClass("upvoted");
+                        {% else %}
+                        $("#Upvote{{ comment.id }}").addClass("upvote");
+                        {% endif %}
+                    
+                        {% if comment.commented_by in comment.downvoted_by.all %}
+                        $("#Downvote{{ comment.id }}").addClass("downvoted");
+                        {% else %}
+                        $("#Downvote{{ comment.id }}").addClass("downvote");
+                        {% endif %}
+                    </script>
+
+
                 </div>
             </div>
             <script>
@@ -135,14 +143,29 @@
                 }
             }   
 
+    //The upvote/downvote will fake a frontend update so comment section no longer need to refresh everytime a user votes
+    //Ajax should not be needed here
         function upvoteComment(event, commentId) {
-
+            var $commentAction = $(event.target).closest(".comment-action");
+            var $voteCount = $commentAction.find(".react");
+          
+            if ($commentAction.find("#Upvote" + commentId).hasClass("upvote")) {
+                $commentAction.find("#Upvote" + commentId).removeClass("upvote").addClass("upvoted");
+                $voteCount.text(parseInt($voteCount.text()) + 1);
+          
+            if ($commentAction.find("#Downvote" + commentId).hasClass("downvoted")) {
+                $commentAction.find("#Downvote" + commentId).removeClass("downvoted").addClass("downvote");
+                $voteCount.text(parseInt($voteCount.text()) + 1);
+              }
+            } else {
+              $commentAction.find("#Upvote" + commentId).removeClass("upvoted").addClass("upvote");
+              $voteCount.text(parseInt($voteCount.text()) - 1);
+            }
             $.ajax({
                 url: "{% url 'posts:upvote_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
                 type: "GET",
                     dataType: "json",
-                    success: function(response) {
-                        getComments()
+                    success: function(response) { 
                     },
                     error: function(xhr, reported, error) {
                         // Handle the error here
@@ -152,23 +175,21 @@
         }  
 
         function downvoteComment(event, commentId) {
-            var $commentAction = $(event.target).closest('.comment-action');
-            var $upvote = $commentAction.find('.upvote');
-            var $downvote = $commentAction.find('.downvote');
-            var $react = $commentAction.find('.react');
-    
-            if ($downvote.hasClass('downvoted')) {
-                $downvote.removeClass('downvoted');
-                $react.text(parseInt($react.text()) + 1);
-            } else {
-                $downvote.addClass('downvoted');
-                $react.text(parseInt($react.text()) - 1);
-                if ($upvote.hasClass('upvoted')) {
-                    $upvote.removeClass('upvoted');
-                    $react.text(parseInt($react.text()) - 1);
-                }
+            var $commentAction = $(event.target).closest(".comment-action");
+            var $voteCount = $commentAction.find(".react");
+
+            if ($commentAction.find("#Downvote" + commentId).hasClass("downvote")) {
+                $commentAction.find("#Downvote" + commentId).removeClass("downvote").addClass("downvoted");
+                $voteCount.text(parseInt($voteCount.text()) - 1);
+
+            if ($commentAction.find("#Upvote" + commentId).hasClass("upvoted")) {
+                $commentAction.find("#Upvote" + commentId).removeClass("upvoted").addClass("upvote");
+                $voteCount.text(parseInt($voteCount.text()) - 1);
             }
-        
+            } else {
+                $commentAction.find("#Downvote" + commentId).removeClass("downvoted").addClass("downvote");
+                $voteCount.text(parseInt($voteCount.text()) + 1);
+            }
                       
             $.ajax({
                 url: "{% url 'posts:downvote_comment' comment_id=1 %}".replace(/1/, commentId.toString()),

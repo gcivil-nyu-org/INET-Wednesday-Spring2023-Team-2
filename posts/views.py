@@ -463,7 +463,7 @@ class CommentsView(View):
             pid = current_pid
             # print('whyyyy:', pid)
             post_ = Post_Model.objects.get(pk=pid)
-            comments_ = post_.comments_model_set.all().order_by("-commented_time")
+            comments_ = post_.comments_model_set.all().order_by("-vote_count")
 
             template = loader.get_template("pages/comments.html")
             contents = {
