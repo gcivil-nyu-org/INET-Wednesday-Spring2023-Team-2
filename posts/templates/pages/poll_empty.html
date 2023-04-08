@@ -1,69 +1,32 @@
+{% include 'includes/messages.html' %}
+{% include 'includes/header.html' %}
+{% load static %}
 
-<div id = "postDispDiv2">
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}" />
+</head>
 
-    <form action="." method="post" id="postDispForm">
-    {% csrf_token %}
+
+<div class="container" id="container">
     <!-- 1L -->
-  <!-- <div class="main-container"> -->
-    <div class="form-container sign-in-container poll-display-container">   
-      <!-- Question -->
-      <!-- <div class="poll-display-container"> -->
-      <div class="poll-display-container2">
-        <!-- <br><br><br><br> -->
-        <div class="inner-poll-display">
-      <h2 class="question">There is currently no polls available.</h2>
-      <br>
-  
-      <div class="section over-hide z-bigger">
-        <input class="checkbox" type="checkbox" name="general" id="general">
-        <div class="section over-hide z-bigger">
-          <div class="checkcontain pb-5">
-            <div class="row justify-content-center pb-5">
-              <div class="col-12 pb-5">
-                {% if request.user.is_authenticated %}
-                Add to the page by posting your own polls!
-                <br>
-                <a href={% url 'posts:create_poll' %}> CREATE A POLL</a>
-                {% elif not request.user.is_authenticated %}
-                Log in and submit your own polls!
-                <br>
-                <a href={% url 'account:login_page' %}>
-                  <!-- <button class="ghost">Sign In</button> -->
-                  SIGN IN
-                </a>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div> 
-          </div>     
-        </div>
-      </div> 
-      </div>
-  
-  
-    <!-- 1R: Comments -->
-      <div class="overlay-container">
-          <div class="overlay">
-        
-              <div class="overlay-panel overlay-right comment-content">
-          <p>No comments.</p>
-              </div>
-  
-          </div>
-      </div>
-  </form>
-  
-  </div>
-  
-  
-  
-  
-  
-  {% for option in options %}
-  
-    <script>
-      document.getElementById("option_{{ forloop.counter }}").style.backgroundImage = "linear-gradient(75deg, #ececec 1%, #{{ option.color }})";
-    </script>
-  
-  {% endfor %}
+	<div class="form-container sign-in-container">
+		<h2 class="question">There is currently no polls available.</h2>
+        {% if request.user.is_authenticated %}
+            <h3>Add to the page by posting your own polls!</h3>
+            <br>
+            <a href={% url 'posts:create_poll' %}> CREATE A POLL</a>
+        {% elif not request.user.is_authenticated %}
+            <h3>Log in and submit your own polls!</h3>
+            <br>
+            <a href={% url 'account:login_page' %}>SIGN IN</a>
+        {% endif %}
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+            <!-- 1R -->
+			<div class="overlay-panel overlay-right">
+                <p>No comments.</p>
+			</div>
+		</div>
+	</div>
+</div>
