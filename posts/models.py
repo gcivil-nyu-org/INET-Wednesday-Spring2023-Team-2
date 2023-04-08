@@ -100,6 +100,13 @@ class Comments_Model(models.Model):
         Custom_User, related_name="downvoted_comment_user", blank=True
     )
     vote_count = models.IntegerField(default=0)
+    option_voted = models.ForeignKey(
+        Options_Model,
+        on_delete=models.CASCADE,
+        related_name="comment_option_voted",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return (

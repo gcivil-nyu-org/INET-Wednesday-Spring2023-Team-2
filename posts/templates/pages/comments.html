@@ -38,7 +38,7 @@
                 </div>
             </div>
             <script>
-                document.getElementById('pfp{{ forloop.counter }}').style.borderColor = "#{{user_color}}";
+                document.getElementById('pfp{{ forloop.counter }}').style.borderColor = "#{{comment.option_voted.color}}";
             </script>
             {% endfor %}
         
