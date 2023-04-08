@@ -7,8 +7,11 @@ app_name = "posts"
 
 urlpatterns = [
     path("home/", views.home_view, name="home_page"),
+    path("<int:pid>/", views.only_id_post_view, name="post_generation_page_idonly"),
     path(
-        "<category>/<int:pid>/", views.PostsView.as_view(), name="post_generation_page"
+        "<str:category>/<int:pid>/",
+        views.PostsView.as_view(),
+        name="post_generation_page",
     ),
     path(
         "show_curr_post/<category>/<int:current_pid>",
@@ -58,6 +61,6 @@ urlpatterns = [
         views.downvote_comment,
         name="downvote_comment",
     ),
-    path("report_post/<int:post_id>/", views.report_post, name="report_post"),
+    path("report/report_post/<int:post_id>/", views.report_post, name="report_post"),
     path("get_back/<category>/<int:pid>", views.get_back_api_view, name="get_back_api"),
 ]

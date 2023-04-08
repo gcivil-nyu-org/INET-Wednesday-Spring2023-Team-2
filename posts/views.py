@@ -96,6 +96,12 @@ def home_view(request):
         return render(request, "pages/poll_empty.html")
 
 
+def only_id_post_view(request, pid):
+    return redirect(
+        reverse("posts:post_generation_page", kwargs={"category": "all", "pid": pid})
+    )
+
+
 # def posts_view(request, pid, call="noapi"):
 # post_ = Post_Model.objects.get(pk=pid)
 # options_ = post_.options_model_set.all()
@@ -550,6 +556,7 @@ def report_post(request, post_id):
     if is_ajax(request):
         try:
             post = Post_Model.objects.get(id=post_id)
+            print(post)
             if request.user not in post.reported_by.all():
                 post.reported_by.add(request.user)
                 post.reported_count += 1

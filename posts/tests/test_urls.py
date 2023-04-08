@@ -34,7 +34,7 @@ class PostGenerationTest(TestCase):
         # option2 = Options_Model.objects.create(question=post1, choice_text='option2')
 
         response = self.client.get(
-            reverse("posts:post_generation_page", kwargs={"pid": 2})
+            reverse("posts:post_generation_page", kwargs={"category": "all", "pid": 2})
         )
         # print(response.status_code)
         self.assertEqual(response.status_code, 200)
@@ -116,13 +116,17 @@ class ViewsFunctions(TestCase):
 
     def test_ShowCurrPost_ajax(self):
         response = self.client.post(
-            reverse("posts:show_curr_post_api", kwargs={"current_pid": 2})
+            reverse(
+                "posts:show_curr_post_api", kwargs={"category": "all", "current_pid": 2}
+            )
         )
         self.assertEqual(response.status_code, 200)
 
     def test_ShowCurrPost_ajax(self):
         response = self.client.post(
-            reverse("posts:show_curr_post_api", kwargs={"current_pid": 2}),
+            reverse(
+                "posts:show_curr_post_api", kwargs={"category": "all", "current_pid": 2}
+            ),
             **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
         self.assertEqual(response.status_code, 200)
@@ -135,9 +139,12 @@ class ViewsFunctions(TestCase):
 
     def test_ajax_get_current_post_url_api(self):
         self.factory = RequestFactory()
-        url = reverse("posts:get_current_post_url_api", kwargs={"current_pid": 2})
+        url = reverse(
+            "posts:get_current_post_url_api",
+            kwargs={"category": "all", "current_pid": 2},
+        )
         request = self.factory.get(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        response = CurrentPostURL.as_view()(request, current_pid=2)
+        response = CurrentPostURL.as_view()(request, category="all", current_pid=2)
         self.assertEqual(response.status_code, 200)
 
     # def test_non_ajax_get_current_post_url_api(self):
@@ -195,7 +202,7 @@ class ViewsFunctions(TestCase):
             comment_text="Test Comment 2", question=post4, commented_by=user
         )
         response = self.client.get(
-            reverse("posts:report_post", args=[post4.id]),
+            reverse("posts:report_post", kwargs={"post_id": post4.id}),
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
 
