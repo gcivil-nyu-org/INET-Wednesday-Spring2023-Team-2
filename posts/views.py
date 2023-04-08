@@ -463,9 +463,6 @@ class CommentsView(View):
             post_ = Post_Model.objects.get(pk=pid)
 
             comments_ = post_.comments_model_set.all().order_by("-commented_time")
-            for comment in comments_:
-                comment.user_upvoted = request.user in comment.upvoted_by.all()
-                comment.user_downvoted = request.user in comment.downvoted_by.all()
                 
             template = loader.get_template("pages/comments.html")
             contents = {
@@ -493,7 +490,6 @@ class CommentsView(View):
             contents["show_comments_text"] = True
             return HttpResponse(template.render(contents, request))
             # return render(request, "pages/comments.html", contents)
-
 
 def report_comment(request, comment_id):
     if is_ajax(request):
