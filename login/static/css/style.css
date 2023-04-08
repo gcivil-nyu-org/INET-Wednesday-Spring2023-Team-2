@@ -24,6 +24,13 @@ h2 {
 	text-align: center;
 }
 
+h3 {
+	text-align: center;
+	margin:10px;
+	padding: 5px;
+	font-size: 14px
+}
+
 p {
 	font-size: 14px;
 	font-weight: 100;
@@ -100,7 +107,7 @@ input {
 	width: 55%;
 	max-width: 100%;
 	min-height: 75%;
-	max-height: 75%;
+	/* max-height: 75%; */
 	color:#222;
 }
 
@@ -319,7 +326,7 @@ select {
 }
 
 
-  .nav-tabs {
+.nav-tabs {
     display: flex;
 	height: 10%;
 	justify-content: space-evenly;
@@ -337,13 +344,12 @@ select {
     cursor: pointer;
 	/* justify-content: space-evenly; */
 	padding: 8px 50px;
-
 	transition: background-color 0.3s, color 0.3s;
-
 	height: 100%;
 	align-items: center;
 	display: flex;
 	line-height: 24px;
+	text-align: center;
 }
 
 .tab-wrapper {

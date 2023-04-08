@@ -10,7 +10,6 @@
     <div class="create-container">
         <form method = "POST" enctype="multipart/form-data">
             {% csrf_token %}
-            <br>
             <h1>Create Your Own Poll</h1>
             <br>
             <h4>Add Your Question</h4>
@@ -23,21 +22,16 @@
 
             <input id="hidden_question_text" placeholder="Type your question" name="question" type="text">
 
-            <br>
             <h4>Add Your Poll Options</h4>
             <input id="choice1" placeholder="Insert Option 1" name="choice1" type="text" required style="background-color: #AED9E0;" class="white-placeholder">
             <input id="choice2" placeholder="Insert Option 2" name="choice2" type="text" required style="background-color: #8CB369;" class="white-placeholder">
             <input id="choice3" placeholder="Insert Option 3" name="choice3" type="text" style="background-color: #D7A5E4;" class="white-placeholder">
             <input id="choice4" placeholder="Insert Option 4" name="choice4" type="text" style="background-color: #5D6DD3;" class="white-placeholder">
-            <br>
             <h4>What's The Fun In Revealing Results Immediately?</h4>
             {{ form.delay }}
-            <br>
             <h4>Add Relevant Categories</h4>
             {{ form.category }}
-            <br>
             <button type="submit" value="submit-poll" name="submit-poll" class="submit">Submit Poll</button>
-            <br>
         </form>
     </div>
 </div>

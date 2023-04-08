@@ -1,8 +1,13 @@
+{% include 'includes/messages.html' %}
+{% include 'includes/header.html' %}
+{% load static %}
 
-<div id = "postDispDiv2">
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}" />
+</head>
 
-    <form action="." method="post" id="postDispForm">
-    {% csrf_token %}
+
+<div class="container" id="container">
     <!-- 1L -->
   <!-- <div class="main-container"> -->
     <div class="form-container sign-in-container poll-display-container">   
