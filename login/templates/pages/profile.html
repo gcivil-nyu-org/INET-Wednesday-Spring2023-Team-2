@@ -23,18 +23,18 @@
 		<div class="tab-wrapper">
 		<a  class="nav-tab " id="nav-history-tab"   onclick="getProfileHistory();">History</a>
 		</div>
-		<div class="tab-wrapper">
-		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">Posts Created</a>
-		</div>
+		<!-- <div class="tab-wrapper">
+		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
+		</div> -->
 	
 		<div class="tab-wrapper">
 			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends();">Friends</a>
 		</div>
-		{% if edit_access %}
+		<!-- {% if edit_access %}
 		<div class="tab-wrapper">
 			<a class="nav-tab" id="nav-requests-tab" onclick="getFriendRequests();">Friend Requests</a>
 		</div>
-		{% endif %}
+		{% endif %} -->
 	</div>
 
 	<!-- {% if edit_access %}
@@ -128,12 +128,8 @@
 			</ul>
 
 		</div>
-       
-    </div>
 
-	<!-- posts created tab -->
-	<div class="form-container tabcontent user-history-container" id="nav-postscreated" style="display: none;">
-        <h2>Posts Created</h2>
+		<h2>Polls Created</h2>
 		<div class="history-content">
 			<ul>
 				<!-- this div will contain the posts created by user, called from ajax -->
@@ -146,6 +142,21 @@
 		</div>
        
     </div>
+
+	<!-- posts created tab -->
+	<!-- <div class="form-container tabcontent user-history-container" id="nav-postscreated" style="display: none;">
+        <h2>Polls Created</h2>
+		<div class="history-content">
+			<ul>
+				<div id="postsCreated">
+
+				</div>
+				
+			</ul>
+
+		</div>
+       
+    </div> -->
 
 	<!-- Friends Tab -->
 	<div class="form-container tabcontent user-history-container" id="nav-friends" style="display: none;">
@@ -160,10 +171,8 @@
 			</ul>
 
 		</div>
-       
-    </div>
 
-	<div class="form-container tabcontent user-history-container" id="nav-requests" style="display: none;">
+		{% if edit_access %}
 		<h2>Friend Requests</h2>
 		<div class="history-content">
 			<ul>
@@ -173,7 +182,10 @@
 				</div>
 			</ul>
 		</div>
-	</div>
+		{% endif %}
+       
+    </div>
+
 
 </div>
 
@@ -197,42 +209,38 @@ function getProfileEditInfo(){
 }
 
 
-function getProfileHistory(){
-		openTab(event, 'nav-history');
-        $.ajax({
-            url: "{% url 'account:profile_history_page' profile.username %}",
-            type: "GET",
-            success: function(resp){
-				changeurlProfile("history");
-                $("#profileHistory").html(resp);
-				// implement change_profile_url
-            },
-            error: function(resp){
-                console.log("getProfileHistory error");
-            }
-        });
-    }
+function getProfileHistory() {
+    openTab(event, 'nav-history');
+    $.ajax({
+        url: "{% url 'account:profile_history_page' profile.username %}",
+        type: "GET",
+        success: function(resp){
+            changeurlProfile("history");
+            $("#profileHistory").html(resp);
+            getPostsCreated();
+        },
+        error: function(resp){
+            console.log("getProfileHistory error");
+        }
+    });
+}
 
-
-
-
-function getPostsCreated(){
-	openTab(event, 'nav-postscreated');
-        $.ajax({
-            url: "{% url 'account:profile_postscreated_page' profile.username %}",
-            type: "GET",
-            success: function(resp){
-				changeurlProfile("posts_created");
-                $("#postsCreated").html(resp);
-				// implement change_profile_url
-            },
-            error: function(resp){
-                console.log("getPostsCreated error");
-            }
-        });
+function getPostsCreated() {
+    $.ajax({
+        url: "{% url 'account:profile_postscreated_page' profile.username %}",
+        type: "GET",
+        success: function(resp){
+            changeurlProfile("posts_created");
+            $("#postsCreated").html(resp);
+        },
+        error: function(resp){
+            console.log("getPostsCreated error");
+        }
+    });
 }
 
 
+<<<<<<< HEAD
 function getFriends(){
 	openTab(event, 'nav-friends');
         $.ajax({
@@ -246,6 +254,34 @@ function getFriends(){
                 console.log("getFriends error");
             }
         });
+=======
+function getFriends() {
+    openTab(event, 'nav-friends');
+
+    // Fetch and display user friends using AJAX
+    $.ajax({
+        url: "{% url 'account:profile_friends_page' profile.username %}",
+        type: "GET",
+        success: function(resp) {
+            $("#userFriends").html(resp);
+        },
+        error: function(resp) {
+            console.log("getFriends error");
+        }
+    });
+
+    // Fetch and display friend requests using AJAX
+    $.ajax({
+        url: "{% url 'account:friend_requests' profile.username %}",
+        type: "GET",
+        success: function(resp) {
+            $("#friendRequests").html(resp);
+        },
+        error: function(resp) {
+            console.log("getFriendRequests error");
+        }
+    });
+>>>>>>> 72b9088 (combined profile tabs)
 }
 
 
@@ -265,24 +301,6 @@ function changeurlProfile(page)
             }
         });
   }
-
-  function getFriendRequests() {
-    openTab(event, 'nav-requests');
-    
-
-    // Fetch and display friend requests using AJAX
-    $.ajax({
-        url: "{% url 'account:friend_requests' profile.username %}",
-        type: "GET",
-        success: function(resp) {
-			changeurlProfile("friend_requests");
-            $("#friendRequests").html(resp);
-        },
-        error: function(resp) {
-            console.log("getFriendRequests error");
-        }
-    });
-}
 
 function acceptFriendRequest(event, requestId) {
     event.preventDefault();

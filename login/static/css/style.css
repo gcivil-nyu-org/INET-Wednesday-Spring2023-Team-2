@@ -409,7 +409,7 @@ select {
 }
 .history-content{
 	/* height:300px; */
-	height:90%;
+	height:40%;
     overflow:auto;
 }
 
