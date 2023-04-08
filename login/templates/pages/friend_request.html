@@ -32,7 +32,7 @@
         type: "GET",
         dataType: "json",
         success: function(response) {
-            getFriendRequests();
+            getFriends();
         },
         error: function(xhr, reported, error) {
             console.log("Error accepting friend request");
@@ -47,7 +47,7 @@ function declineFriendRequest(event, uid) {
         type: "GET",
         dataType: "json",
         success: function(response) {
-            getFriendRequests();
+            getFriends();
         },
         error: function(xhr, reported, error) {
             console.log("Error declining friend request");
