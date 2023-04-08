@@ -7,7 +7,9 @@ app_name = "posts"
 
 urlpatterns = [
     path("home/", views.home_view, name="home_page"),
-    path("<category>/<int:pid>/", views.PostsView.as_view(), name="post_generation_page"),
+    path(
+        "<category>/<int:pid>/", views.PostsView.as_view(), name="post_generation_page"
+    ),
     path(
         "show_curr_post/<category>/<int:current_pid>",
         views.show_curr_post_api_view,
