@@ -6,7 +6,7 @@
         <div>
             
             {% for comment in comments %}
-    
+  
             <div class="comment-box">
                 <div class="comment">
                     <div class="profile-picture-container"  id="pfp{{ forloop.counter }}">
@@ -18,13 +18,13 @@
                     </div>
                 </div>
                 <div class="comment-action">
-                    {% if comment.user_upvoted %}
+                    {% if request.user in comment.upvoted_by.all %}
                     <a class= "upvoted" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
                     {% else %}
                     <a class= "upvote" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
                     {% endif %}
                     <span class = "react">{{ comment.vote_count }}</span>
-                    {% if comment.user_downvoted %}
+                    {% if request.user in comment.downvoted_by.all %}
                     <a class = "downvoted" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
                     {% else %}
                     <a class = "downvote" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
