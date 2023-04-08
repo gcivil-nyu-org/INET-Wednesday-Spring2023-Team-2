@@ -231,7 +231,7 @@ class PostsView(View):
     def get(self, request, category, pid, call="noapi", change_url=True):
         print("CATTTTT:", category)
         try:
-            post_ = Post_Model.objects.get(pk=pid, category__contains = category)
+            post_ = Post_Model.objects.get(pk=pid, category__contains=category)
         except Post_Model.DoesNotExist:
             try:
                 post_ = Post_Model.objects.get(pk=pid)
@@ -385,6 +385,7 @@ class SearchPostsView(TemplateView):
 #     contents = {"post": post_, "options": options_, 'pid': pid}
 #     return HttpResponse(template.render(contents, request))
 
+
 def no_more_posts(request, category):
     template = loader.get_template("pages/poll_end.html")
     contents = {
@@ -394,7 +395,6 @@ def no_more_posts(request, category):
         "category": category,
     }
     return HttpResponse(template.render(contents, request))
-
 
 
 def show_next_post_api_view(request, current_pid, category):
