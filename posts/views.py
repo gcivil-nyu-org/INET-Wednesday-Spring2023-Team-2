@@ -231,9 +231,13 @@ class PostsView(View):
     def get(self, request, category, pid, call="noapi", change_url=True):
         print("CATTTTT:", category)
         try:
-            post_ = Post_Model.objects.get(pk=pid)
+            post_ = Post_Model.objects.get(pk=pid, category__contains = category)
         except Post_Model.DoesNotExist:
-            return render(request, "pages/poll_empty.html")
+            try:
+                post_ = Post_Model.objects.get(pk=pid)
+                category = "all"
+            except:
+                return render(request, "pages/poll_empty.html")
         options_ = post_.options_model_set.all().order_by("id")
 
         if call == "noapi":
@@ -381,6 +385,17 @@ class SearchPostsView(TemplateView):
 #     contents = {"post": post_, "options": options_, 'pid': pid}
 #     return HttpResponse(template.render(contents, request))
 
+def no_more_posts(request, category):
+    template = loader.get_template("pages/poll_end.html")
+    contents = {
+        "post": None,
+        "pid": -1,
+        "change_url": True,
+        "category": category,
+    }
+    return HttpResponse(template.render(contents, request))
+
+
 
 def show_next_post_api_view(request, current_pid, category):
     if is_ajax(request):
@@ -401,7 +416,8 @@ def show_next_post_api_view(request, current_pid, category):
 
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
-            return HttpResponse("No more posts to display in the selected category")
+            # return HttpResponse("No more posts to display in the selected category")
+            no_more_posts(request, category)
 
     else:
         return HttpResponse("Thou Shall not Enter!!")
@@ -428,7 +444,8 @@ def show_categorybased_post_api_view(request, current_pid, category):
 
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
-            return HttpResponse("No more posts to display in the selected category")
+            # return HttpResponse("No more posts to display in the selected category")
+            no_more_posts(request, category)
     else:
         return HttpResponse("Thou Shall not Enter!!")
 

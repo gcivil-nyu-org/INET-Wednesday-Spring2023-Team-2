@@ -1,0 +1,15 @@
+<div>
+    No more Polls to display!!
+</div>
+
+
+{% if change_url %}
+<script>changeurl("{{ category }}");</script>
+{% endif %}
+
+
+{% block scripts %}
+
+{% include "includes/ajax_functions.html" %}
+
+{% endblock scripts %}
