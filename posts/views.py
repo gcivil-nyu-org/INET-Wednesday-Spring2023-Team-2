@@ -432,7 +432,9 @@ class CommentsView(View):
                 comments_ = comments_form.save(commit=False)
                 comments_.question = post_
                 comments_.commented_by = request.user
-
+                comments_.option_voted = Options_Model.objects.filter(
+                    question=post_, chosen_by=request.user
+                ).first()
                 comment_text = comments_form.cleaned_data["comment_text"]
 
             def check_mention_user_exist(match):
@@ -461,9 +463,8 @@ class CommentsView(View):
             pid = current_pid
             # print('whyyyy:', pid)
             post_ = Post_Model.objects.get(pk=pid)
-
             comments_ = post_.comments_model_set.all().order_by("-commented_time")
-                
+
             template = loader.get_template("pages/comments.html")
             contents = {
                 "pid": pid,
@@ -484,12 +485,12 @@ class CommentsView(View):
                 "pid": pid,
                 "comments": comments_,
                 "show_comments_text": False,
-                "user_color": "red",
             }
             contents["post"] = post_
             contents["show_comments_text"] = True
             return HttpResponse(template.render(contents, request))
             # return render(request, "pages/comments.html", contents)
+
 
 def report_comment(request, comment_id):
     if is_ajax(request):
