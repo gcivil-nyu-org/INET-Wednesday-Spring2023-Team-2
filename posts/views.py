@@ -237,7 +237,7 @@ class PostsView(View):
                 if call == "api":
                     return render(request, "pages/poll_end.html")
                 contents = {
-                    "pid": '0',
+                    "pid": "0",
                     "category": category,
                 }
                 return render(request, "pages/posts_home.html", contents)
