@@ -149,7 +149,7 @@ def results_view(request, pid, change_url):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
-    
+
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color_ = user_choice.color
     contents = {
@@ -229,7 +229,12 @@ class PostsView(View):
             return results_view(request, pid, change_url)
 
         template = loader.get_template("pages/poll_disp.html")
-        contents = {"post": post_, "options": options_, "pid": pid, "change_url": change_url}
+        contents = {
+            "post": post_,
+            "options": options_,
+            "pid": pid,
+            "change_url": change_url,
+        }
         return HttpResponse(template.render(contents, request))
 
     def post(self, request, pid, call="noapi"):
@@ -704,8 +709,6 @@ def create_poll(request):
     return render(request, "pages/poll_create.html", context)
 
 
-
-
 def get_back_api_view(request, pid):
     post_view_class = PostsView()
-    return post_view_class.get(request=request, call="api", pid=pid, change_url = False)
+    return post_view_class.get(request=request, call="api", pid=pid, change_url=False)
