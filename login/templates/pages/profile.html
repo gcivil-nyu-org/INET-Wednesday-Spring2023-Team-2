@@ -311,6 +311,7 @@ window.onpopstate = function (e) {
     var current_url = getCurrentURL();
 	current_tab = current_url.split("/").at(-1);
 	console.log(current_tab);
+	//need to get rid of changeurl inside the function for this to work
 	document.getElementById("nav-" + current_tab + "-tab").click();
 }
 

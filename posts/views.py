@@ -159,7 +159,6 @@ def results_view(request, pid, change_url, category):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
-    print(user_option, post_)
 
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color_ = user_choice.color
@@ -211,7 +210,6 @@ def results_view(request, pid, change_url, category):
 def show_curr_post_api_view(request, category, current_pid):
     if is_ajax(request):
         pid = current_pid
-        print("here", pid)
         post_view_class = PostsView()
         if request.method == "GET":
             return post_view_class.get(
@@ -229,15 +227,20 @@ def show_curr_post_api_view(request, category, current_pid):
 
 class PostsView(View):
     def get(self, request, category, pid, call="noapi", change_url=True):
-        print("CATTTTT:", category)
         try:
             post_ = Post_Model.objects.get(pk=pid, category__contains=category)
         except Post_Model.DoesNotExist:
             try:
                 post_ = Post_Model.objects.get(pk=pid)
                 category = "all"
-            except:
-                return render(request, "pages/poll_empty.html")
+            except Post_Model.DoesNotExist:
+                if call == "api":
+                    return render(request, "pages/poll_end.html")
+                contents = {
+                    "pid": '0',
+                    "category": category,
+                }
+                return render(request, "pages/posts_home.html", contents)
         options_ = post_.options_model_set.all().order_by("id")
 
         if call == "noapi":
@@ -390,7 +393,7 @@ def no_more_posts(request, category):
     template = loader.get_template("pages/poll_end.html")
     contents = {
         "post": None,
-        "pid": -1,
+        "pid": "0",
         "change_url": True,
         "category": category,
     }
@@ -417,7 +420,7 @@ def show_next_post_api_view(request, current_pid, category):
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
             # return HttpResponse("No more posts to display in the selected category")
-            no_more_posts(request, category)
+            return no_more_posts(request, category)
 
     else:
         return HttpResponse("Thou Shall not Enter!!")
@@ -473,6 +476,7 @@ class CurrentPostURL(APIView):
                     kwargs={"category": category, "pid": pid},
                 )
             )
+            print("test", current_url)
             content = {"current_url": current_url}
             return Response(content)
         else:

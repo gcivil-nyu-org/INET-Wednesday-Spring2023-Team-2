@@ -165,16 +165,16 @@ function getCurrentURL () {
 
 
   // eg: changeurl("res");
-  function changeurl(category)
+  function changeurl(pid, category)
   {
-    // console.log(category)
+    // console.log("{% url 'posts:get_current_post_url_api' current_pid=1 category='catrep' %}".replace(/1/, pid.toString()).replace("catrep", category.toString()))
     $.ajax({
-            url:"{% url 'posts:get_current_post_url_api' current_pid=pid category='catrep' %}".replace("catrep", category.toString()),
+            url:"{% url 'posts:get_current_post_url_api' current_pid=1 category='catrep' %}".replace(/1/, pid.toString()).replace("catrep", category.toString()),
             type:"GET",
             success: function(resp){
                 var new_url=resp.current_url;
                 window.history.pushState("data","Title",new_url);
-                // console.log(new_url)
+                // console.log("todo {{ pid }}")
             },
             error: function(resp){
               console.log("changeurl error")
