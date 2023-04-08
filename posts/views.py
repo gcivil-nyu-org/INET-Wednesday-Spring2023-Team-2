@@ -87,7 +87,7 @@ def home_view(request):
     pid, truth = get_random_pid()
 
     if truth:
-        return redirect(reverse("posts:post_generation_page", kwargs={"pid": pid}))
+        return redirect(reverse("posts:post_generation_page", kwargs={"category": "all", "pid": pid}))
     else:
         return render(request, "pages/poll_empty.html")
 
@@ -145,10 +145,11 @@ def home_view(request):
 
 
 ##need a json response here as post method automatically returns whatever is in this function and renders it!
-def results_view(request, pid, change_url):
+def results_view(request, pid, change_url, category):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
+    print(user_option, post_)
 
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color_ = user_choice.color
@@ -159,6 +160,7 @@ def results_view(request, pid, change_url):
         "user_option": user_option,
         "show_poll_results": False,
         "change_url": change_url,
+        "category": category,
     }
     template = loader.get_template("pages/poll_result.html")
 
@@ -196,14 +198,14 @@ def results_view(request, pid, change_url):
 
 # shows whether you have voted or not
 # if voted, then results. if not, poll
-def show_curr_post_api_view(request, current_pid):
+def show_curr_post_api_view(request, category, current_pid):
     if is_ajax(request):
         pid = current_pid
         print("here", pid)
         post_view_class = PostsView()
         if request.method == "GET":
-            return post_view_class.get(request=request, pid=pid, call="api")
-        return post_view_class.post(request=request, pid=pid, call="api")
+            return post_view_class.get(request=request, category=category, pid=pid, call="api")
+        return post_view_class.post(request=request, category=category, pid=pid, call="api")
     else:
         return HttpResponse("Thou Shall not Enter!!")
 
@@ -212,7 +214,8 @@ def show_curr_post_api_view(request, current_pid):
 
 
 class PostsView(View):
-    def get(self, request, pid, call="noapi", change_url=True):
+    def get(self, request, category, pid, call="noapi", change_url=True):
+        print("CATTTTT:", category)
         try:
             post_ = Post_Model.objects.get(pk=pid)
         except Post_Model.DoesNotExist:
@@ -220,13 +223,13 @@ class PostsView(View):
         options_ = post_.options_model_set.all().order_by("id")
 
         if call == "noapi":
-            contents = {"post": post_, "options": options_, "pid": pid}
+            contents = {"post": post_, "options": options_, "pid": pid, "category": category}
             print(pid, call)
             return render(request, "pages/posts_home.html", contents)
 
         if post_.viewed_by.filter(username=request.user.username).exists():
             # display results
-            return results_view(request, pid, change_url)
+            return results_view(request, pid, change_url, category)
 
         template = loader.get_template("pages/poll_disp.html")
         contents = {
@@ -234,10 +237,11 @@ class PostsView(View):
             "options": options_,
             "pid": pid,
             "change_url": change_url,
+            "category": category,
         }
         return HttpResponse(template.render(contents, request))
 
-    def post(self, request, pid, call="noapi"):
+    def post(self, request, category, pid, call="noapi"):
         if is_ajax(request):
             post_ = Post_Model.objects.get(pk=pid)
             try:
@@ -361,15 +365,16 @@ class SearchPostsView(TemplateView):
 
 def show_next_post_api_view(request, current_pid, category):
     if is_ajax(request):
+        category_ = category
         if category == "all":
-            category = None
-        pid, truth = get_random_pid(current_pid=current_pid, category=category)
+            category_ = None
+        pid, truth = get_random_pid(current_pid=current_pid, category=category_)
 
         if truth:
             post_view_class = PostsView()
             if request.method == "GET":
-                return post_view_class.get(request=request, pid=pid, call="api")
-            return post_view_class.post(request=request, pid=pid, call="api")
+                return post_view_class.get(request=request, pid=pid, call="api", category=category)
+            return post_view_class.post(request=request, pid=pid, call="api", category=category)
 
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
@@ -381,17 +386,18 @@ def show_next_post_api_view(request, current_pid, category):
 
 def show_categorybased_post_api_view(request, current_pid, category):
     if is_ajax(request):
+        category_ = category
         if category == "all":
-            category = None
-        pid, truth = get_random_pid(current_pid=current_pid, category=category)
+            category_ = None
+        pid, truth = get_random_pid(current_pid=current_pid, category=category_)
 
         # print(pid)
 
         if truth:
             post_view_class = PostsView()
             if request.method == "GET":
-                return post_view_class.get(request=request, pid=pid, call="api")
-            return post_view_class.post(request=request, pid=pid, call="api")
+                return post_view_class.get(request=request, pid=pid, call="api", category=category)
+            return post_view_class.post(request=request, pid=pid, call="api", category=category)
 
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
@@ -414,11 +420,11 @@ class CurrentPostURL(APIView):
     renderer_classes = [JSONRenderer]
     # permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request, current_pid):
+    def get(self, request, category, current_pid):
         if is_ajax(request):
             pid = current_pid
             current_url = request.build_absolute_uri(
-                reverse("posts:post_generation_page", kwargs={"pid": pid})
+                reverse("posts:post_generation_page", kwargs={"category": category, "pid": pid})
             )
             content = {"current_url": current_url}
             return Response(content)
@@ -709,6 +715,6 @@ def create_poll(request):
     return render(request, "pages/poll_create.html", context)
 
 
-def get_back_api_view(request, pid):
+def get_back_api_view(request, category, pid):
     post_view_class = PostsView()
-    return post_view_class.get(request=request, call="api", pid=pid, change_url=False)
+    return post_view_class.get(request=request, call="api", pid=pid, change_url=False, category=category)

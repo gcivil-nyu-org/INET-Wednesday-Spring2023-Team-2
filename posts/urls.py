@@ -7,9 +7,9 @@ app_name = "posts"
 
 urlpatterns = [
     path("home/", views.home_view, name="home_page"),
-    path("<int:pid>/", views.PostsView.as_view(), name="post_generation_page"),
+    path("<category>/<int:pid>/", views.PostsView.as_view(), name="post_generation_page"),
     path(
-        "show_curr_post/<int:current_pid>",
+        "show_curr_post/<category>/<int:current_pid>",
         views.show_curr_post_api_view,
         name="show_curr_post_api",
     ),
@@ -19,7 +19,7 @@ urlpatterns = [
         name="show_next_post_api",
     ),
     path(
-        "get_current_url/<int:current_pid>",
+        "get_current_url/<category>/<int:current_pid>",
         views.CurrentPostURL.as_view(),
         name="get_current_post_url_api",
     ),
@@ -57,5 +57,5 @@ urlpatterns = [
         name="downvote_comment",
     ),
     path("report_post/<int:post_id>/", views.report_post, name="report_post"),
-    path("get_back/<int:pid>", views.get_back_api_view, name="get_back_api"),
+    path("get_back/<category>/<int:pid>", views.get_back_api_view, name="get_back_api"),
 ]

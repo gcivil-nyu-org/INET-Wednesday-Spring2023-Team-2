@@ -26,7 +26,7 @@ function getCurrentURL () {
         var current_pid = getCurrentURL().toString();
         current_pid = current_pid.split("/").at(-2);
         $.ajax({
-            url: "{% url 'posts:show_categorybased_post_api' current_pid=1 category='rep1' %}".replace(/1/, current_pid.toString()).replace("rep1", current_cat.toString()),
+            url: "{% url 'posts:show_categorybased_post_api' current_pid=1 category='catrep' %}".replace(/1/, current_pid.toString()).replace("catrep", current_cat.toString()),
             type: "GET",
             success: function(resp){
                 $("#postDispDiv").html(resp);
@@ -40,16 +40,17 @@ function getCurrentURL () {
 
 
     function getCurrPost(){
-        var current_pid = getCurrentURL().toString();
-        current_pid = current_pid.split("/").at(-2);
+        var current_url = getCurrentURL().toString();
+        current_pid = current_url.split("/").at(-2);
+        current_cat = current_url.split("/").at(-3);
         $.ajax({
             // url: $(".post-content").data('url'),
-            url: "{% url 'posts:show_curr_post_api' current_pid=1 %}".replace(/1/, current_pid.toString()),
+            url: "{% url 'posts:show_curr_post_api' current_pid=1 category='catrep'%}".replace(/1/, current_pid.toString()).replace("catrep", current_cat.toString()),
             type: "GET",
             success: function(resp){
                 // $("#postDispForm").html(resp);
                 // changeurlhere(current_pid);
-                localStorage.setItem("response", resp);
+                // localStorage.setItem("response", resp);
                 $("#postDispDiv").html(resp);
                 // var url= $(".post-content").data('url');
                 // console.log(url);
@@ -62,16 +63,17 @@ function getCurrentURL () {
 
 
     function getCurrPostInside(){
-        var current_pid = getCurrentURL().toString();
-        current_pid = current_pid.split("/").at(-2);
+        var current_url = getCurrentURL().toString();
+        current_pid = current_url.split("/").at(-2);
+        current_cat = current_url.split("/").at(-3);
         $.ajax({
             // url: $(".post-content").data('url'),
-            url: "{% url 'posts:show_curr_post_api' current_pid=1 %}".replace(/1/, current_pid.toString()),
+            url: "{% url 'posts:show_curr_post_api' current_pid=1 category='catrep' %}".replace(/1/, current_pid.toString()).replace("catrep", current_cat.toString()),
             type: "GET",
             success: function(resp){
                 // $("#postDispForm").html(resp);
                 // changeurlhere(current_pid);
-                localStorage.setItem("response", resp);
+                // localStorage.setItem("response", resp);
                 $("#postDispDiv2").html(resp);
                 // var url= $(".post-content").data('url');
                 // console.log(url);
@@ -130,16 +132,17 @@ function getCurrentURL () {
 
     // change this to call getCurrPost() to keep it linear, return json in views.py
     function getNextPost(){
-        var current_pid = getCurrentURL().toString();
-        current_pid = current_pid.split("/").at(-2);
+        var current_url = getCurrentURL().toString();
+        current_pid = current_url.split("/").at(-2);
+        current_cat = current_url.split("/").at(-3);
 
-        $('.nav-tab').each(function () {
-            if ($(this).hasClass('active')) {
-                var current_cat = $(this).attr('data-url');
+        // $('.nav-tab').each(function () {
+        //     if ($(this).hasClass('active')) {
+        //         var current_cat = $(this).attr('data-url');
 
 
         $.ajax({
-            url:"{% url 'posts:show_next_post_api' current_pid=1 category='rep1' %}".replace(/1/, current_pid.toString()).replace("rep1", current_cat.toString()),
+            url:"{% url 'posts:show_next_post_api' current_pid=1 category='catrep' %}".replace(/1/, current_pid.toString()).replace("catrep", current_cat.toString()),
             type:"GET",
             success: function(resp){
                 // changeurl();
@@ -156,32 +159,17 @@ function getCurrentURL () {
             }
         });
     }
-    });
-    }
+    // });
+    // }
 
 
 
   // eg: changeurl("res");
-  function changeurl()
+  function changeurl(category)
   {
+    // console.log(category)
     $.ajax({
-            url:"{% url 'posts:get_current_post_url_api' pid %}",
-            type:"GET",
-            success: function(resp){
-                var new_url=resp.current_url;
-                window.history.pushState("data","Title",new_url);
-                // console.log(new_url)
-            },
-            error: function(resp){
-              console.log("changeurl error")
-            }
-        });
-  }
-
-  function changeurlhere(pid)
-  {
-    $.ajax({
-            url:"{% url 'posts:get_current_post_url_api' current_pid=1 %}".replace(/1/, pid.toString()),
+            url:"{% url 'posts:get_current_post_url_api' current_pid=pid category='catrep' %}".replace("catrep", category.toString()),
             type:"GET",
             success: function(resp){
                 var new_url=resp.current_url;
@@ -224,7 +212,7 @@ function getCurrentURL () {
         $("#commentDisp").html(resp);
       },
       error: function(resp){
-        console.log(resp);
+        console.log("getComments error");
       }
     })
   }
@@ -273,11 +261,11 @@ function getCurrentURL () {
     });
 
 
-    function getBack(url){
-        var current_pid = url.toString();
-        current_pid = current_pid.split("/").at(-2);
+    function getBack(current_url){
+        current_pid = current_url.split("/").at(-2);
+        current_cat = current_url.split("/").at(-3);
         $.ajax({
-            url:"{% url 'posts:get_back_api' pid=1 %}".replace(/1/, current_pid.toString()),
+            url:"{% url 'posts:get_back_api' pid=1 category='catrep' %}".replace(/1/, current_pid.toString()).replace("catrep", current_cat.toString()),
             type:"GET",
             success: function(resp){
                 // localStorage.setItem("response", resp);

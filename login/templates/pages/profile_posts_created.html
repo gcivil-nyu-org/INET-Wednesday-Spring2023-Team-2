@@ -2,7 +2,7 @@
 {% for post in posts %}
 
 <div>
-    <li><a href="{% url 'posts:post_generation_page' post.id %}">{{ post }}</a></li>
+    <li><a href="{% url 'posts:post_generation_page' category='all' pid=post.id %}">{{ post }}</a></li>
 </div>
 
 {% endfor %}

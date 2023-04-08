@@ -55,14 +55,16 @@ getCurrPost();
 
 // // trying to fix back button not loading ajax contents issue
 window.onpopstate = function (e) {
-    var url = getCurrentURL();
+    var current_url = getCurrentURL();
     // console.log(url);
     // var res = sessionStorage.getItem('cat');
     // console.log(res);
     // if(res){
     //     openCatTabforback(res);
     // }
-    getBack(url);
+    current_cat = current_url.split("/").at(-3);
+    openCatTabforback(current_cat);
+    getBack(current_url);
 }
 //     console.log(getCurrentURL());
 //     $.ajax({
@@ -99,7 +101,7 @@ function openCatTabforback(currentCat){
       tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
 
-    main_tablink = document.getElementsByClassName("nav-" + currentCat.toString() + "-tab");
+    main_tablink = document.getElementById("nav-" + currentCat.toString() + "-tab");
     main_tablink.className += " active";
 }
 
