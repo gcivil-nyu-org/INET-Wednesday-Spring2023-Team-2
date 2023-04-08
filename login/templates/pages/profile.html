@@ -229,7 +229,6 @@ function getFriends(){
             success: function(resp){
 				changeurlProfile("friends");
                 $("#userFriends").html(resp);
-				console.log(resp);
             },
             error: function(resp){
                 console.log("getFriends error");
@@ -303,7 +302,17 @@ function declineFriendRequest(event, requestId) {
     });
 }
 
- 
+
+function getCurrentURL(){
+  return window.location.href
+    }
+
+window.onpopstate = function (e) {
+    var current_url = getCurrentURL();
+	current_tab = current_url.split("/").at(-1);
+	console.log(current_tab);
+	document.getElementById("nav-" + current_tab + "-tab").click();
+}
 
 document.getElementById("{{ tab_to_click }}").click();
 

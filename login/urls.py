@@ -28,7 +28,7 @@ urlpatterns = [
         name="profile_history_page",
     ),
     path(
-        "profile/<str:username_>/posts_created",
+        "profile/<str:username_>/postscreated",
         login_required(views.UserPostsCreated.as_view()),
         name="profile_postscreated_page",
     ),
@@ -50,7 +50,7 @@ urlpatterns = [
         name="send_friend_request",
     ),
     path(
-        "profile/<str:username_>/friend_requests/",
+        "profile/<str:username_>/requests/",
         views.friend_requests,
         name="friend_requests",
     ),
