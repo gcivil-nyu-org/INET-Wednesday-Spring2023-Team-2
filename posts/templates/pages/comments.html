@@ -19,15 +19,15 @@
                 </div>
                 <div class="comment-action">
                     {% if request.user in comment.upvoted_by.all %}
-                    <a class= "upvoted" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
+                    <a class= "upvoted" id = "Upvoted" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
                     {% else %}
-                    <a class= "upvote" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
+                    <a class= "upvote" id = "Upvote" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
                     {% endif %}
                     <span class = "react">{{ comment.vote_count }}</span>
                     {% if request.user in comment.downvoted_by.all %}
-                    <a class = "downvoted" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
+                    <a class = "downvoted" id = "Downvoted" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
                     {% else %}
-                    <a class = "downvote" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
+                    <a class = "downvote" id = "Downvote" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
                     {% endif %}
                     <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
                     {% if request.user == comment.commented_by %}
@@ -134,7 +134,8 @@
                 }
             }   
 
-        function upvoteComment(event, commentId) {            
+        function upvoteComment(event, commentId) {
+
             $.ajax({
                 url: "{% url 'posts:upvote_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
                 type: "GET",
@@ -148,13 +149,31 @@
                     },
                 });    
         }  
-        function downvoteComment(event, commentId) {              
+
+        function downvoteComment(event, commentId) {
+            var $commentAction = $(event.target).closest('.comment-action');
+            var $upvote = $commentAction.find('.upvote');
+            var $downvote = $commentAction.find('.downvote');
+            var $react = $commentAction.find('.react');
+    
+            if ($downvote.hasClass('downvoted')) {
+                $downvote.removeClass('downvoted');
+                $react.text(parseInt($react.text()) + 1);
+            } else {
+                $downvote.addClass('downvoted');
+                $react.text(parseInt($react.text()) - 1);
+                if ($upvote.hasClass('upvoted')) {
+                    $upvote.removeClass('upvoted');
+                    $react.text(parseInt($react.text()) - 1);
+                }
+            }
+        
+                      
             $.ajax({
                 url: "{% url 'posts:downvote_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
                 type: "GET",
                     dataType: "json",
                     success: function(response) {
-                        getComments()
                     },
                     error: function(xhr, reported, error) {
                         // Handle the error here
