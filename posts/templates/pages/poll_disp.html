@@ -103,8 +103,13 @@
 {% endfor %}
 
 
+{% if change_url %}
+<script>changeurl();</script>
+{% endif %}
+
+
 <script>
-  changeurl();
+  // changeurl();
 
   function reportPost(event, postId) {
     event.preventDefault();
@@ -137,6 +142,17 @@
             },
         });
     }
-  } 
+  }
+  
+  
+
+//   window.onpopstate = function (e) {
+//     console.log(getCurrentURL());
+//     // location.reload();
+//     // getCurrPostInside();
+//     var res = localStorage.getItem('response');         
+//     $("#postDispDiv2").html(res);
+// }
+
 
 </script>

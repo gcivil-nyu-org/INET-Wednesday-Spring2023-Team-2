@@ -53,10 +53,33 @@
 getCurrPost();
 
 
-// // trying to fix back butoon not loading ajax contents issue
-// window.onpopstate = function (e) {
-//     location.reload();
-//     getCurrPost();
+// // trying to fix back button not loading ajax contents issue
+window.onpopstate = function (e) {
+    var url = getCurrentURL();
+    // console.log(url);
+    // var res = sessionStorage.getItem('cat');
+    // console.log(res);
+    // if(res){
+    //     openCatTabforback(res);
+    // }
+    getBack(url);
+}
+//     console.log(getCurrentURL());
+//     $.ajax({
+//         url:getCurrentURL(),
+//         type:"GET",
+//         success: function(resp){
+//             // changeurl();
+//             localStorage.setItem("response", resp);
+//             $("#postDispDiv").html(resp);
+//         },
+//             error: function(resp){
+//               console.log("getnextpost error")
+//             }
+//         })
+//     // console.log(getCurrentURL());
+//     // location.reload();
+//     // getCurrPost();
 // }
 
 
@@ -68,6 +91,16 @@ function openCatTab(evt, currentCat){
 
     evt.currentTarget.className += " active";
     getCategoryBasedPosts(currentCat);
+}
+
+function openCatTabforback(currentCat){
+    tablinks = document.getElementsByClassName("nav-tab");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    main_tablink = document.getElementsByClassName("nav-" + currentCat.toString() + "-tab");
+    main_tablink.className += " active";
 }
 
 </script>

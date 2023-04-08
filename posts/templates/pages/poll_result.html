@@ -82,9 +82,13 @@
 
 {% endblock scripts %}
 
+{% if change_url %}
+<script>changeurl();</script>
+{% endif %}
+
 <script>
 
-changeurl();
+// changeurl();
 getCommentsText();
 // getComments();
 

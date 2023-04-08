@@ -145,11 +145,11 @@ def home_view(request):
 
 
 ##need a json response here as post method automatically returns whatever is in this function and renders it!
-def results_view(request, pid):
+def results_view(request, pid, change_url):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
-    print(post_.result_reveal_time)
+    
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color_ = user_choice.color
     contents = {
@@ -158,6 +158,7 @@ def results_view(request, pid):
         "pid": pid,
         "user_option": user_option,
         "show_poll_results": False,
+        "change_url": change_url,
     }
     template = loader.get_template("pages/poll_result.html")
 
@@ -211,7 +212,7 @@ def show_curr_post_api_view(request, current_pid):
 
 
 class PostsView(View):
-    def get(self, request, pid, call="noapi"):
+    def get(self, request, pid, call="noapi", change_url=True):
         try:
             post_ = Post_Model.objects.get(pk=pid)
         except Post_Model.DoesNotExist:
@@ -225,10 +226,10 @@ class PostsView(View):
 
         if post_.viewed_by.filter(username=request.user.username).exists():
             # display results
-            return results_view(request, pid)
+            return results_view(request, pid, change_url)
 
         template = loader.get_template("pages/poll_disp.html")
-        contents = {"post": post_, "options": options_, "pid": pid}
+        contents = {"post": post_, "options": options_, "pid": pid, "change_url": change_url}
         return HttpResponse(template.render(contents, request))
 
     def post(self, request, pid, call="noapi"):
@@ -701,3 +702,10 @@ def create_poll(request):
 
     context = {"form": form, "categories": categories}
     return render(request, "pages/poll_create.html", context)
+
+
+
+
+def get_back_api_view(request, pid):
+    post_view_class = PostsView()
+    return post_view_class.get(request=request, call="api", pid=pid, change_url = False)

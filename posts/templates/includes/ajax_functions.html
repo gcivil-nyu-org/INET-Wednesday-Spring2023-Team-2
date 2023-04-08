@@ -48,6 +48,8 @@ function getCurrentURL () {
             type: "GET",
             success: function(resp){
                 // $("#postDispForm").html(resp);
+                // changeurlhere(current_pid);
+                localStorage.setItem("response", resp);
                 $("#postDispDiv").html(resp);
                 // var url= $(".post-content").data('url');
                 // console.log(url);
@@ -68,6 +70,8 @@ function getCurrentURL () {
             type: "GET",
             success: function(resp){
                 // $("#postDispForm").html(resp);
+                // changeurlhere(current_pid);
+                localStorage.setItem("response", resp);
                 $("#postDispDiv2").html(resp);
                 // var url= $(".post-content").data('url');
                 // console.log(url);
@@ -139,6 +143,7 @@ function getCurrentURL () {
             type:"GET",
             success: function(resp){
                 // changeurl();
+                sessionStorage.setItem("cat", current_cat);
                 $("#postDispDiv").html(resp);
                 // $(self).unbind();
                 // changeurl("res");
@@ -161,6 +166,22 @@ function getCurrentURL () {
   {
     $.ajax({
             url:"{% url 'posts:get_current_post_url_api' pid %}",
+            type:"GET",
+            success: function(resp){
+                var new_url=resp.current_url;
+                window.history.pushState("data","Title",new_url);
+                // console.log(new_url)
+            },
+            error: function(resp){
+              console.log("changeurl error")
+            }
+        });
+  }
+
+  function changeurlhere(pid)
+  {
+    $.ajax({
+            url:"{% url 'posts:get_current_post_url_api' current_pid=1 %}".replace(/1/, pid.toString()),
             type:"GET",
             success: function(resp){
                 var new_url=resp.current_url;
@@ -252,6 +273,21 @@ function getCurrentURL () {
     });
 
 
+    function getBack(url){
+        var current_pid = url.toString();
+        current_pid = current_pid.split("/").at(-2);
+        $.ajax({
+            url:"{% url 'posts:get_back_api' pid=1 %}".replace(/1/, current_pid.toString()),
+            type:"GET",
+            success: function(resp){
+                // localStorage.setItem("response", resp);
+                $("#postDispDiv").html(resp);
+            },
+            error: function(resp){
+                console.log("getcurrpost error");
+            }
+        })
+    }
 
 
 //// to check category click
