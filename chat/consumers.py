@@ -55,6 +55,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                 "type": "chatbox_message",
                 "message": message,
                 "username": username,
+                "timestamp": timestamp,
             },
         )
 
@@ -64,12 +65,14 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def chatbox_message(self, event):
         message = event["message"]
         username = event["username"]
+        timestamp = event["timestamp"]
         # send message and username of sender to websocket
         await self.send(
             text_data=json.dumps(
                 {
                     "message": message,
                     "username": username,
+                    "timestamp": str(timestamp),
                 }
             )
         )
