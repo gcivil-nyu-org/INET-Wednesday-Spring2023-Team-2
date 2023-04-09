@@ -315,6 +315,21 @@ window.onpopstate = function (e) {
 	document.getElementById("nav-" + current_tab + "-tab").click();
 }
 
+
+function backactivetab(current_tab){
+	openTab(event, "nav-" + current_tab);
+        $.ajax({
+            url: "{% url 'account:profile_backactivetab' username=profile.username tab='current_tab' %}".replace('current_tab', current_tab.toString()),
+            type: "GET",
+            success: function(resp){
+                $("#userFriends").html(resp);
+            },
+            error: function(resp){
+                console.log("getFriends error");
+            }
+        });
+}
+
 document.getElementById("{{ tab_to_click }}").click();
 
 </script>

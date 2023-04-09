@@ -600,3 +600,8 @@ def decline_friend_request(request, uid):
                 {"status": "error", "message": "Friend request not found."}
             )
     return JsonResponse({"status": "error", "message": "Not an AJAX request."})
+
+
+def backactivetab_view(request, username, tab):
+    # implement map for each tab to corresponding func
+    return

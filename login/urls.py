@@ -55,13 +55,18 @@ urlpatterns = [
         name="friend_requests",
     ),
     path(
-        "profile/accept_friend_request/<int:uid>>/",
+        "profile/accept_friend_request/<int:uid>/",
         views.accept_friend_request,
         name="accept_friend_request",
     ),
     path(
-        "profile/decline_friend_request/<int:uid>>/",
+        "profile/decline_friend_request/<int:uid>/",
         views.decline_friend_request,
         name="decline_friend_request",
+    ),
+    path(
+        "profile/get_back/<username>/<tab>/",
+        views.backactivetab_view,
+        name="profile_backactivetab",
     ),
 ]
