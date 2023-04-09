@@ -585,7 +585,7 @@ def report_post(request, post_id):
                 return JsonResponse({"report": "success"})
             else:
                 return JsonResponse({"report": "already_reported"})
-        except Comments_Model.DoesNotExist:
+        except Post_Model.DoesNotExist:
             return JsonResponse({"report": "error"})
     return JsonResponse({"report": "not ajax"})
 

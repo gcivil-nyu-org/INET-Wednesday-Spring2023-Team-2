@@ -131,7 +131,7 @@ def password_reset_confirmation_view(request):
 
         if email_token(request, user_, email_subject, text_, token_, reverse_link):
             messages.success(
-                request, "Password Reset Link set via email. Reset Password to Login"
+                request, "Password Reset Link sent via email. Reset Password to Login"
             )
             # return maybe redirect to home? or login?
 
