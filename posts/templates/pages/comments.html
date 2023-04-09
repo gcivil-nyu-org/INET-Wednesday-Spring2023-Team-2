@@ -30,13 +30,13 @@
                     <a class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
 
                     <script>
-                        {% if comment.commented_by in comment.upvoted_by.all %}
+                        {% if request.user in comment.upvoted_by.all %}
                         $("#Upvote{{ comment.id }}").addClass("upvoted");
                         {% else %}
                         $("#Upvote{{ comment.id }}").addClass("upvote");
                         {% endif %}
                     
-                        {% if comment.commented_by in comment.downvoted_by.all %}
+                        {% if request.user in comment.downvoted_by.all %}
                         $("#Downvote{{ comment.id }}").addClass("downvoted");
                         {% else %}
                         $("#Downvote{{ comment.id }}").addClass("downvote");
