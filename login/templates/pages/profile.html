@@ -86,11 +86,14 @@
 		</div>
 		<div class="tabcontent profile-info-container"> 
 
-			<h1>Profile Information</h1>
-				{% if request.user.is_authenticated %}
-				Username<input type="text" value="{{ profile.username }}" readonly>
+			<h2>Profile Information</h2>
 
-				Email<input type="text" value="{{ profile.email }}" readonly>
+				{% if request.user.is_authenticated %}
+				Username<input type="text" class="input-field" value="{{ profile.username }}" readonly>
+
+				{% if edit_access %}
+				Email<input type="text" class="input-field" value="{{ profile.email }}" readonly>
+				{% endif %}
 				{% endif %}
 
 				<!--change here-->
@@ -99,16 +102,16 @@
 				
 				<!--this js script must be placed at the end of the file AFTER buttons-->
 				{% if edit_access %}
-				<div class="edit-profile-container">
-					<form action="{% url 'account:profile_page' profile.username %}" method = "POST">
+				<!-- <div class="edit-profile-container"> -->
+					<form action="{% url 'account:profile_page' profile.username %}" method = "POST" class="edit-password_form">
 						{% csrf_token %}
 
-						<input type="password" placeholder="Current Password" name ="old_password" required/>
-						<input type="password" placeholder="New Password" name ="password1" required/>
-						<input type="password" placeholder="Confirm New Password" name ="password2" required/>
-						<button type = "submit" value="pass_change" name="account_info">Confirm</button>
+						<input type="password" class="input-field" placeholder="Current Password" name ="old_password" required/>
+						<input type="password" class="input-field" placeholder="New Password" name ="password1" required/>
+						<input type="password" class="input-field" placeholder="Confirm New Password" name ="password2" required/>
+						<button type = "submit" class="input-field" value="pass_change" name="account_info">Confirm</button>
 					</form>
-				</div>
+				<!-- </div> -->
 				{% endif %}
 
 
