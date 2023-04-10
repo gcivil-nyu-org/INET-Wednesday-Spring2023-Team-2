@@ -604,4 +604,5 @@ def decline_friend_request(request, uid):
 
 def backactivetab_view(request, username, tab):
     # implement map for each tab to corresponding func
+    tab_map = {"history": UserHistory(), "postscreated": None}
     return
