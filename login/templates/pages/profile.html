@@ -37,19 +37,6 @@
 		{% endif %} -->
 	</div>
 
-	<!-- {% if edit_access %}
-	<div class="form-container profile-edit-container tabcontent" id="nav-edit" style="display: none;">
-		<form action="{% url 'account:profile_page' profile.username %}" method = "POST">
-			{% csrf_token %}
-			<h1>Edit Profile</h1><a></a>
-			<input type="password" placeholder="Current Password" name ="old_password" required/>
-            <input type="password" placeholder="New Password" name ="password1" required/>
-			<input type="password" placeholder="Confirm New Password" name ="password2" required/>
-			<button type = "submit" value="pass_change" name="account_info">Confirm</button>
-		</form>
-	</div>
-	
-	{% endif %} -->
 
 	<div class="form-container profile-container tabcontent" id="nav-profile">
 		<div class="profile-pic-container">
@@ -70,17 +57,19 @@
 
 
 			{% if profile != request.user and not friend_exists and not request_exists %}
-			
-
-			<!-- <form method="POST" action="{% url 'account:send_friend_request' profile.id %}">
-				{% csrf_token %}
-				<button type="submit" class="friend_request_button">Send Friend Request</button>
-			</form> -->
 				<p class="friend_request">
 					<a href="{% url 'account:send_friend_request' profile.id %}" class="friend_request_button">Send Friend Request</a>
 				</p>
-
 			{% endif %}
+
+			<!-- {% if profile != request.user and coming_request_exists %}
+			<div class="block-button-container">
+
+                <a class="accept" onclick="acceptFriendRequest(event, '{{ coming_request.id }}')">Accept</a>
+
+                <a class="decline" onclick="declineFriendRequest(event, '{{ coming_request.id }}')">Decline</a>
+            </div>
+			{% endif %} -->
 	
 		</form>
 		</div>
@@ -257,21 +246,6 @@ function getPostsCreated() {
 }
 
 
-<<<<<<< HEAD
-function getFriends(){
-	openTab(event, 'nav-friends');
-        $.ajax({
-            url: "{% url 'account:profile_friends_page' profile.username %}",
-            type: "GET",
-            success: function(resp){
-				changeurlProfile("friends");
-                $("#userFriends").html(resp);
-            },
-            error: function(resp){
-                console.log("getFriends error");
-            }
-        });
-=======
 function getFriends() {
     openTab(event, 'nav-friends');
 
@@ -299,7 +273,6 @@ function getFriends() {
             console.log("getFriendRequests error");
         }
     });
->>>>>>> 72b9088 (combined profile tabs)
 }
 
 
