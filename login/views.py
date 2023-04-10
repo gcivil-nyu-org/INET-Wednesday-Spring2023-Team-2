@@ -475,19 +475,24 @@ class UserFriends(APIView):
             friends = get_user_friends_list(user_).order_by("-connection_answer_time")
             # print(get_user_friends_list(user_), friends)
             friends_data = []
+            friends_set = set()
 
             # friends = [friend.get_friend(user_) for friend in friends]
 
             for connection in friends:
                 friend = connection.get_friend(user_)
                 connection_status = connection.connection_status
-                friends_data.append(
-                    {
-                        "friend": friend,
-                        "connection_id": connection.id,
-                        "connection_status": connection_status,
-                    }
-                )
+                # prevent showing duplicate friends in friends list
+
+                if friend not in friends_set:
+                    friends_set.add(friend)
+                    friends_data.append(
+                        {
+                            "friend": friend,
+                            "connection_id": connection.id,
+                            "connection_status": connection_status,
+                        }
+                    )
 
             if request.user == user_:
                 block_access = True
@@ -560,6 +565,28 @@ def block_friend(request, connection_id):
                 connection.connection_status = "Blocked"
                 connection.save()
 
+                # also change the connection status of opposite connection if exists
+                # (from_user=to_user, to_user=from_user)
+                if request.user == connection.to_user:
+                    opposite_request = Connection_Model.objects.get(
+                        from_user=request.user,
+                        to_user=connection.from_user,
+                        connection_status="Accepted",
+                    )
+                    if opposite_request:
+                        opposite_request.connection_status = "Blocked"
+                        opposite_request.save()
+
+                if request.user == connection.from_user:
+                    opposite_request = Connection_Model.objects.get(
+                        from_user=connection.to_user,
+                        to_user=request.user,
+                        connection_status="Accepted",
+                    )
+                    if opposite_request:
+                        opposite_request.connection_status = "Blocked"
+                        opposite_request.save()
+
                 return JsonResponse({"status": "success"})
             else:
                 return JsonResponse(
@@ -587,6 +614,28 @@ def unblock_friend(request, connection_id):
             ) and connection.connection_status == "Blocked":
                 connection.connection_status = "Accepted"
                 connection.save()
+
+                # also change the connection status of opposite connection if exists
+                # (from_user=to_user, to_user=from_user)
+                if request.user == connection.to_user:
+                    opposite_request = Connection_Model.objects.get(
+                        from_user=request.user,
+                        to_user=connection.from_user,
+                        connection_status="Blocked",
+                    )
+                    if opposite_request:
+                        opposite_request.connection_status = "Accepted"
+                        opposite_request.save()
+
+                if request.user == connection.from_user:
+                    opposite_request = Connection_Model.objects.get(
+                        from_user=connection.to_user,
+                        to_user=request.user,
+                        connection_status="Blocked",
+                    )
+                    if opposite_request:
+                        opposite_request.connection_status = "Accepted"
+                        opposite_request.save()
 
                 return JsonResponse({"status": "success"})
             else:
@@ -639,6 +688,16 @@ def accept_friend_request(request, uid):
                 friend_request.connection_status = "Accepted"
                 friend_request.save()
 
+                # also change the connection status of opposite connection if exists
+                # (from_user=to_user, to_user=from_user)
+                sender = friend_request.from_user
+                opposite_request = Connection_Model.objects.get(
+                    from_user=request.user, to_user=sender, connection_status="Pending"
+                )
+                if opposite_request:
+                    opposite_request.connection_status = "Accepted"
+                    opposite_request.save()
+
                 return JsonResponse({"status": "success"})
             else:
                 return JsonResponse(
@@ -663,6 +722,17 @@ def decline_friend_request(request, uid):
                 friend_request.connection_status = "Declined"
                 friend_request.save()
                 # friend_request.delete()
+
+                # also change the connection status of opposite connection if exists
+                # (from_user=to_user, to_user=from_user)
+                sender = friend_request.from_user
+                opposite_request = Connection_Model.objects.get(
+                    from_user=request.user, to_user=sender, connection_status="Pending"
+                )
+                if opposite_request:
+                    opposite_request.connection_status = "Declined"
+                    opposite_request.save()
+
                 return JsonResponse({"status": "success"})
             else:
                 return JsonResponse(
