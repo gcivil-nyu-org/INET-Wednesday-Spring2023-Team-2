@@ -472,7 +472,7 @@ select {
     justify-content: center;
     flex-direction: column;
     padding: 50px 50px;
-	padding-bottom: 50px;
+	/* padding-bottom: 50px; */
     text-align: center;
 
     overflow-y: auto;

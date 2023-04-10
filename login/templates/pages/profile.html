@@ -84,15 +84,15 @@
 	
 		</form>
 		</div>
-		<div class="profile-container tabcontent profile-info-container"> 
+		<div class="tabcontent profile-info-container"> 
 
-			<h1>Profile Information</h1><a></a>
+			<h1>Profile Information</h1>
 				{% if request.user.is_authenticated %}
 				Username<input type="text" value="{{ profile.username }}" readonly>
-				<a></a>
+
 				Email<input type="text" value="{{ profile.email }}" readonly>
 				{% endif %}
-				<a></a>
+
 				<!--change here-->
 
 
@@ -102,7 +102,7 @@
 				<div class="edit-profile-container">
 					<form action="{% url 'account:profile_page' profile.username %}" method = "POST">
 						{% csrf_token %}
-						<h1>Edit Profile</h1><a></a>
+
 						<input type="password" placeholder="Current Password" name ="old_password" required/>
 						<input type="password" placeholder="New Password" name ="password1" required/>
 						<input type="password" placeholder="Confirm New Password" name ="password2" required/>
