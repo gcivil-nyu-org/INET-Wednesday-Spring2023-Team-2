@@ -62,14 +62,14 @@
 				</p>
 			{% endif %}
 
-			<!-- {% if profile != request.user and coming_request_exists %}
+			{% if profile != request.user and coming_request_exists %}
 			<div class="block-button-container">
 
-                <a class="accept" onclick="acceptFriendRequest(event, '{{ coming_request.id }}')">Accept</a>
+                <a class="accept" href="{% url 'account:accept_friend_request_profilepage' coming_request.id %}">Accept</a>
 
-                <a class="decline" onclick="declineFriendRequest(event, '{{ coming_request.id }}')">Decline</a>
-            </div>
-			{% endif %} -->
+                <a class="decline" href="{% url 'account:decline_friend_request_profilepage' coming_request.id %}">Decline</a>
+            </div> 
+			{% endif %} 
 	
 		</form>
 		</div>

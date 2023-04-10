@@ -329,18 +329,20 @@ def profile_page_contents(request, username_):
         ).exists()
     )
 
-    # coming_request_exists = Connection_Model.objects.filter(
-    #     from_user=profile, to_user=request.user, connection_status="Pending"
-    # ).exists()
+    coming_request_exists = Connection_Model.objects.filter(
+        from_user=profile, to_user=request.user, connection_status="Pending"
+    ).exists()
 
-    # contents["coming_request_exists"] = coming_request_exists
+    contents["coming_request_exists"] = coming_request_exists
 
-    # if coming_request_exists:
-    #     coming_request = Connection_Model.objects.filter(
-    #         from_user=profile, to_user=request.user, connection_status="Pending"
-    #     )
+    if coming_request_exists:
+        coming_request = Connection_Model.objects.get(
+            from_user=profile, to_user=request.user, connection_status="Pending"
+        )
 
-    #     contents["coming_request"] = coming_request
+        print(coming_request)
+
+        contents["coming_request"] = coming_request
 
     # Get friends list
     # user_ = Custom_User.objects.get(username=username_)
@@ -680,6 +682,26 @@ def send_friend_request(request, uid):
             request, f"You have already sent a friend request to {to_user.username}."
         )
     return redirect("account:profile_page", username_=to_user.username)
+
+
+@login_required
+def accept_friend_request_profilepage(request, uid):
+    friend_request = Connection_Model.objects.get(id=uid)
+
+    friend_request.connection_status = "Accepted"
+    friend_request.save()
+
+    return redirect("account:profile_page", username_=friend_request.from_user.username)
+
+
+@login_required
+def decline_friend_request_profilepage(request, uid):
+    friend_request = Connection_Model.objects.get(id=uid)
+
+    friend_request.connection_status = "Declined"
+    friend_request.save()
+
+    return redirect("account:profile_page", username_=friend_request.from_user.username)
 
 
 @login_required
