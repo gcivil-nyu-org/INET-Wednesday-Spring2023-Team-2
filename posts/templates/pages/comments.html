@@ -25,7 +25,9 @@
                     {% if request.user == comment.commented_by %}
                     <a class="delete" onclick="deleteComment(event, {{ comment.id }})"><i class="fas fa-trash-alt"></i></a>
                     {% endif %}
+                    {% if request.user != comment.commented_by %}
                     <a id="Report{{ comment.id }}" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
+                    {% endif %}
                     <a class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
 
                     <script>
