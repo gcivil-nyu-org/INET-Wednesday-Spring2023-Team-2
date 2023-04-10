@@ -10,11 +10,25 @@
             <p>{{ friend.friend.username }}</p>
         </div>
         {% if block_access %}
+        {% if friend.connection_status == "Accepted" %}
         <div>
             
             <a class="accept" onclick="blockFriend(event, '{{ friend.connection_id }}')">Block</a>
 
         </div>
+        {% endif %}
+        {% endif %}
+
+        {% if block_access %}
+        {% if friend.connection_status == "Blocked" %}
+
+        <div>
+            
+            <a class="accept" onclick="unblockFriend(event, '{{ friend.connection_id }}')">Unblock</a>
+
+        </div>
+
+        {% endif %}
         {% endif %}
     </div>
 </li>
@@ -30,6 +44,21 @@ function blockFriend(event, connection_id) {
     event.preventDefault();
     $.ajax({
         url: "{% url 'account:block_friend' connection_id=1 %}".replace(/1/, connection_id.toString()),
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            getFriends();
+        },
+        error: function(xhr, reported, error) {
+            console.log("Error accepting friend request");
+        },
+    });
+}
+
+function unblockFriend(event, connection_id) {
+    event.preventDefault();
+    $.ajax({
+        url: "{% url 'account:unblock_friend' connection_id=1 %}".replace(/1/, connection_id.toString()),
         type: "GET",
         dataType: "json",
         success: function(response) {

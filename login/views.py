@@ -480,7 +480,14 @@ class UserFriends(APIView):
 
             for connection in friends:
                 friend = connection.get_friend(user_)
-                friends_data.append({"friend": friend, "connection_id": connection.id})
+                connection_status = connection.connection_status
+                friends_data.append(
+                    {
+                        "friend": friend,
+                        "connection_id": connection.id,
+                        "connection_status": connection_status,
+                    }
+                )
 
             if request.user == user_:
                 block_access = True
@@ -508,7 +515,20 @@ def get_user_friends_list(user):
         connection_status="Accepted"
     )
 
-    friends = connections_sent | connections_recieved
+    connections_sent_blocked = user.connection_requests_sent.filter(
+        connection_status="Blocked"
+    )
+
+    connections_recieved_blocked = user.connection_requests_received.filter(
+        connection_status="Blocked"
+    )
+
+    friends = (
+        connections_sent
+        | connections_recieved
+        | connections_sent_blocked
+        | connections_recieved_blocked
+    )
 
     # returns all connection models that has from_user = user or to_user=user
     return friends
@@ -546,6 +566,34 @@ def block_friend(request, connection_id):
                     {
                         "status": "error",
                         "message": "You don't have permission to block this user.",
+                    }
+                )
+        except Connection_Model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Friend request not found."}
+            )
+    return JsonResponse({"status": "error", "message": "Not an AJAX request."})
+
+
+@login_required
+def unblock_friend(request, connection_id):
+    if is_ajax(request):
+        try:
+            # friend = Custom_User.objects.get(id=uid)
+            connection = Connection_Model.objects.get(id=connection_id)
+            if (
+                connection.to_user == request.user
+                or connection.from_user == request.user
+            ) and connection.connection_status == "Blocked":
+                connection.connection_status = "Accepted"
+                connection.save()
+
+                return JsonResponse({"status": "success"})
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "You don't have permission to unblock this user.",
                     }
                 )
         except Connection_Model.DoesNotExist:
