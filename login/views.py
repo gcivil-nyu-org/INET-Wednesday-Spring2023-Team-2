@@ -329,18 +329,18 @@ def profile_page_contents(request, username_):
         ).exists()
     )
 
-    coming_request_exists = Connection_Model.objects.filter(
-        from_user=profile, to_user=request.user, connection_status="Pending"
-    ).exists()
+    # coming_request_exists = Connection_Model.objects.filter(
+    #     from_user=profile, to_user=request.user, connection_status="Pending"
+    # ).exists()
 
-    contents["coming_request_exists"] = coming_request_exists
+    # contents["coming_request_exists"] = coming_request_exists
 
-    if coming_request_exists:
-        coming_request = Connection_Model.objects.filter(
-            from_user=profile, to_user=request.user, connection_status="Pending"
-        )
+    # if coming_request_exists:
+    #     coming_request = Connection_Model.objects.filter(
+    #         from_user=profile, to_user=request.user, connection_status="Pending"
+    #     )
 
-        contents["coming_request"] = coming_request
+    #     contents["coming_request"] = coming_request
 
     # Get friends list
     # user_ = Custom_User.objects.get(username=username_)
