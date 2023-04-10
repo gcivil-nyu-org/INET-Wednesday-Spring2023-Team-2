@@ -500,9 +500,16 @@ def report_comment(request, comment_id):
                 comment.reported_by.add(request.user)
                 comment.reported_count += 1
                 comment.save()
-                return JsonResponse({"report": "success"})
+                return JsonResponse(
+                    {"report": "success", "message": "Comment has been reported"}
+                )
             else:
-                return JsonResponse({"report": "already_reported"})
+                comment.reported_by.remove(request.user)
+                comment.reported_count -= 1
+                comment.save()
+                return JsonResponse(
+                    {"report": "unreported", "message": "Report has been canceled"}
+                )
         except Comments_Model.DoesNotExist:
             return JsonResponse({"report": "error"})
     return JsonResponse({"report": "not ajax"})
@@ -516,9 +523,16 @@ def report_post(request, post_id):
                 post.reported_by.add(request.user)
                 post.reported_count += 1
                 post.save()
-                return JsonResponse({"report": "success"})
+                return JsonResponse(
+                    {"report": "success", "message": "Poll has been reported"}
+                )
             else:
-                return JsonResponse({"report": "already_reported"})
+                post.reported_by.remove(request.user)
+                post.reported_count -= 1
+                post.save()
+                return JsonResponse(
+                    {"report": "cancel", "message": "Report has been canceled"}
+                )
         except Comments_Model.DoesNotExist:
             return JsonResponse({"report": "error"})
     return JsonResponse({"report": "not ajax"})
@@ -530,9 +544,11 @@ def delete_comment(request, comment_id):
 
         if comment.commented_by == request.user:
             comment.delete()
-            return JsonResponse({"delete": "success"})
+            return JsonResponse(
+                {"delete": "success", "message": "Comment has been deleted"}
+            )
         else:
-            return JsonResponse({"delete": "fail"})
+            return JsonResponse({"delete": "fail", "message": "Something went wrong"})
     return JsonResponse({"delete": "error"})
 
 

@@ -45,7 +45,14 @@
       <div class="text-center">
       <p id="resultReveal"></p>
       Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
-      <a class="report" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
+      <a id="PostReport{{ post.id }}" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
+      <script>
+        {% if request.user in post.reported_by.all %}
+        $("#PostReport{{ post.id }}").addClass("reported");
+        {% else %}
+        $("#PostReport{{ post.id }}").addClass("report");
+        {% endif %}
+      </script>
     </div>
     </section>
     <!-- <br><br> -->
@@ -141,11 +148,6 @@ function reportPost(event, postId) {
     event.preventDefault();
     
     // Add a confirmation message
-    var result = confirm("Do you want to report this post for inappropriate content?");
-    if (!result) {
-        alert("Report has been canceled!")
-    }
-    else {
         $.ajax({
             url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
             type: "GET",
@@ -153,10 +155,11 @@ function reportPost(event, postId) {
             success: function(response) {
                 if (response.report === "success") {
                     // Handle a successful report here
-                    alert("Post has been reported!");
-                } else if (response.report === "already_reported") {
+                    showMessage(response.message)
+                } else if (response.report === "cancel") {
                     // Handle the case when the user has already reported the comment
-                    alert("You have already reported this post.");
+
+                    showMessage(response.message)
                 } else {
                     // Handle any other errors
                     alert("An error occurred while reporting the post.");
@@ -168,6 +171,6 @@ function reportPost(event, postId) {
             },
         });
     }
-  } 
+  
 
 </script>
