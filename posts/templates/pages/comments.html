@@ -25,7 +25,7 @@
                     {% if request.user == comment.commented_by %}
                     <a class="delete" onclick="deleteComment(event, {{ comment.id }})"><i class="fas fa-trash-alt"></i></a>
                     {% endif %}
-                    <a class="report" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
+                    <a id="Report{{ comment.id }}" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
                     <a class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
 
                     <script>
@@ -39,6 +39,12 @@
                         $("#Downvote{{ comment.id }}").addClass("downvoted");
                         {% else %}
                         $("#Downvote{{ comment.id }}").addClass("downvote");
+                        {% endif %}
+
+                        {% if request.user in comment.reported_by.all %}
+                        $("#Report{{comment.id}}").addClass("reported");
+                        {% else %}
+                        $("#Report{{comment.id}}").addClass("report");
                         {% endif %}
                     </script>
 
@@ -83,16 +89,29 @@
                 }
             });
         });
-
+        function showMessage(message) {
+            var $message = $('<div class="report-message">' + message + '</div>');
+            $('body').append($message);
+            $message.css({
+                'position': 'fixed',
+                'top': '0',
+                'left': '50%',
+                'transform': 'translateX(-50%)',
+            });
+            $message.slideDown(300).delay(1000).slideUp(300, function () {
+                $message.remove();
+            });
+        }
         function reportComment(event, commentId) {
-            event.preventDefault();
-            
-            // Add a confirmation message
-            var result = confirm("Do you want to report this comment for inappropriate content?");
-            if (!result) {
-                alert("Report has been canceled!")
+            var $commentAction = $(event.target).closest(".comment-action");
+            var $report = $commentAction.find("#Report" + commentId)
+            if ($report.hasClass("reported")) {
+                $report.removeClass("reported").addClass("report")
+            } else {
+                $report.removeClass()
+                $report.addClass("reported")
             }
-            else {                  
+            event.preventDefault();               
                 $.ajax({
                     url: "{% url 'posts:report_comment' comment_id=1 %}".replace(/1/, commentId.toString()),
                     type: "GET",
@@ -100,10 +119,10 @@
                     success: function(response) {
                         if (response.report === "success") {
                             // Handle a successful report here
-                            alert("Comment has been reported!");
-                        } else if (response.report === "already_reported") {
+                            showMessage(response.message);
+                        } else if (response.report === "unreported") {
                             // Handle the case when the user has already reported the comment
-                            alert("You have already reported this comment.");
+                            showMessage(response.message);
                         } else {
                             // Handle any other errors
                             alert("An error occurred while reporting the comment.");
@@ -115,7 +134,6 @@
                     },
                 });
             }
-        }  
 
         function deleteComment(event, commentId) {
             event.preventDefault();
@@ -130,7 +148,7 @@
                     success: function (response) {
                         if (response.delete === "success") {
                             getComments()
-                            alert("Comment has been deleted!")
+                            showMessage(response.message)
                         } else {
                             alert("Something went wrong")
                         }
@@ -147,14 +165,14 @@
         function upvoteComment(event, commentId) {
             var $commentAction = $(event.target).closest(".comment-action");
             var $voteCount = $commentAction.find(".react");
-          
+            
             if ($commentAction.find("#Upvote" + commentId).hasClass("upvote")) {
                 $commentAction.find("#Upvote" + commentId).removeClass("upvote").addClass("upvoted");
                 $voteCount.text(parseInt($voteCount.text()) + 1);
           
-            if ($commentAction.find("#Downvote" + commentId).hasClass("downvoted")) {
-                $commentAction.find("#Downvote" + commentId).removeClass("downvoted").addClass("downvote");
-                $voteCount.text(parseInt($voteCount.text()) + 1);
+                if ($commentAction.find("#Downvote" + commentId).hasClass("downvoted")) {
+                    $commentAction.find("#Downvote" + commentId).removeClass("downvoted").addClass("downvote");
+                    $voteCount.text(parseInt($voteCount.text()) + 1);
               }
             } else {
               $commentAction.find("#Upvote" + commentId).removeClass("upvoted").addClass("upvote");
@@ -180,10 +198,10 @@
             if ($commentAction.find("#Downvote" + commentId).hasClass("downvote")) {
                 $commentAction.find("#Downvote" + commentId).removeClass("downvote").addClass("downvoted");
                 $voteCount.text(parseInt($voteCount.text()) - 1);
-
-            if ($commentAction.find("#Upvote" + commentId).hasClass("upvoted")) {
-                $commentAction.find("#Upvote" + commentId).removeClass("upvoted").addClass("upvote");
-                $voteCount.text(parseInt($voteCount.text()) - 1);
+            
+                if ($commentAction.find("#Upvote" + commentId).hasClass("upvoted")) {
+                    $commentAction.find("#Upvote" + commentId).removeClass("upvoted").addClass("upvote");
+                    $voteCount.text(parseInt($voteCount.text()) - 1);
             }
             } else {
                 $commentAction.find("#Downvote" + commentId).removeClass("downvoted").addClass("downvote");
