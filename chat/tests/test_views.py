@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 from login.models import Custom_User
+from chat.views import get_chat_history
 from chat.models import (
     Connection_Model,
     Chat_Message,
@@ -52,3 +53,24 @@ class TestChatViews(TestCase):
 
         self.assertIn(self.user1, friend_objects)
         self.assertNotIn(self.user2, friend_objects)
+
+    def test_chat_page_chathistory_view_valid(self):
+        self.client.login(username="test", password="test1234")
+        response = self.client.get(
+            reverse("connections:get_chat_history_box", args=[self.connection.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "pages/chat_box.html")
+        self.assertContains(response, self.user1.username)
+
+        messages = get_chat_history(self.connection.id)
+        for message in messages:
+            self.assertContains(response, message.message)
+
+    def test_chat_page_chathistory_view_invalid(self):
+        self.client.login(username="test", password="test1234")
+        response = self.client.get(
+            reverse("connections:get_chat_history_box", args=[99999])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Thou Shall not Enter!!")

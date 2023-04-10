@@ -7,7 +7,7 @@
 
 .chat {
     height: 75vh;
-    /* position: relative;  */
+    position: relative; 
 }
 
 .chat-app .people-list {
@@ -88,9 +88,13 @@
     padding-left: 10px
 }
 
+.chat-history {
+    max-height: 80%;
+    overflow-y: auto;
+}
+
 .chat .chat-history {
     padding: 20px;
-    border-bottom: 2px solid #fff
 }
 
 .chat .chat-history ul {
@@ -176,13 +180,11 @@
 
 .chat .chat-history .other-message:after {
     border-bottom-color: #eee6f3;
-    left: 93%;
+    left: 80%;
 }
 
 .chat .chat-message {
-    padding: 20px;
-    position:absolute;
-    bottom: 0; 
+    padding: 15px;
 }
 
 .online,
@@ -217,49 +219,3 @@
     clear: both;
     height: 0;
 }
-
-/* @media only screen and (max-width: 767px) {
-    .chat-app .people-list {
-        height: 100vh;
-        width: 100%;
-        overflow-x: auto;
-        background: #fff;
-        left: -400px;
-        display: none
-    }
-    .chat-app .people-list.open {
-        left: 0
-    }
-    .chat-app .chat {
-        margin: 0
-    }
-    .chat-app .chat .chat-header {
-        border-radius: 0.55rem 0.55rem 0 0
-    }
-    .chat-app .chat-history {
-        height: 100vh;
-        overflow-x: auto
-    }
-}
-
-@media only screen and (min-width: 768px) and (max-width: 992px) {
-    .chat-app .chat-list {
-        height: 100vh;
-        overflow-x: auto
-    }
-    .chat-app .chat-history {
-        height: 100vh;
-        overflow-x: auto
-    }
-}
-
-@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) and (-webkit-min-device-pixel-ratio: 1) {
-    .chat-app .chat-list {
-        height: 100vh;
-        overflow-x: auto
-    }
-    .chat-app .chat-history {
-        height: 100vh;
-        overflow-x: auto
-    }
-} */

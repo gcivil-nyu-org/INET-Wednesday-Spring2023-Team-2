@@ -31,6 +31,7 @@ var chatSocket = new WebSocket(
 //     messageInputDom.value = '';
 // };
 
+
 // once message is processed and recieved from backend, display inside textarea
 chatSocket.onmessage = function (e) {
     const data = JSON.parse(e.data);
@@ -39,6 +40,7 @@ chatSocket.onmessage = function (e) {
     // add message to text box
 
     addMessagestoChatBox(data);
+    saveMessageToDatabase(data.message, data.username, data.connection_id);
 }
 
 // submit on pressing enter
