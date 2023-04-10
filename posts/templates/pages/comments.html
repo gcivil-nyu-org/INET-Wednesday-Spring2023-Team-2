@@ -95,8 +95,12 @@
             $message.css({
                 'position': 'fixed',
                 'top': '0',
-                'left': '50%',
-                'transform': 'translateX(-50%)',
+                'left': '0',
+                'width': '100%',
+                'padding': '10px',
+                'text-align': 'center',
+                'background-color': '#eee6f3',
+                'color':'#18191a',
             });
             $message.slideDown(300).delay(1000).slideUp(300, function () {
                 $message.remove();

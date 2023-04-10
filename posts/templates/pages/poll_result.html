@@ -149,32 +149,40 @@ var x = setInterval(function() {
 }, 1000);
 
 function reportPost(event, postId) {
-    event.preventDefault();
-    
-    // Add a confirmation message
-        $.ajax({
-            url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
-            type: "GET",
-            dataType: "json",
-            success: function(response) {
-                if (response.report === "success") {
-                    // Handle a successful report here
-                    showMessage(response.message)
-                } else if (response.report === "cancel") {
-                    // Handle the case when the user has already reported the comment
-
-                    showMessage(response.message)
-                } else {
-                    // Handle any other errors
-                    alert("An error occurred while reporting the post.");
-                }
-            },
-            error: function(xhr, reported, error) {
-                // Handle the error here
-                alert("Request error");
-            },
-        });
-    }
+  event.preventDefault();
   
+  // Get the report button element
+  var reportButton = $("#PostReport" + postId);
+
+  // Add a confirmation message
+  $.ajax({
+      url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
+      type: "GET",
+      dataType: "json",
+      success: function(response) {
+          if (response.report === "success") {
+              showMessage(response.message);
+              // Change the button color to red by toggling the classes
+              reportButton.removeClass("report").addClass("reported");
+          } else if (response.report === "cancel") {
+              showMessage(response.message);
+              // Change the button color to grey by toggling the classes
+              reportButton.removeClass("reported").addClass("report");
+          } else {
+              alert("An error occurred while reporting the post.");
+          }
+      },
+      error: function(xhr, reported, error) {
+          // Handle the error here
+          alert("Request error");
+      },
+  });
+}
+
+
+
+
+
+
 
 </script>

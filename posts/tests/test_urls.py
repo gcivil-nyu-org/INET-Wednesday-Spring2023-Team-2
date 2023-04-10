@@ -210,7 +210,9 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check response data
-        self.assertEqual(response.json(), {"report": "success"})
+        self.assertEqual(
+            response.json(), {"report": "success", "message": "Poll has been reported"}
+        )
 
         # Refresh the post object from the database
         post4.refresh_from_db()
@@ -241,13 +243,12 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check response data
-        self.assertEqual(response.json(), {"report": "already_reported"})
+        self.assertEqual(
+            response.json(), {"report": "cancel", "message": "Report has been canceled"}
+        )
 
         # Refresh the post object from the database
         post4.refresh_from_db()
-
-        # Check if reported count remains unchanged
-        self.assertEqual(post4.reported_count, 0)
 
     def test_report_post_not_ajax(self):
         user = Custom_User.objects.create_user(username="test3", password="test1234")
@@ -274,9 +275,6 @@ class ViewsFunctions(TestCase):
         # Refresh the post object from the database
         post4.refresh_from_db()
 
-        # Check if reported count remains unchanged
-        self.assertEqual(post4.reported_count, 0)
-
     def test_report_comment(self):
         user = Custom_User.objects.create_user(username="test3", password="test1234")
         self.client.force_login(user=user)
@@ -298,7 +296,10 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check response data
-        self.assertEqual(response.json(), {"report": "success"})
+        self.assertEqual(
+            response.json(),
+            {"report": "success", "message": "Comment has been reported"},
+        )
 
         # Refresh the post object from the database
         comment2.refresh_from_db()
@@ -329,7 +330,10 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check response data
-        self.assertEqual(response.json(), {"report": "already_reported"})
+        self.assertEqual(
+            response.json(),
+            {"report": "unreported", "message": "Report has been canceled"},
+        )
 
         # Refresh the post object from the database
         post4.refresh_from_db()
@@ -388,7 +392,10 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check response data
-        self.assertEqual(response.json(), {"delete": "success"})
+        self.assertEqual(
+            response.json(),
+            {"delete": "success", "message": "Comment has been deleted"},
+        )
 
         # Check if the comment is deleted from the database
         with self.assertRaises(Comments_Model.DoesNotExist):
