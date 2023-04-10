@@ -117,30 +117,36 @@
 
 
 	<div class="form-container tabcontent user-history-container" id="nav-history" style="display: none;">
-        <h2>User History</h2>
-		<div class="history-content">
-			<ul>
-				<!-- this div will contain the profile history of user, called from ajax -->
-				<div id="profileHistory">
+		<div class="user-history-container2">
+			<h2>User History</h2>
+				<div class="history-content">
+					<ul>
+						<!-- this div will contain the profile history of user, called from ajax -->
+						<div id="profileHistory">
 
+						</div>
+						
+					</ul>
 				</div>
-				
-			</ul>
+
 
 		</div>
+        
+		<div class="polls-created-container"> 
+			<h2>Polls Created</h2>
+				<div class="polls-content">
+					<ul>
+						<!-- this div will contain the posts created by user, called from ajax -->
+						<div id="postsCreated">
 
-		<h2>Polls Created</h2>
-		<div class="history-content">
-			<ul>
-				<!-- this div will contain the posts created by user, called from ajax -->
-				<div id="postsCreated">
+						</div>
+						
+					</ul>
 
 				</div>
-				
-			</ul>
 
 		</div>
-       
+    
     </div>
 
 	<!-- posts created tab -->
@@ -160,29 +166,37 @@
 
 	<!-- Friends Tab -->
 	<div class="form-container tabcontent user-history-container" id="nav-friends" style="display: none;">
-        <h2>Friends</h2>
-		<div class="history-content">
-			<ul>
-				<!-- this div will contain user friends, called from ajax -->
-				<div id="userFriends">
+		<div class="user-history-container2">
+			<h2>Friends</h2>
+			<div class="history-content">
+				<ul>
+					<!-- this div will contain user friends, called from ajax -->
+					<div id="userFriends">
 
-				</div>
-				
-			</ul>
+					</div>
+					
+				</ul>
+
+			</div>
+
 
 		</div>
-
+        
 		{% if edit_access %}
-		<h2>Friend Requests</h2>
-		<div class="history-content">
-			<ul>
-				<!-- this div will contain the friend requests for the user -->
-				<div id="friendRequests">
-	
-				</div>
-			</ul>
+		<div class="polls-created-container"> 
+			<h2>Friend Requests</h2>
+			<div class="history-content">
+				<ul>
+					<!-- this div will contain the friend requests for the user -->
+					<div id="friendRequests">
+		
+					</div>
+				</ul>
+			</div>
 		</div>
 		{% endif %}
+
+		
        
     </div>
 

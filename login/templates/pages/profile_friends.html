@@ -11,7 +11,7 @@
         </div>
         {% if block_access %}
         {% if friend.connection_status == "Accepted" %}
-        <div>
+        <div class="block-button-container">
             
             <a class="accept" onclick="blockFriend(event, '{{ friend.connection_id }}')">Block</a>
 
@@ -22,7 +22,7 @@
         {% if block_access %}
         {% if friend.connection_status == "Blocked" %}
 
-        <div>
+        <div class="block-button-container">
             
             <a class="accept" onclick="unblockFriend(event, '{{ friend.connection_id }}')">Unblock</a>
 

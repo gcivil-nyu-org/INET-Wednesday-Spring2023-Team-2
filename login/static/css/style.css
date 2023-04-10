@@ -442,6 +442,30 @@ select {
 	padding-top: 50px;
 }
 
+.user-history-container2,
+.polls-created-container {
+  width: 50%;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.user-history-container2 {
+  float: left;
+}
+
+.polls-created-container {
+  float: right;
+}
+
+.history-content,
+.polls-content {
+  height: calc(100% - 40px); /* Subtract the height of the header */
+  overflow-y: auto;
+}
+
+
+
 
   @media (max-width: 767px) {
 	.nav-tabs {
@@ -694,11 +718,15 @@ select {
 
 
 .friend-request-container {
-    /* display: flex; */
+    display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
 }
+
+.block-button-container {
+	margin-left: 20px;
+  }
 
 
 .friend-container {
