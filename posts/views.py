@@ -796,7 +796,11 @@ def create_poll(request):
 
 
 def get_back_api_view(request, category, pid):
-    post_view_class = PostsView()
-    return post_view_class.get(
-        request=request, call="api", pid=pid, change_url=False, category=category
-    )
+    if is_ajax(request):
+        post_view_class = PostsView()
+        return post_view_class.get(
+            request=request, call="api", pid=pid, change_url=False, category=category
+        )
+    
+    else:
+        return HttpResponse("Thou Shall not Enter!!")

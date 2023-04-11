@@ -99,11 +99,14 @@ class Connection_Model(models.Model):
         return False
 
     def save(self, *args, **kwargs):
+        # print(self.connection_status, self.from_user, self.to_user, Connection_Model.objects.get(
+        #         from_user=self.from_user, to_user=self.to_user
+        #     ).connection_status)
         if not (
             Connection_Model.objects.filter(
                 from_user=self.from_user, to_user=self.to_user
             ).exists()
-            and Connection_Model.objects.filter(
+            or Connection_Model.objects.filter(
                 from_user=self.to_user, to_user=self.from_user
             ).exists()
         ):
