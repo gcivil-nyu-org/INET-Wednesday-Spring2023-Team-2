@@ -433,8 +433,22 @@ class UserPostsCreated(APIView):
                 "-created_time"
             )  # .order_by('-view_time') order by relation field here
 
+            posts = []
+            for post in content:
+                options = []
+                for option in Options_Model.objects.all():
+                    options.append({"options": option.choice_text})
+
+                posts.append(
+                    {
+                        "id": post.id,
+                        "post": content,
+                        "options": options,
+                    }
+                )
+
             return Response(
-                {"posts": content}, template_name="pages/profile_posts_created.html"
+                {"posts": posts}, template_name="pages/profile_posts_created.html"
             )
 
         else:

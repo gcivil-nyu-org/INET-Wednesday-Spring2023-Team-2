@@ -118,6 +118,13 @@
     text-align: left;
 }
 
+.comment-action .upvoted:hover {
+    font-size: 15px;
+    color: green;
+    text-align: left;
+    cursor: pointer;
+}
+
 .comment-action .react {
     font-size: 14px;
     font-weight: bold;
@@ -142,6 +149,13 @@
     font-size: 15px;
     color: red;
     text-align: left;
+}
+
+.comment-action .downvoted:hover {
+    font-size: 15px;
+    color: red;
+    text-align: left;
+    cursor: pointer;
 }
 
 .comment-action .delete {
