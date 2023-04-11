@@ -437,7 +437,7 @@ select {
 
 .user-history-container li {
     padding: 10px;
-    border-bottom: 1px solid #eee;
+    /* border-bottom: 1px solid #eee; */
 }
 
 .user-history-container li:last-child {

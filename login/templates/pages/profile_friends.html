@@ -2,13 +2,30 @@
 {% for friend in friends_data %}
 <li>
     <div class="friend-request-container">
-    
+
+
+        {% if friend.connection_status == "Accepted" %}
         <div class="profile-picture-container">
             <a href="{% url 'account:profile_page' friend.friend.username %}">
             <img src="{{ friend.friend.profile_picture.url }}" class="profile-picture" alt="{{ friend.username }}" height="50px" width="50px">
             </a>
             <p>{{ friend.friend.username }}</p>
         </div>
+        {% endif %}
+
+        {% if block_access %}
+        {% if friend.connection_status == "Blocked" %}
+        <div class="profile-picture-container">
+            <a href="{% url 'account:profile_page' friend.friend.username %}">
+            <img src="{{ friend.friend.profile_picture.url }}" class="profile-picture" alt="{{ friend.username }}" height="50px" width="50px">
+            </a>
+            <p>{{ friend.friend.username }}</p>
+        </div>
+
+        {% endif %}
+        {% endif %}
+
+
         {% if block_access %}
         {% if friend.connection_status == "Accepted" %}
         <div class="block-button-container">
