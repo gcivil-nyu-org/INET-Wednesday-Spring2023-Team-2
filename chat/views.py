@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Chat_History, Connection_Model
 from django.template import loader
+from django.views.generic import TemplateView
 
 from django.contrib.auth.decorators import login_required
 
@@ -62,7 +63,7 @@ def get_chat_history(connection_id):
     history_list = chat_history.history.order_by(
         "-timestamp"
     ).all()  # [:100] ##todo: return top 100msg everytime to reduce query time
-    return history_list[::-1]
+    return history_list
 
 
 # delete later

@@ -16,11 +16,6 @@
         </div>
     </div>
 </div>
-<div class="chat-history">
-    <ul class="m-b-0" id="history" style="overflow-y: auto;">
-
-    </ul>
-</div>
 <div class="chat-message clearfix">
     <div class="input-group mb-0">
         <div class="input-group-prepend">
@@ -31,18 +26,23 @@
         </div>
     </div>
 </div>
+<div class="chat-history">
+    <ul class="m-b-0" id="history">
+
+    </ul>
+</div>
 
 <!-- add history -->
 {% for message in messages %}
 {% if message.user == request.user %}
 <script>
-    document.getElementById('history').innerHTML += 
-    '<div class="chat-history"><ul class="m-b-0"><li class="clearfix"><div class="message-data-right"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message other-message float-right"> {{ message.message }} </div></li></ul></div>';
+    document.getElementById('history').insertAdjacentHTML('afterbegin', 
+    '<ul class="m-b-0"><li class="clearfix"><div class="message-data-right"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message other-message float-right"> {{ message.message }} </div></li></ul>');
 </script>
 {% else %}
 <script>
-    document.getElementById('history').innerHTML += 
-    '<div class="chat-history"><ul class="m-b-0"><li class="clearfix"><div class="message-data"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message my-message"> {{ message.message }} </div></li></ul></div>';
+    document.getElementById('history').insertAdjacentHTML('afterbegin', 
+    '<ul class="m-b-0"><li class="clearfix"><div class="message-data"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message my-message"> {{ message.message }} </div></li></ul>');
 </script>
 {% endif %}
 {% endfor %}
@@ -59,10 +59,10 @@
     function addMessagestoChatBox(data){
         const user_username = JSON.parse(document.getElementById('user_username').textContent);
         if (user_username == data.username){
-            document.getElementById('history').innerHTML += '<li class="clearfix"><div class="message-data-right"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message other-message float-right"> ' + data.message + ' </div></li>';
+            document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data-right"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message other-message float-right"> ' + data.message + ' </div></li>');
         }
         else{
-            document.getElementById('history').innerHTML += '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + data.message + ' </div></li>';
+            document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + data.message + ' </div></li>');
         }
     }
 </script>

@@ -51,9 +51,9 @@
     </section> -->
 
        </div class="footer">
-        <div class="text-center">
-        Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
-        </div>
+          <div class="text-center">
+            Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
+          </div>
       <a id="PostReport" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
       <script>
         {% if request.user in post.reported_by.all %}

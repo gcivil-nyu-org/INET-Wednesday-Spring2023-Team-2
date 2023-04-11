@@ -89,13 +89,13 @@
 }
 
 .chat-history {
-    max-height: 80%;
-    overflow-y: auto;
+    min-height: 78%;
+    max-height: 78%;
+    overflow-y: scroll;
 }
 
 .chat .chat-history {
     padding: 20px;
-    flex-direction: column-reverse;
 }
 
 .chat .chat-history ul {
@@ -108,7 +108,7 @@
 }
 
 .chat .chat-history ul li:last-child {
-    margin-bottom: 0px
+    margin-bottom: 15px
 }
 
 .chat .chat-history .message-data {
