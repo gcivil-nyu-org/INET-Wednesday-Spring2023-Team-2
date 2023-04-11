@@ -13,7 +13,7 @@
 <div class="container" id="profile-container">
 	<div class="nav-tabs" id="profile-tabs">
 		<div class="tab-wrapper">
-		<a class="nav-tab activate" id="nav-profile-tab" onclick="getProfileInfo();">Profile</a>
+		<a class="nav-tab activate" id="nav-profile-tab" onclick="getProfileInfo(1);">Profile</a>
 		</div>
 		<!-- {% if edit_access %}
 		<div class="tab-wrapper">
@@ -21,14 +21,14 @@
 	 	</div>
 		 {% endif %} -->
 		<div class="tab-wrapper">
-		<a  class="nav-tab " id="nav-history-tab"   onclick="getProfileHistory();">History</a>
+		<a  class="nav-tab " id="nav-history-tab"   onclick="getProfileHistory(1);">History</a>
 		</div>
 		<!-- <div class="tab-wrapper">
 		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
 		</div> -->
 	
 		<div class="tab-wrapper">
-			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends();">Friends</a>
+			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends(1);">Friends</a>
 		</div>
 		<!-- {% if edit_access %}
 		<div class="tab-wrapper">
@@ -204,25 +204,29 @@
 
 <script>
 
-function getProfileInfo(){
+function getProfileInfo(changeurl){
 	openTab(event, 'nav-profile');
-	changeurlProfile("profile");
+	if (Boolean(changeurl)){
+		changeurlProfile("profile");
+	}
 }
 
 
-function getProfileEditInfo(){
-	openTab(event, 'nav-edit');
-	changeurlProfile("profile");
-}
+// function getProfileEditInfo(){
+// 	openTab(event, 'nav-edit');
+// 	changeurlProfile("profile");
+// }
 
 
-function getProfileHistory() {
+function getProfileHistory(changeurl) {
     openTab(event, 'nav-history');
     $.ajax({
         url: "{% url 'account:profile_history_page' profile.username %}",
         type: "GET",
         success: function(resp){
-            changeurlProfile("history");
+			if (Boolean(changeurl)){
+				changeurlProfile("history");
+			}
             $("#profileHistory").html(resp);
             getPostsCreated();
         },
@@ -237,7 +241,7 @@ function getPostsCreated() {
         url: "{% url 'account:profile_postscreated_page' profile.username %}",
         type: "GET",
         success: function(resp){
-            changeurlProfile("posts_created");
+            // changeurlProfile("posts_created");
             $("#postsCreated").html(resp);
         },
         error: function(resp){
@@ -247,7 +251,7 @@ function getPostsCreated() {
 }
 
 
-function getFriends() {
+function getFriends(changeurl) {
     openTab(event, 'nav-friends');
 
     // Fetch and display user friends using AJAX
@@ -255,7 +259,9 @@ function getFriends() {
         url: "{% url 'account:profile_friends_page' profile.username %}",
         type: "GET",
         success: function(resp) {
-			changeurlProfile("friends");
+			if (Boolean(changeurl)){
+				changeurlProfile("friends");
+			}
             $("#userFriends").html(resp);
         },
         error: function(resp) {
@@ -334,23 +340,13 @@ window.onpopstate = function (e) {
 	current_tab = current_url.split("/").at(-1);
 	console.log(current_tab);
 	//need to get rid of changeurl inside the function for this to work
-	document.getElementById("nav-" + current_tab + "-tab").click();
+	// document.getElementById("nav-" + current_tab + "-tab").click();
+	var map_ = {'history': getProfileHistory, 'friends': getFriends, '': getProfileInfo};
+
+	map_[current_tab](0);
 }
 
 
-function backactivetab(current_tab){
-	openTab(event, "nav-" + current_tab);
-        $.ajax({
-            url: "{% url 'account:profile_backactivetab' username=profile.username tab='current_tab' %}".replace('current_tab', current_tab.toString()),
-            type: "GET",
-            success: function(resp){
-                $("#userFriends").html(resp);
-            },
-            error: function(resp){
-                console.log("getFriends error");
-            }
-        });
-}
 
 document.getElementById("{{ tab_to_click }}").click();
 

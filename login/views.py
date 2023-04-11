@@ -773,7 +773,7 @@ def decline_friend_request(request, uid):
     return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
-def backactivetab_view(request, username, tab):
-    # implement map for each tab to corresponding func
-    tab_map = {"history": UserHistory(), "postscreated": None}
-    return
+# def backactivetab_view(request, username, tab):
+#     # implement map for each tab to corresponding func
+#     tab_map = {"history": UserHistory(), "postscreated": None}
+#     return
