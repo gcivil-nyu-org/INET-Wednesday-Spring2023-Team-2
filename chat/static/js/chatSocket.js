@@ -1,9 +1,17 @@
 // get roomName, or connection_id in this case to know who's talking to who, and username
-const boxName = JSON.parse(document.getElementById('room-name').textContent);
-const user_username = JSON.parse(document.getElementById('user_username').textContent);
+var boxName = JSON.parse(document.getElementById('room-name').textContent);
+var user_username = JSON.parse(document.getElementById('user_username').textContent);
+
+try{
+    chatSocket.close();
+    // delete chatSocket;
+}
+catch{
+
+}
 
 // Create a WebSocket in JavaScript.
-const chatSocket = new WebSocket(
+var chatSocket = new WebSocket(
     'ws://' +
     window.location.host +
     '/ws/chat/' +
