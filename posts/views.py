@@ -12,6 +12,7 @@ from django.utils.safestring import mark_safe
 from .forms import PollForm
 import re
 from django.views.generic import TemplateView
+from login.models import Custom_User
 
 from django.utils import timezone
 
@@ -309,15 +310,20 @@ class SearchPostsView(TemplateView):
         query = request.GET.get("search", "")
 
         if query:
-            results = Post_Model.objects.filter(
+            post_results = Post_Model.objects.filter(
                 Q(question_text__icontains=query)
                 | Q(options_model__choice_text__icontains=query)
             ).distinct()
+
+            user_results = Custom_User.objects.filter(
+                Q(username__icontains=query)
+            ).distinct()
         else:
-            results = Post_Model.objects.none()
+            post_results = Post_Model.objects.none()
+            user_results = Custom_User.objects.none()
 
         search_results = []
-        for post in results:
+        for post in post_results:
             options = []
             # create an array for options based on the Options_Model.question=post
             for option in Options_Model.objects.filter(question=post):
@@ -333,6 +339,14 @@ class SearchPostsView(TemplateView):
                     "question_text": post.question_text,
                     "category": post.category,
                     "options": options,
+                }
+            )
+
+        for user in user_results:
+            search_results.append(
+                {
+                    "id": user.id,
+                    "username": user.username,
                 }
             )
 

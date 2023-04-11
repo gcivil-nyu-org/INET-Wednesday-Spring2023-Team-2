@@ -432,6 +432,11 @@ body.dark .home .text{
     font-weight: bold;
 }
 
+.autocomplete-username {
+    font-weight: bold;
+}
+
+
 .autocomplete-options {
     font-style: italic;
     color: var(--secondary-color);

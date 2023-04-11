@@ -552,3 +552,33 @@ class ViewsFunctions(TestCase):
         self.assertNotIn(user, comment2.upvoted_by.all())
         self.assertIn(user, comment2.downvoted_by.all())
         self.assertEqual(comment2.vote_count, -1)
+
+    def test_search_posts_view(self):
+        self.url = reverse("posts:search_posts")
+
+        user = Custom_User.objects.create_user(username="test3", password="test1234")
+        self.client.force_login(user=user)
+        post5 = Post_Model.objects.create(
+            question_text="Test question 1", created_by=self.user1, id=7
+        )
+        post6 = Post_Model.objects.create(
+            question_text="Test question 2", created_by=self.user1, id=8
+        )
+
+        response = self.client.get(self.url, {"search": "test"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Test question 1")
+        self.assertContains(response, "1option1")
+        self.assertContains(response, "Test question 2")
+        self.assertContains(response, "2option2")
+
+        response = self.client.get(self.url, {"search": "foo"})
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Test question 1")
+        self.assertNotContains(response, "1option1")
+        self.assertNotContains(response, "Test question 2")
+        self.assertNotContains(response, "2option2")
+
+        response = self.client.get(self.url, {"search": ""})
+        self.assertEqual(response.status_code, 200)
+        self.assertListEqual(response.json()["search_results"], [])
