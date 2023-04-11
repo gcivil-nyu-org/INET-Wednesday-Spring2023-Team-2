@@ -45,6 +45,46 @@ class Connection_Model(models.Model):
             or cls.objects.filter(from_user=to_user, to_user=from_user).exists()
         )
 
+
+
+    def save_checks(self, to_user, from_user):
+        if Connection_Model.objects.filter(from_user=from_user, to_user=to_user).exists():
+            ##change from pending to accepted or declined
+            if (self.connection_status == "Accepted" or self.connection_status == "Declined") and Connection_Model.objects.get(from_user=from_user, to_user=to_user).connection_status == "Pending":
+                return True
+            
+            ##change from declined to pending i.e. requesting again after initial decline
+            elif self.connection_status == "Pending" and Connection_Model.objects.get(from_user=from_user, to_user=to_user).connection_status == "Declined":
+                return True
+
+            ##change from accepted to blocked
+            elif self.connection_status == "Blocked" and (Connection_Model.objects.get(from_user=from_user, to_user=to_user).connection_status == "Accepted"):
+                 return True
+
+            ##change from blocked to accepted or declined
+            elif (self.connection_status == "Accepted" or self.connection_status == "Declined") and (Connection_Model.objects.get(from_user=from_user, to_user=to_user).connection_status == "Blocked"):
+                 return True
+        
+        return False
+
+    def save(self, *args, **kwargs):
+        if (not(Connection_Model.objects.filter(from_user=self.from_user, to_user=self.to_user).exists() and Connection_Model.objects.filter(from_user=self.to_user, to_user=self.from_user).exists())):
+            super(Connection_Model, self).save(*args, **kwargs)
+
+        elif self.save_checks(to_user=self.to_user, from_user=self.from_user):
+            super(Connection_Model, self).save(*args, **kwargs)
+
+        elif self.save_checks(to_user=self.from_user, from_user=self.to_user):
+            super(Connection_Model, self).save(*args, **kwargs)
+            
+        else:
+            raise ValidationError("Connection between specified users already exists!!")
+
+
+
+        # ((Connection_Model.objects.filter(from_user=self.from_user, to_user=self.to_user).exists() 
+            # and Connection_Model.objects.get(from_user=self.from_user, to_user=self.to_user).connection_status == "Declined") or (Connection_Model.objects.filter(from_user=self.to_user, to_user=self.from_user).exists() and Connection_Model.objects.get(from_user=self.to_user, to_user=self.from_user).connection_status == "Declined"))
+   
     # def save(self, *args, **kwargs):
     #     if (
     #         Connection_Model.objects.filter(
