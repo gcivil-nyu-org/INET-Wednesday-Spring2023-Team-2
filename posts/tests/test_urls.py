@@ -565,6 +565,11 @@ class ViewsFunctions(TestCase):
             question_text="Test question 2", created_by=self.user1, id=8
         )
 
+        option1 = Options_Model.objects.create(question=post5, choice_text="1option1")
+        option2 = Options_Model.objects.create(question=post5, choice_text="1option2")
+        option3 = Options_Model.objects.create(question=post6, choice_text="2option1")
+        option3 = Options_Model.objects.create(question=post6, choice_text="2option2")
+
         response = self.client.get(self.url, {"search": "test"})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Test question 1")

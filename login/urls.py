@@ -74,13 +74,21 @@ urlpatterns = [
         views.decline_friend_request_profilepage,
         name="decline_friend_request_profilepage",
     ),
-    path("profile/block_friend/<int:connection_id>/", views.block_friend, name="block_friend"),
+    path(
+        "profile/block_friend/<int:connection_id>/",
+        views.block_friend,
+        name="block_friend",
+    ),
     path(
         "profile/get_back/<username>/<tab>/",
         views.backactivetab_view,
         name="profile_backactivetab",
     ),
-    path('profile/block_friend/<int:connection_id>/', views.block_friend, name='block_friend'),
+    path(
+        "profile/block_friend/<int:connection_id>/",
+        views.block_friend,
+        name="block_friend",
+    ),
     path(
         "profile/unblock_friend/<int:connection_id>/",
         views.unblock_friend,

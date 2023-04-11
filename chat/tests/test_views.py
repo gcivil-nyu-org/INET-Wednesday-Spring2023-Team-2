@@ -2,10 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 from login.models import Custom_User
-<<<<<<< HEAD
 from chat.views import get_chat_history
-=======
->>>>>>> af572fd (add chat/test_views & fix poll_empty and messages css)
 from chat.models import (
     Connection_Model,
     Chat_Message,
@@ -56,7 +53,6 @@ class TestChatViews(TestCase):
 
         self.assertIn(self.user1, friend_objects)
         self.assertNotIn(self.user2, friend_objects)
-<<<<<<< HEAD
 
     def test_chat_page_chathistory_view_valid(self):
         self.client.login(username="test", password="test1234")
@@ -78,5 +74,3 @@ class TestChatViews(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Thou Shall not Enter!!")
-=======
->>>>>>> af572fd (add chat/test_views & fix poll_empty and messages css)
