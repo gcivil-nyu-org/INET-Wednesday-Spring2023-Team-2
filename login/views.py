@@ -588,7 +588,9 @@ def block_friend(request, connection_id):
                 #         opposite_request.connection_status = "Blocked"
                 #         opposite_request.save()
 
-                return JsonResponse({"status": "success"})
+                return JsonResponse(
+                    {"status": "success", "message": "The user has been blocked"}
+                )
             else:
                 return JsonResponse(
                     {
@@ -638,7 +640,9 @@ def unblock_friend(request, connection_id):
                 #         opposite_request.connection_status = "Accepted"
                 #         opposite_request.save()
 
-                return JsonResponse({"status": "success"})
+                return JsonResponse(
+                    {"status": "success", "message": "The user has been unblocked"}
+                )
             else:
                 return JsonResponse(
                     {
