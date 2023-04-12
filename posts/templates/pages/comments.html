@@ -18,15 +18,15 @@
                     </div>
                 </div>
                 <div class="comment-action">
-                    <a id = "Upvote{{ comment.id }}" onclick="upvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-up"></i></a>
+                    <a id = "Upvote{{ comment.id }}" onclick="upvoteComment(event, '{{ comment.id }}')"><i class="fas fa-arrow-alt-circle-up"></i></a>
                     <span class = "react">{{ comment.vote_count }}</span>
-                    <a id = "Downvote{{ comment.id }}" onclick="downvoteComment(event, {{ comment.id }})"><i class="fas fa-arrow-alt-circle-down"></i></a>
+                    <a id = "Downvote{{ comment.id }}" onclick="downvoteComment(event, '{{ comment.id }}')"><i class="fas fa-arrow-alt-circle-down"></i></a>
                     <a class="timestamp">{{ comment.commented_time |date:"M d, Y, P"  }}</a>
                     {% if request.user == comment.commented_by %}
-                    <a class="delete" onclick="deleteComment(event, {{ comment.id }})"><i class="fas fa-trash-alt"></i></a>
+                    <a class="delete" onclick="deleteComment(event, '{{ comment.id }}')"><i class="fas fa-trash-alt"></i></a>
                     {% endif %}
                     {% if request.user != comment.commented_by %}
-                    <a id="Report{{ comment.id }}" onclick="reportComment(event, {{ comment.id }})"><i class="fas fa-exclamation-triangle"></i></a>
+                    <a id="Report{{ comment.id }}" onclick="reportComment(event, '{{ comment.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
                     {% endif %}
                     <a class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
 
