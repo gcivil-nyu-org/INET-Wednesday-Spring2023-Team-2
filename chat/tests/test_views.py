@@ -57,8 +57,10 @@ class TestChatViews(TestCase):
     def test_chat_page_chathistory_view_valid(self):
         self.client.login(username="test", password="test1234")
         response = self.client.get(
-            reverse("connections:get_chat_history_box", args=[self.connection.id])
+            reverse("connections:get_chat_history_box", args=[self.connection.id]),
+            **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
+
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "pages/chat_box.html")
         self.assertContains(response, self.user1.username)

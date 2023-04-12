@@ -40,7 +40,6 @@ chatSocket.onmessage = function (e) {
     // add message to text box
 
     addMessagestoChatBox(data);
-    saveMessageToDatabase(data.message, data.username, data.connection_id);
 }
 
 // submit on pressing enter

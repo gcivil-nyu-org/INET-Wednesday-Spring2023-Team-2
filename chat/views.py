@@ -67,27 +67,27 @@ def get_chat_history(connection_id):
 
 
 # delete later
-@login_required
-def chat_view_test(request, connection_id):
-    # if connection doesn't exists (i.e. users don't know each other) or
-    # if connection is not in accepted status (i.e. users agreed to chat with each other) or
-    # if request isnot from ajax (url request not accepted)
+# @login_required
+# def chat_view_test(request, connection_id):
+#     # if connection doesn't exists (i.e. users don't know each other) or
+#     # if connection is not in accepted status (i.e. users agreed to chat with each other) or
+#     # if request isnot from ajax (url request not accepted)
 
-    if (
-        Connection_Model.objects.filter(id=connection_id).exists()
-        and Connection_Model.objects.get(id=connection_id).connection_status
-        == "Accepted"
-    ):  # and is_ajax(request):
-        messages = get_chat_history(connection_id)
+#     if (
+#         Connection_Model.objects.filter(id=connection_id).exists()
+#         and Connection_Model.objects.get(id=connection_id).connection_status
+#         == "Accepted"
+#     ):  # and is_ajax(request):
+#         messages = get_chat_history(connection_id)
 
-        return render(
-            request,
-            "pages/chat_test.html",
-            {"connection_id": connection_id, "messages": messages},
-        )
+#         return render(
+#             request,
+#             "pages/chat_test.html",
+#             {"connection_id": connection_id, "messages": messages},
+#         )
 
-    else:
-        return HttpResponse("Thou Shall not Enter!!")
+#     else:
+#         return HttpResponse("Thou Shall not Enter!!")
 
 
 def chat_history_box_view(request, connection_id):
@@ -95,7 +95,7 @@ def chat_history_box_view(request, connection_id):
         Connection_Model.objects.filter(id=connection_id).exists()
         and Connection_Model.objects.get(id=connection_id).connection_status
         == "Accepted"
-    ):  # and is_ajax(request):
+    ) and is_ajax(request):
         messages = get_chat_history(connection_id)
 
         template = loader.get_template("pages/chat_box.html")
