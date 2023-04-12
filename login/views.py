@@ -384,9 +384,7 @@ def profile_page_contents(request, username_):
         or Connection_Model.objects.filter(
             from_user=request.user, to_user=profile, connection_status="Blocked"
         ).exists()
-
         ##declined can request again
-
         # or Connection_Model.objects.filter(
         #     from_user=request.user, to_user=profile, connection_status="Declined"
         # ).exists()
@@ -396,9 +394,7 @@ def profile_page_contents(request, username_):
         or Connection_Model.objects.filter(
             from_user=profile, to_user=request.user, connection_status="Blocked"
         ).exists()
-
         ##declined can request again
-
         # or Connection_Model.objects.filter(
         #     from_user=profile, to_user=request.user, connection_status="Declined"
         # ).exists()
@@ -714,7 +710,7 @@ def send_friend_request(request, uid):
         friend_request.connection_status = "Pending"
         friend_request.save()
         messages.success(request, f"Friend request sent to {to_user.username}!")
-    
+
     else:
         messages.info(
             request, f"You have already sent a friend request to {to_user.username}."

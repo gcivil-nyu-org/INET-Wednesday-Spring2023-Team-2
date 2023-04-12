@@ -801,6 +801,6 @@ def get_back_api_view(request, category, pid):
         return post_view_class.get(
             request=request, call="api", pid=pid, change_url=False, category=category
         )
-    
+
     else:
         return HttpResponse("Thou Shall not Enter!!")
