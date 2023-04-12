@@ -2,13 +2,13 @@
 var boxName = JSON.parse(document.getElementById('room-name').textContent);
 var user_username = JSON.parse(document.getElementById('user_username').textContent);
 
-// try{
-//     chatSocket.close();
-//     // delete chatSocket;
-// }
-// catch{
+try{
+    chatSocket.close();
+    // delete chatSocket;
+}
+catch{
 
-// }
+}
 
 // Create a WebSocket in JavaScript.
 var chatSocket = new WebSocket(
