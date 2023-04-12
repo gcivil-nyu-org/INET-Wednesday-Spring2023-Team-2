@@ -587,3 +587,12 @@ class ViewsFunctions(TestCase):
         response = self.client.get(self.url, {"search": ""})
         self.assertEqual(response.status_code, 200)
         self.assertListEqual(response.json()["search_results"], [])
+
+    def test_home(self):
+        response = self.client.get(
+            reverse(
+                "go_home",
+            ),
+        )
+        print(response)
+        self.assertEqual(response.status_code, 302)
