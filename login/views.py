@@ -366,7 +366,8 @@ def profile_page_contents(request, username_):
             ).first()
         )
 
-        if block_connection.blocked_by == request.user:
+        ##admin can view blocked user profiles
+        if block_connection.blocked_by == request.user or request.user.is_superuser:
             contents["view_access"] = True
         else:
             # TODO:fix later
