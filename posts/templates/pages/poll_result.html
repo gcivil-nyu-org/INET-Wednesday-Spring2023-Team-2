@@ -45,7 +45,14 @@
       <div class="text-center">
       <p id="resultReveal"></p>
       Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
-      <a class="report" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
+      <a id="PostReport{{ post.id }}" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
+
+        {% if request.user in post.reported_by.all %}
+        <script>$("#PostReport{{ post.id }}").addClass("reported");</script>
+        {% else %}
+        <script>$("#PostReport{{ post.id }}").addClass("report");</script>
+        {% endif %}
+
     </div>
     </section>
     <!-- <br><br> -->
@@ -82,9 +89,13 @@
 
 {% endblock scripts %}
 
+{% if change_url %}
+<script>changeurl("{{ pid }}", "{{ category }}");</script>
+{% endif %}
+
 <script>
 
-changeurl();
+// changeurl();
 getCommentsText();
 // getComments();
 
@@ -108,10 +119,10 @@ getCommentsText();
 var x = setInterval(function() {
 
   // Get today's date and time
-  // var now = new Date().getTime();
+  var now = new Date().getTime();
   // temperary fix of display time
-  var now = new Date();
-  now.setHours(now.getHours() + 3);
+  // var now = new Date();
+  // now.setHours(now.getHours() + 3);
   // now = now.toLocaleTimeString();
 
     
@@ -138,36 +149,40 @@ var x = setInterval(function() {
 }, 1000);
 
 function reportPost(event, postId) {
-    event.preventDefault();
-    
-    // Add a confirmation message
-    var result = confirm("Do you want to report this post for inappropriate content?");
-    if (!result) {
-        alert("Report has been canceled!")
-    }
-    else {
-        $.ajax({
-            url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
-            type: "GET",
-            dataType: "json",
-            success: function(response) {
-                if (response.report === "success") {
-                    // Handle a successful report here
-                    alert("Post has been reported!");
-                } else if (response.report === "already_reported") {
-                    // Handle the case when the user has already reported the comment
-                    alert("You have already reported this post.");
-                } else {
-                    // Handle any other errors
-                    alert("An error occurred while reporting the post.");
-                }
-            },
-            error: function(xhr, reported, error) {
-                // Handle the error here
-                alert("Request error");
-            },
-        });
-    }
-  } 
+  event.preventDefault();
+  
+  // Get the report button element
+  var reportButton = $("#PostReport" + postId);
+
+  // Add a confirmation message
+  $.ajax({
+      url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
+      type: "GET",
+      dataType: "json",
+      success: function(response) {
+          if (response.report === "success") {
+              showMessage(response.message);
+              // Change the button color to red by toggling the classes
+              reportButton.removeClass("report").addClass("reported");
+          } else if (response.report === "cancel") {
+              showMessage(response.message);
+              // Change the button color to grey by toggling the classes
+              reportButton.removeClass("reported").addClass("report");
+          } else {
+              alert("An error occurred while reporting the post.");
+          }
+      },
+      error: function(xhr, reported, error) {
+          // Handle the error here
+          alert("Request error");
+      },
+  });
+}
+
+
+
+
+
+
 
 </script>

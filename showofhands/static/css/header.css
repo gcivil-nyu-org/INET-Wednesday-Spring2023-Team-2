@@ -432,8 +432,24 @@ body.dark .home .text{
     font-weight: bold;
 }
 
+.autocomplete-username {
+    font-weight: bold;
+}
+
+
 .autocomplete-options {
     font-style: italic;
     color: var(--secondary-color);
     margin-top: 5px;
+}
+
+.messages {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	padding: 10px;
+	background-color: #eee6f3;
+    color:#18191a;
+	text-align: center;
 }

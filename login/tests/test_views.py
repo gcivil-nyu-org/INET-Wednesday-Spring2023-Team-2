@@ -524,7 +524,7 @@ class TestRegister(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertEqual(
             str(messages[0]),
-            "Password Reset Link set via email. Reset Password to Login",
+            "Password Reset Link sent via email. Reset Password to Login",
         )
 
         self.assertEqual(len(mail.outbox), 1)
@@ -540,7 +540,7 @@ class TestRegister(TestCase):
         self.assertEqual(len(messages), 1)
         self.assertEqual(
             str(messages[0]),
-            "Password Reset Link set via email. Reset Password to Login",
+            "Password Reset Link sent via email. Reset Password to Login",
         )
 
         self.assertEqual(len(mail.outbox), 1)

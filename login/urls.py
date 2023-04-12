@@ -28,7 +28,7 @@ urlpatterns = [
         name="profile_history_page",
     ),
     path(
-        "profile/<str:username_>/posts_created",
+        "profile/<str:username_>/postscreated",
         login_required(views.UserPostsCreated.as_view()),
         name="profile_postscreated_page",
     ),
@@ -45,23 +45,48 @@ urlpatterns = [
     # re_path("^profile/(?:name=(?P<username_>\w+))/$", views.UserHistory.as_view(), name="profile_page"),
     # re_path("profile/", login_required(views.UserHistory.as_view()), name="profile_page"),
     path(
-        "send_friend_request/<int:uid>/",
+        "profile/send_friend_request/<int:uid>/",
         views.send_friend_request,
         name="send_friend_request",
     ),
     path(
-        "friend_requests/<str:username_>/",
+        "profile/<str:username_>/requests/",
         views.friend_requests,
         name="friend_requests",
     ),
     path(
-        "accept_friend_request/<int:uid>>/",
+        "profile/accept_friend_request/<int:uid>/",
         views.accept_friend_request,
         name="accept_friend_request",
     ),
     path(
-        "decline_friend_request/<int:uid>>/",
+        "profile/accept_friend_request_profilepage/<int:uid>>/",
+        views.accept_friend_request_profilepage,
+        name="accept_friend_request_profilepage",
+    ),
+    path(
+        "profile/decline_friend_request/<int:uid>>/",
         views.decline_friend_request,
         name="decline_friend_request",
+    ),
+    path(
+        "profile/decline_friend_request_profilepage/<int:uid>>/",
+        views.decline_friend_request_profilepage,
+        name="decline_friend_request_profilepage",
+    ),
+    path(
+        "profile/block_friend/<int:connection_id>/",
+        views.block_friend,
+        name="block_friend",
+    ),
+    path(
+        "profile/block_friend/<int:connection_id>/",
+        views.block_friend,
+        name="block_friend",
+    ),
+    path(
+        "profile/unblock_friend/<int:connection_id>/",
+        views.unblock_friend,
+        name="unblock_friend",
     ),
 ]

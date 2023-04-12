@@ -54,7 +54,7 @@
 {% endfor %}
 
 <!-- import chatSocket.js -->
-<script type="text/javascript" src="{% static '../static/js/chatSocket.js' %}"></script>
+<script type="text/javascript" src="{% static '../static/js/chatSocket_old.js' %}"></script>
 
 
 <!-- Optional JavaScript -->
@@ -67,4 +67,13 @@
 </script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
     integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
+</script>
+
+
+<script>
+    
+    var element = document.getElementById('chat-text');
+    console.log(element.scrollTop);
+    element.scrollTop = element.scrollHeight;
+    console.log(element.scrollTop);
 </script>

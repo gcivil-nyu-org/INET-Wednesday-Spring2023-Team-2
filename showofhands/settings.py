@@ -202,7 +202,7 @@ AUTH_USER_MODEL = "login.Custom_User"
 
 # LOGIN_URL = redirect(reverse("login:login_page"))
 
-LOGIN_URL = "/account/login"
+LOGIN_URL = "/account/login/"
 
 LOGOUT_REDIRECT_URL = "/home"
 
@@ -217,9 +217,6 @@ LOGOUT_REDIRECT_URL = "/home"
 
 
 TIME_ZONE = "America/New_York"
-
-# need to change later
-USE_TZ = False
 
 
 if "AWS_ACCESS_KEY_ID" in os.environ:
@@ -254,18 +251,19 @@ STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 # updates for chat application
 ASGI_APPLICATION = "showofhands.asgi.application"
 
+# TODO: temp fix for inmem chat to work, change later before deploy
 ## Redis for AWS
-if "USE_REDIS_ENDPOINT" in os.environ and os.environ["USE_REDIS_ENDPOINT"]:
-    CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels_redis.core.RedisChannelLayer",
-            "CONFIG": {
-                "hosts": [
-                    ("aws-my-1sw7m30jtg0i4.yxaols.0001.use1.cache.amazonaws.com", 6379)
-                ],
-            },
-        },
-    }
+# if "USE_REDIS_ENDPOINT" in os.environ and os.environ["USE_REDIS_ENDPOINT"]:
+#     CHANNEL_LAYERS = {
+#         "default": {
+#             "BACKEND": "channels_redis.core.RedisChannelLayer",
+#             "CONFIG": {
+#                 "hosts": [
+#                     ("aws-my-1sw7m30jtg0i4.yxaols.0001.use1.cache.amazonaws.com", 6379)
+#                 ],
+#             },
+#         },
+#     }
 
-else:
-    CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
+# else:
+CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}

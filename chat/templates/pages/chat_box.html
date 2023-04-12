@@ -1,0 +1,82 @@
+{% load static %}
+<div class="chat-header clearfix">
+    <div class="row">
+        <div class="col-lg-6">
+            <a href="javascript:void(0);" data-toggle="modal" data-ta
+            rget="#view_info">
+                <a href="../../account/profile/{{ friend_name }}/"><img src="{{ friend_pic }}" alt="avatar"></a>
+            </a>
+            <div class="chat-about">
+                <h6 class="m-b-0">
+                    <a href="../../account/profile/{{ friend_name }}/">{{ friend_name }}</a>
+                </h6>
+                <!-- get last login or something -->
+                <small>Online</small>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="chat-message clearfix">
+    <div class="input-group mb-0">
+        <div class="input-group-prepend">
+            <span class="input-group-text"><i class="fa fa-send"></i></span>
+        </div>
+        <div id="chat-messages">
+            <input class="form-control" placeholder="Enter text here" id="input" type="text"></br>
+        </div>
+    </div>
+</div>
+<div class="chat-history">
+    <ul class="m-b-0" id="history">
+
+    </ul>
+</div>
+
+<!-- add history -->
+{% for message in messages %}
+{% if message.user == request.user %}
+<script>
+    document.getElementById('history').insertAdjacentHTML('afterbegin', 
+    '<ul class="m-b-0"><li class="clearfix"><div class="message-data-right"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message other-message float-right"> {{ message.message }} </div></li></ul>');
+</script>
+{% else %}
+<script>
+    document.getElementById('history').insertAdjacentHTML('afterbegin', 
+    '<ul class="m-b-0"><li class="clearfix"><div class="message-data"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message my-message"> {{ message.message }} </div></li></ul>');
+</script>
+{% endif %}
+{% endfor %}
+
+
+<!-- required python variable to get from inside js func -->
+{% comment %} Get data for username and chatbox name{% endcomment %}
+{{ request.user.username|json_script:"user_username" }}
+{{ connection_id|json_script:"room-name" }}
+
+
+<!-- add chat messages func -->
+<script>
+    function addMessagestoChatBox(data){
+        const user_username = JSON.parse(document.getElementById('user_username').textContent);
+        if (user_username == data.username){
+            document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data-right"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message other-message float-right"> ' + data.message + ' </div></li>');
+        }
+        else{
+            document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + data.message + ' </div></li>');
+        }
+    }
+</script>
+
+<!-- <script>
+    var element = document.getElementById('test1');
+    console.log(element.scrollTop);
+    element.scrollTop = element.scrollHeight;
+    console.log(element.scrollTop);
+    // window.scrollTo(0, document.body.scrollHeight);
+    // $('#history').scrollTop($('#history')[0].scrollHeight);
+    // window.scrollTo(0, document.body.scrollHeight);
+    // document.getElementById('test1').scrollTop = 9999999;
+</script> -->
+
+<!-- import chatSocket.js -->
+<script type="text/javascript" src="{% static '../static/js/chatSocket.js' %}"></script>

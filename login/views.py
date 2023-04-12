@@ -21,6 +21,7 @@ from .tokens import account_activation_token, password_reset_token
 from .models import Custom_User
 from chat.models import Connection_Model
 from chat.views import get_friends_info
+from posts.models import Post_Model, Options_Model
 
 
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
@@ -131,7 +132,7 @@ def password_reset_confirmation_view(request):
 
         if email_token(request, user_, email_subject, text_, token_, reverse_link):
             messages.success(
-                request, "Password Reset Link set via email. Reset Password to Login"
+                request, "Password Reset Link sent via email. Reset Password to Login"
             )
             # return maybe redirect to home? or login?
 
@@ -328,6 +329,50 @@ def profile_page_contents(request, username_):
         ).exists()
     )
 
+    coming_request_exists = Connection_Model.objects.filter(
+        from_user=profile, to_user=request.user, connection_status="Pending"
+    ).exists()
+
+    contents["coming_request_exists"] = coming_request_exists
+
+    if coming_request_exists:
+        coming_request = Connection_Model.objects.get(
+            from_user=profile, to_user=request.user, connection_status="Pending"
+        )
+
+        print(coming_request)
+
+        contents["coming_request"] = coming_request
+
+    block_connection_exists = (
+        Connection_Model.objects.filter(
+            from_user=profile, to_user=request.user, connection_status="Blocked"
+        ).exists()
+        or Connection_Model.objects.filter(
+            from_user=request.user, to_user=profile, connection_status="Blocked"
+        ).exists()
+    )
+
+    contents["block_connection_exists"] = block_connection_exists
+    contents["view_access"] = True
+
+    if block_connection_exists:
+        block_connection = (
+            Connection_Model.objects.filter(
+                from_user=profile, to_user=request.user, connection_status="Blocked"
+            ).first()
+            or Connection_Model.objects.filter(
+                from_user=request.user, to_user=profile, connection_status="Blocked"
+            ).first()
+        )
+
+        ##admin can view blocked user profiles
+        if block_connection.blocked_by == request.user or request.user.is_superuser:
+            contents["view_access"] = True
+        else:
+            # TODO:fix later
+            contents["view_access"] = False
+
     # Get friends list
     # user_ = Custom_User.objects.get(username=username_)
     # friends = get_user_friends_list(user_).order_by("-connection_answer_time")
@@ -337,14 +382,22 @@ def profile_page_contents(request, username_):
             from_user=request.user, to_user=profile, connection_status="Accepted"
         ).exists()
         or Connection_Model.objects.filter(
-            from_user=request.user, to_user=profile, connection_status="Declined"
+            from_user=request.user, to_user=profile, connection_status="Blocked"
         ).exists()
+        ##declined can request again
+        # or Connection_Model.objects.filter(
+        #     from_user=request.user, to_user=profile, connection_status="Declined"
+        # ).exists()
         or Connection_Model.objects.filter(
             from_user=profile, to_user=request.user, connection_status="Accepted"
         ).exists()
         or Connection_Model.objects.filter(
-            from_user=profile, to_user=request.user, connection_status="Declined"
+            from_user=profile, to_user=request.user, connection_status="Blocked"
         ).exists()
+        ##declined can request again
+        # or Connection_Model.objects.filter(
+        #     from_user=profile, to_user=request.user, connection_status="Declined"
+        # ).exists()
     )
 
     contents["request_exists"] = request_exists
@@ -440,6 +493,7 @@ class CurrentProfileURL(APIView):
             "posts_created": "account:profile_postscreated_page",
             "profile": "account:profile_page",
             "friends": "account:profile_friends_page",
+            "friend_requests": "account:friend_requests",
         }
         current_url = request.build_absolute_uri(
             reverse(url_page_map[page], kwargs={"username_": username})
@@ -458,11 +512,37 @@ class UserFriends(APIView):
             user_ = Custom_User.objects.get(username=username_)
             friends = get_user_friends_list(user_).order_by("-connection_answer_time")
             # print(get_user_friends_list(user_), friends)
+            friends_data = []
+            friends_set = set()
 
-            friends = [friend.get_friend(user_) for friend in friends]
+            # friends = [friend.get_friend(user_) for friend in friends]
+
+            for connection in friends:
+                friend = connection.get_friend(user_)
+                connection_status = connection.connection_status
+                blocked_by = connection.blocked_by
+                # prevent showing duplicate friends in friends list
+
+                # if friend not in friends_set:
+                #     friends_set.add(friend)
+                friends_data.append(
+                    {
+                        "friend": friend,
+                        "connection_id": connection.id,
+                        "connection_status": connection_status,
+                        "blocked_by": blocked_by,
+                    }
+                )
+
+            if request.user == user_:
+                block_access = True
+            else:
+                block_access = False
 
             return Response(
-                {"friends": friends}, template_name="pages/profile_friends.html"
+                # {"friends": friends}, template_name="pages/profile_friends.html"
+                {"friends_data": friends_data, "block_access": block_access},
+                template_name="pages/profile_friends.html",
             )
 
         else:
@@ -480,10 +560,142 @@ def get_user_friends_list(user):
         connection_status="Accepted"
     )
 
-    friends = connections_sent | connections_recieved
+    connections_sent_blocked = user.connection_requests_sent.filter(
+        connection_status="Blocked"
+    )
+
+    connections_recieved_blocked = user.connection_requests_received.filter(
+        connection_status="Blocked"
+    )
+
+    friends = (
+        connections_sent
+        | connections_recieved
+        | connections_sent_blocked
+        | connections_recieved_blocked
+    )
 
     # returns all connection models that has from_user = user or to_user=user
     return friends
+
+
+# def block_friend(request, uid):
+#     if request.user.is_authenticated:
+#         friend = Custom_User.objects.get(id=uid)
+#         connection = Connection_Model.objects.filter(from_user=request.user, to_user=friend).first()
+#         if connection:
+#             connection.status = 'declined'
+#             connection.save()
+#             return JsonResponse({'status': 'success'}, status=200)
+#         else:
+#             return JsonResponse({'status': 'error', 'message': 'Friend not found.'}, status=404)
+#     return JsonResponse({'status': 'error', 'message': 'User not authenticated.'}, status=401)
+
+
+@login_required
+def block_friend(request, connection_id):
+    if is_ajax(request):
+        try:
+            # friend = Custom_User.objects.get(id=uid)
+            connection = Connection_Model.objects.get(id=connection_id)
+            if (
+                connection.to_user == request.user
+                or connection.from_user == request.user
+            ) and connection.connection_status == "Accepted":
+                connection.connection_status = "Blocked"
+                connection.blocked_by = request.user
+                connection.save()
+
+                # also change the connection status of opposite connection if exists
+                # (from_user=to_user, to_user=from_user)
+                # if request.user == connection.to_user:
+                #     opposite_request = Connection_Model.objects.get(
+                #         from_user=request.user,
+                #         to_user=connection.from_user,
+                #          connection_status="Accepted",
+                #     )
+                #     if opposite_request:
+                #         opposite_request.connection_status = "Blocked"
+                #         opposite_request.save()
+
+                # if request.user == connection.from_user:
+                #     opposite_request = Connection_Model.objects.get(
+                #         from_user=connection.to_user,
+                #         to_user=request.user,
+                #         connection_status="Accepted",
+                #     )
+                #     if opposite_request:
+                #         opposite_request.connection_status = "Blocked"
+                #         opposite_request.save()
+
+                return JsonResponse(
+                    {"status": "success", "message": "The user has been blocked"}
+                )
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "You don't have permission to block this user.",
+                    }
+                )
+        except Connection_Model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Friend request not found."}
+            )
+    return JsonResponse({"status": "error", "message": "Not an AJAX request."})
+
+
+@login_required
+def unblock_friend(request, connection_id):
+    if is_ajax(request):
+        try:
+            # friend = Custom_User.objects.get(id=uid)
+            connection = Connection_Model.objects.get(id=connection_id)
+            if (
+                connection.to_user == request.user
+                or connection.from_user == request.user
+            ) and connection.connection_status == "Blocked":
+                connection.connection_status = "Accepted"
+                connection.blocked_by = None
+                connection.save()
+
+                # also change the connection status of opposite connection if exists
+                # (from_user=to_user, to_user=from_user)
+                # if request.user == connection.to_user:
+                #     opposite_request = Connection_Model.objects.get(
+                #         from_user=request.user,
+                #         to_user=connection.from_user,
+                #         connection_status="Blocked",
+                #     )
+                #     if opposite_request:
+                #         opposite_request.connection_status = "Accepted"
+                #         opposite_request.save()
+
+                # if request.user == connection.from_user:
+                #     opposite_request = Connection_Model.objects.get(
+                #         from_user=connection.to_user,
+                #         to_user=request.user,
+                #         connection_status="Blocked",
+                #     )
+                #     if opposite_request:
+                #         opposite_request.connection_status = "Accepted"
+                #         opposite_request.save()
+
+                return JsonResponse(
+                    {"status": "success", "message": "The user has been unblocked"}
+                )
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "You don't have permission to unblock this user.",
+                    }
+                )
+        except Connection_Model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Friend request not found."}
+            )
+    return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
 @login_required
@@ -494,13 +706,36 @@ def send_friend_request(request, uid):
         from_user=from_user, to_user=to_user
     )
 
-    if created:
+    if created or friend_request.connection_status == "Declined":
+        friend_request.connection_status = "Pending"
+        friend_request.save()
         messages.success(request, f"Friend request sent to {to_user.username}!")
+
     else:
         messages.info(
             request, f"You have already sent a friend request to {to_user.username}."
         )
     return redirect("account:profile_page", username_=to_user.username)
+
+
+@login_required
+def accept_friend_request_profilepage(request, uid):
+    friend_request = Connection_Model.objects.get(id=uid)
+
+    friend_request.connection_status = "Accepted"
+    friend_request.save()
+
+    return redirect("account:profile_page", username_=friend_request.from_user.username)
+
+
+@login_required
+def decline_friend_request_profilepage(request, uid):
+    friend_request = Connection_Model.objects.get(id=uid)
+
+    friend_request.connection_status = "Declined"
+    friend_request.save()
+
+    return redirect("account:profile_page", username_=friend_request.from_user.username)
 
 
 @login_required
@@ -513,46 +748,6 @@ def friend_requests(request, username_):
     return render(request, "pages/friend_request.html", context)
 
 
-# def send_friend_request(request, uid):
-#     if request.method == 'POST':
-#         from_user = request.user
-#         to_user = get_object_or_404(Custom_User, id=uid)
-
-
-#         # Avoid sending multiple requests or sending a request to oneself
-#         if from_user != to_user and not Connection_Model.objects.filter(from_user=from_user, to_user=to_user).exists():
-#             connection_request = Connection_Model(from_user=from_user, to_user=to_user)
-#             connection_request.save()
-#             messages.success(request, 'Friend request sent successfully.')
-
-#     return redirect('account:profile_page', username_=to_user.username)
-
-
-# @login_required
-# def accept_friend_request(request, request_id):
-#     try:
-#         friend_request = Connection_Model.objects.get(id=request_id, to_user=request.user, connection_status="Pending")
-#         friend_request.connection_status = "Accepted"
-#         friend_request.save()
-#         messages.success(request, f'You are now friends with {friend_request.from_user.username}!')
-#     except Connection_Model.DoesNotExist:
-#         messages.error(request, 'Friend request not found.')
-
-#     return redirect('account:profile_page', username_=request.user.username)
-
-
-# @login_required
-# def decline_friend_request(request, request_id):
-#     try:
-#         friend_request = Connection_Model.objects.get(id=request_id, to_user=request.user, connection_status="Pending")
-#         friend_request.delete()
-#         messages.success(request, f'Friend request from {friend_request.from_user.username} has been declined.')
-#     except Connection_Model.DoesNotExist:
-#         messages.error(request, 'Friend request not found.')
-
-#     return redirect('account:profile_page', username_=request.user.username)
-
-
 @login_required
 def accept_friend_request(request, uid):
     if is_ajax(request):
@@ -561,6 +756,16 @@ def accept_friend_request(request, uid):
             if friend_request.to_user == request.user:
                 friend_request.connection_status = "Accepted"
                 friend_request.save()
+
+                # also change the connection status of opposite connection if exists
+                # (from_user=to_user, to_user=from_user)
+                # sender = friend_request.from_user
+                # opposite_request = Connection_Model.objects.get(
+                #     from_user=request.user, to_user=sender, connection_status="Pending"
+                # )
+                # if opposite_request:
+                #     opposite_request.connection_status = "Accepted"
+                #     opposite_request.save()
 
                 return JsonResponse({"status": "success"})
             else:
@@ -586,6 +791,17 @@ def decline_friend_request(request, uid):
                 friend_request.connection_status = "Declined"
                 friend_request.save()
                 # friend_request.delete()
+
+                # also change the connection status of opposite connection if exists
+                # (from_user=to_user, to_user=from_user)
+                # sender = friend_request.from_user
+                # opposite_request = Connection_Model.objects.get(
+                #     from_user=request.user, to_user=sender, connection_status="Pending"
+                # )
+                # if opposite_request:
+                #     opposite_request.connection_status = "Declined"
+                #     opposite_request.save()
+
                 return JsonResponse({"status": "success"})
             else:
                 return JsonResponse(
@@ -599,3 +815,9 @@ def decline_friend_request(request, uid):
                 {"status": "error", "message": "Friend request not found."}
             )
     return JsonResponse({"status": "error", "message": "Not an AJAX request."})
+
+
+# def backactivetab_view(request, username, tab):
+#     # implement map for each tab to corresponding func
+#     tab_map = {"history": UserHistory(), "postscreated": None}
+#     return

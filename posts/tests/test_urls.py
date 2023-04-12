@@ -34,7 +34,7 @@ class PostGenerationTest(TestCase):
         # option2 = Options_Model.objects.create(question=post1, choice_text='option2')
 
         response = self.client.get(
-            reverse("posts:post_generation_page", kwargs={"pid": 2})
+            reverse("posts:post_generation_page", kwargs={"category": "all", "pid": 2})
         )
         # print(response.status_code)
         self.assertEqual(response.status_code, 200)
@@ -116,13 +116,17 @@ class ViewsFunctions(TestCase):
 
     def test_ShowCurrPost_ajax(self):
         response = self.client.post(
-            reverse("posts:show_curr_post_api", kwargs={"current_pid": 2})
+            reverse(
+                "posts:show_curr_post_api", kwargs={"category": "all", "current_pid": 2}
+            )
         )
         self.assertEqual(response.status_code, 200)
 
     def test_ShowCurrPost_ajax(self):
         response = self.client.post(
-            reverse("posts:show_curr_post_api", kwargs={"current_pid": 2}),
+            reverse(
+                "posts:show_curr_post_api", kwargs={"category": "all", "current_pid": 2}
+            ),
             **{"HTTP_X_REQUESTED_WITH": "XMLHttpRequest"}
         )
         self.assertEqual(response.status_code, 200)
@@ -135,9 +139,12 @@ class ViewsFunctions(TestCase):
 
     def test_ajax_get_current_post_url_api(self):
         self.factory = RequestFactory()
-        url = reverse("posts:get_current_post_url_api", kwargs={"current_pid": 2})
+        url = reverse(
+            "posts:get_current_post_url_api",
+            kwargs={"category": "all", "current_pid": 2},
+        )
         request = self.factory.get(url, HTTP_X_REQUESTED_WITH="XMLHttpRequest")
-        response = CurrentPostURL.as_view()(request, current_pid=2)
+        response = CurrentPostURL.as_view()(request, category="all", current_pid=2)
         self.assertEqual(response.status_code, 200)
 
     # def test_non_ajax_get_current_post_url_api(self):
@@ -195,7 +202,7 @@ class ViewsFunctions(TestCase):
             comment_text="Test Comment 2", question=post4, commented_by=user
         )
         response = self.client.get(
-            reverse("posts:report_post", args=[post4.id]),
+            reverse("posts:report_post", kwargs={"post_id": post4.id}),
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
 
@@ -203,7 +210,9 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check response data
-        self.assertEqual(response.json(), {"report": "success"})
+        self.assertEqual(
+            response.json(), {"report": "success", "message": "Poll has been reported"}
+        )
 
         # Refresh the post object from the database
         post4.refresh_from_db()
@@ -234,13 +243,12 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check response data
-        self.assertEqual(response.json(), {"report": "already_reported"})
+        self.assertEqual(
+            response.json(), {"report": "cancel", "message": "Report has been canceled"}
+        )
 
         # Refresh the post object from the database
         post4.refresh_from_db()
-
-        # Check if reported count remains unchanged
-        self.assertEqual(post4.reported_count, 0)
 
     def test_report_post_not_ajax(self):
         user = Custom_User.objects.create_user(username="test3", password="test1234")
@@ -267,9 +275,6 @@ class ViewsFunctions(TestCase):
         # Refresh the post object from the database
         post4.refresh_from_db()
 
-        # Check if reported count remains unchanged
-        self.assertEqual(post4.reported_count, 0)
-
     def test_report_comment(self):
         user = Custom_User.objects.create_user(username="test3", password="test1234")
         self.client.force_login(user=user)
@@ -291,7 +296,10 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check response data
-        self.assertEqual(response.json(), {"report": "success"})
+        self.assertEqual(
+            response.json(),
+            {"report": "success", "message": "Comment has been reported"},
+        )
 
         # Refresh the post object from the database
         comment2.refresh_from_db()
@@ -322,7 +330,10 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check response data
-        self.assertEqual(response.json(), {"report": "already_reported"})
+        self.assertEqual(
+            response.json(),
+            {"report": "unreported", "message": "Report has been canceled"},
+        )
 
         # Refresh the post object from the database
         post4.refresh_from_db()
@@ -381,7 +392,10 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Check response data
-        self.assertEqual(response.json(), {"delete": "success"})
+        self.assertEqual(
+            response.json(),
+            {"delete": "success", "message": "Comment has been deleted"},
+        )
 
         # Check if the comment is deleted from the database
         with self.assertRaises(Comments_Model.DoesNotExist):
@@ -538,3 +552,38 @@ class ViewsFunctions(TestCase):
         self.assertNotIn(user, comment2.upvoted_by.all())
         self.assertIn(user, comment2.downvoted_by.all())
         self.assertEqual(comment2.vote_count, -1)
+
+    def test_search_posts_view(self):
+        self.url = reverse("posts:search_posts")
+
+        user = Custom_User.objects.create_user(username="test3", password="test1234")
+        self.client.force_login(user=user)
+        post5 = Post_Model.objects.create(
+            question_text="Test question 1", created_by=self.user1, id=7
+        )
+        post6 = Post_Model.objects.create(
+            question_text="Test question 2", created_by=self.user1, id=8
+        )
+
+        option1 = Options_Model.objects.create(question=post5, choice_text="1option1")
+        option2 = Options_Model.objects.create(question=post5, choice_text="1option2")
+        option3 = Options_Model.objects.create(question=post6, choice_text="2option1")
+        option3 = Options_Model.objects.create(question=post6, choice_text="2option2")
+
+        response = self.client.get(self.url, {"search": "test"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Test question 1")
+        self.assertContains(response, "1option1")
+        self.assertContains(response, "Test question 2")
+        self.assertContains(response, "2option2")
+
+        response = self.client.get(self.url, {"search": "foo"})
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Test question 1")
+        self.assertNotContains(response, "1option1")
+        self.assertNotContains(response, "Test question 2")
+        self.assertNotContains(response, "2option2")
+
+        response = self.client.get(self.url, {"search": ""})
+        self.assertEqual(response.status_code, 200)
+        self.assertListEqual(response.json()["search_results"], [])

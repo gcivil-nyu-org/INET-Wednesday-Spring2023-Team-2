@@ -1,4 +1,4 @@
-from datetime import timedelta, timezone, datetime
+from datetime import timedelta, datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -12,6 +12,9 @@ from django.utils.safestring import mark_safe
 from .forms import PollForm
 import re
 from django.views.generic import TemplateView
+from login.models import Custom_User
+
+from django.utils import timezone
 
 # import datetime
 
@@ -50,7 +53,10 @@ def is_ajax(request):
 def get_random_pid(current_pid=None, category=None):
     if category:
         # pids = Post_Model.objects.filter(category=category)
-        pids = Post_Model.objects.filter(category__iexact=category).filter(
+        # pids = Post_Model.objects.filter(category__iexact=category).filter(
+        #     ~Q(id=current_pid)
+        # )
+        pids = Post_Model.objects.filter(category__contains=category).filter(
             ~Q(id=current_pid)
         )
         # pids = Post_Model.objects.filter(~Q(id=current_pid))
@@ -82,9 +88,19 @@ def home_view(request):
     pid, truth = get_random_pid()
 
     if truth:
-        return redirect(reverse("posts:post_generation_page", kwargs={"pid": pid}))
+        return redirect(
+            reverse(
+                "posts:post_generation_page", kwargs={"category": "all", "pid": pid}
+            )
+        )
     else:
         return render(request, "pages/poll_empty.html")
+
+
+def only_id_post_view(request, pid):
+    return redirect(
+        reverse("posts:post_generation_page", kwargs={"category": "all", "pid": pid})
+    )
 
 
 # def posts_view(request, pid, call="noapi"):
@@ -140,10 +156,11 @@ def home_view(request):
 
 
 ##need a json response here as post method automatically returns whatever is in this function and renders it!
-def results_view(request, pid):
+def results_view(request, pid, change_url, category):
     post_ = Post_Model.objects.get(pk=pid)
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
+
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color_ = user_choice.color
     contents = {
@@ -152,6 +169,8 @@ def results_view(request, pid):
         "pid": pid,
         "user_option": user_option,
         "show_poll_results": False,
+        "change_url": change_url,
+        "category": category,
     }
     template = loader.get_template("pages/poll_result.html")
 
@@ -162,9 +181,11 @@ def results_view(request, pid):
 
     # print(post_.result_reveal_time - timedelta(hours=5), datetime.now())
 
-    ##Need to change timezone to fix this ig...this is temporary fix
-    print(post_.result_reveal_time.replace(tzinfo=None), datetime.now())
-    if post_.result_reveal_time.replace(tzinfo=None) < datetime.now():
+    # print(timezone.localtime(post_.result_reveal_time).replace(tzinfo=None), post_.result_reveal_time.replace(tzinfo=None), datetime.now())
+    if (
+        timezone.localtime(post_.result_reveal_time).replace(tzinfo=None)
+        < datetime.now()
+    ):
         contents["show_poll_results"] = True
 
     return HttpResponse(template.render(contents, request))
@@ -187,14 +208,17 @@ def results_view(request, pid):
 
 # shows whether you have voted or not
 # if voted, then results. if not, poll
-def show_curr_post_api_view(request, current_pid):
+def show_curr_post_api_view(request, category, current_pid):
     if is_ajax(request):
         pid = current_pid
-        print("here", pid)
         post_view_class = PostsView()
         if request.method == "GET":
-            return post_view_class.get(request=request, pid=pid, call="api")
-        return post_view_class.post(request=request, pid=pid, call="api")
+            return post_view_class.get(
+                request=request, category=category, pid=pid, call="api"
+            )
+        return post_view_class.post(
+            request=request, category=category, pid=pid, call="api"
+        )
     else:
         return HttpResponse("Thou Shall not Enter!!")
 
@@ -203,27 +227,48 @@ def show_curr_post_api_view(request, current_pid):
 
 
 class PostsView(View):
-    def get(self, request, pid, call="noapi"):
+    def get(self, request, category, pid, call="noapi", change_url=True):
         try:
-            post_ = Post_Model.objects.get(pk=pid)
+            post_ = Post_Model.objects.get(pk=pid, category__contains=category)
         except Post_Model.DoesNotExist:
-            return render(request, "pages/poll_empty.html")
+            try:
+                post_ = Post_Model.objects.get(pk=pid)
+                category = "all"
+            except Post_Model.DoesNotExist:
+                if call == "api":
+                    return render(request, "pages/poll_end.html")
+                contents = {
+                    "pid": "0",
+                    "category": category,
+                }
+                return render(request, "pages/posts_home.html", contents)
         options_ = post_.options_model_set.all().order_by("id")
 
         if call == "noapi":
-            contents = {"post": post_, "options": options_, "pid": pid}
+            contents = {
+                "post": post_,
+                "options": options_,
+                "pid": pid,
+                "category": category,
+            }
             print(pid, call)
             return render(request, "pages/posts_home.html", contents)
 
         if post_.viewed_by.filter(username=request.user.username).exists():
             # display results
-            return results_view(request, pid)
+            return results_view(request, pid, change_url, category)
 
         template = loader.get_template("pages/poll_disp.html")
-        contents = {"post": post_, "options": options_, "pid": pid}
+        contents = {
+            "post": post_,
+            "options": options_,
+            "pid": pid,
+            "change_url": change_url,
+            "category": category,
+        }
         return HttpResponse(template.render(contents, request))
 
-    def post(self, request, pid, call="noapi"):
+    def post(self, request, category, pid, call="noapi"):
         if is_ajax(request):
             post_ = Post_Model.objects.get(pk=pid)
             try:
@@ -233,15 +278,18 @@ class PostsView(View):
                 messages.error(request, "Select an option to submit!")
                 return JsonResponse({"voting": "Wrong request"})
 
-            selected_choice.votes += 1
-            selected_choice.chosen_by.add(request.user)
-            selected_choice.save()
+            if request.user.is_authenticated:
+                selected_choice.votes += 1
+                selected_choice.chosen_by.add(request.user)
+                post_.viewed_by.add(request.user)
+                post_.save()
+                selected_choice.save()
 
-            post_.viewed_by.add(request.user)
-            post_.save()
-
-            if not request.user.posts_view_time.filter(post=post_).exists():
-                print(request.user.posts_view_time.all())
+            if (
+                request.user.is_authenticated
+                and not request.user.posts_view_time.filter(post=post_).exists()
+            ):
+                # print(request.user.posts_view_time.all())
                 user_post_view_time_model = UserPostViewTime.objects.create(
                     user=request.user, post=post_
                 )
@@ -262,15 +310,20 @@ class SearchPostsView(TemplateView):
         query = request.GET.get("search", "")
 
         if query:
-            results = Post_Model.objects.filter(
+            post_results = Post_Model.objects.filter(
                 Q(question_text__icontains=query)
                 | Q(options_model__choice_text__icontains=query)
             ).distinct()
+
+            user_results = Custom_User.objects.filter(
+                Q(username__icontains=query)
+            ).distinct()
         else:
-            results = Post_Model.objects.none()
+            post_results = Post_Model.objects.none()
+            user_results = Custom_User.objects.none()
 
         search_results = []
-        for post in results:
+        for post in post_results:
             options = []
             # create an array for options based on the Options_Model.question=post
             for option in Options_Model.objects.filter(question=post):
@@ -286,6 +339,14 @@ class SearchPostsView(TemplateView):
                     "question_text": post.question_text,
                     "category": post.category,
                     "options": options,
+                }
+            )
+
+        for user in user_results:
+            search_results.append(
+                {
+                    "id": user.id,
+                    "username": user.username,
                 }
             )
 
@@ -342,21 +403,38 @@ class SearchPostsView(TemplateView):
 #     return HttpResponse(template.render(contents, request))
 
 
+def no_more_posts(request, category):
+    template = loader.get_template("pages/poll_end.html")
+    contents = {
+        "post": None,
+        "pid": "0",
+        "change_url": True,
+        "category": category,
+    }
+    return HttpResponse(template.render(contents, request))
+
+
 def show_next_post_api_view(request, current_pid, category):
     if is_ajax(request):
+        category_ = category
         if category == "all":
-            category = None
-        pid, truth = get_random_pid(current_pid=current_pid, category=category)
+            category_ = None
+        pid, truth = get_random_pid(current_pid=current_pid, category=category_)
 
         if truth:
             post_view_class = PostsView()
             if request.method == "GET":
-                return post_view_class.get(request=request, pid=pid, call="api")
-            return post_view_class.post(request=request, pid=pid, call="api")
+                return post_view_class.get(
+                    request=request, pid=pid, call="api", category=category
+                )
+            return post_view_class.post(
+                request=request, pid=pid, call="api", category=category
+            )
 
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
-            return HttpResponse("No more posts to display in the selected category")
+            # return HttpResponse("No more posts to display in the selected category")
+            return no_more_posts(request, category)
 
     else:
         return HttpResponse("Thou Shall not Enter!!")
@@ -364,21 +442,27 @@ def show_next_post_api_view(request, current_pid, category):
 
 def show_categorybased_post_api_view(request, current_pid, category):
     if is_ajax(request):
+        category_ = category
         if category == "all":
-            category = None
-        pid, truth = get_random_pid(current_pid=current_pid, category=category)
+            category_ = None
+        pid, truth = get_random_pid(current_pid=current_pid, category=category_)
 
         # print(pid)
 
         if truth:
             post_view_class = PostsView()
             if request.method == "GET":
-                return post_view_class.get(request=request, pid=pid, call="api")
-            return post_view_class.post(request=request, pid=pid, call="api")
+                return post_view_class.get(
+                    request=request, pid=pid, call="api", category=category
+                )
+            return post_view_class.post(
+                request=request, pid=pid, call="api", category=category
+            )
 
         else:
             ## need to implement an empty template to say you have reached the end! and pass a httpresponse/ template_response here
-            return HttpResponse("No more posts to display in the selected category")
+            # return HttpResponse("No more posts to display in the selected category")
+            return no_more_posts(request, category)
     else:
         return HttpResponse("Thou Shall not Enter!!")
 
@@ -397,12 +481,16 @@ class CurrentPostURL(APIView):
     renderer_classes = [JSONRenderer]
     # permission_classes = [permissions.IsAdminUser]
 
-    def get(self, request, current_pid):
+    def get(self, request, category, current_pid):
         if is_ajax(request):
             pid = current_pid
             current_url = request.build_absolute_uri(
-                reverse("posts:post_generation_page", kwargs={"pid": pid})
+                reverse(
+                    "posts:post_generation_page",
+                    kwargs={"category": category, "pid": pid},
+                )
             )
+            print("test", current_url)
             content = {"current_url": current_url}
             return Response(content)
         else:
@@ -421,7 +509,9 @@ class CommentsView(View):
                 comments_ = comments_form.save(commit=False)
                 comments_.question = post_
                 comments_.commented_by = request.user
-
+                comments_.option_voted = Options_Model.objects.filter(
+                    question=post_, chosen_by=request.user
+                ).first()
                 comment_text = comments_form.cleaned_data["comment_text"]
 
             def check_mention_user_exist(match):
@@ -450,16 +540,13 @@ class CommentsView(View):
             pid = current_pid
             # print('whyyyy:', pid)
             post_ = Post_Model.objects.get(pk=pid)
-            # user_choices = post_.options_model_set.get(chosen_by=request.user)
-            # user_color_ = user_choices.color
-            # comments_ = post_.comments_model_set.get(pk=pid)
-            comments_ = post_.comments_model_set.all().order_by("-commented_time")
+            comments_ = post_.comments_model_set.all().order_by("-vote_count")
+
             template = loader.get_template("pages/comments.html")
             contents = {
                 "pid": pid,
                 "comments": comments_,
                 "show_comments_text": False,
-                "user_color": "red",
             }
             if post_.viewed_by.filter(username=request.user.username).exists():
                 contents["show_comments_text"] = True
@@ -475,7 +562,6 @@ class CommentsView(View):
                 "pid": pid,
                 "comments": comments_,
                 "show_comments_text": False,
-                "user_color": "red",
             }
             contents["post"] = post_
             contents["show_comments_text"] = True
@@ -491,9 +577,16 @@ def report_comment(request, comment_id):
                 comment.reported_by.add(request.user)
                 comment.reported_count += 1
                 comment.save()
-                return JsonResponse({"report": "success"})
+                return JsonResponse(
+                    {"report": "success", "message": "Comment has been reported"}
+                )
             else:
-                return JsonResponse({"report": "already_reported"})
+                comment.reported_by.remove(request.user)
+                comment.reported_count -= 1
+                comment.save()
+                return JsonResponse(
+                    {"report": "unreported", "message": "Report has been canceled"}
+                )
         except Comments_Model.DoesNotExist:
             return JsonResponse({"report": "error"})
     return JsonResponse({"report": "not ajax"})
@@ -503,13 +596,21 @@ def report_post(request, post_id):
     if is_ajax(request):
         try:
             post = Post_Model.objects.get(id=post_id)
+            print(post)
             if request.user not in post.reported_by.all():
                 post.reported_by.add(request.user)
                 post.reported_count += 1
                 post.save()
-                return JsonResponse({"report": "success"})
+                return JsonResponse(
+                    {"report": "success", "message": "Poll has been reported"}
+                )
             else:
-                return JsonResponse({"report": "already_reported"})
+                post.reported_by.remove(request.user)
+                post.reported_count -= 1
+                post.save()
+                return JsonResponse(
+                    {"report": "cancel", "message": "Report has been canceled"}
+                )
         except Comments_Model.DoesNotExist:
             return JsonResponse({"report": "error"})
     return JsonResponse({"report": "not ajax"})
@@ -521,9 +622,11 @@ def delete_comment(request, comment_id):
 
         if comment.commented_by == request.user:
             comment.delete()
-            return JsonResponse({"delete": "success"})
+            return JsonResponse(
+                {"delete": "success", "message": "Comment has been deleted"}
+            )
         else:
-            return JsonResponse({"delete": "fail"})
+            return JsonResponse({"delete": "fail", "message": "Something went wrong"})
     return JsonResponse({"delete": "error"})
 
 
@@ -652,6 +755,7 @@ def create_poll(request):
                 created_by=request.user,
                 category=category,
                 created_time=datetime.now(),
+                # created_time=timezone.now(),
             )
 
             color_list = ["AED9E0", "8CB369", "D7A5E4", "5D6DD3"]
@@ -664,7 +768,13 @@ def create_poll(request):
                     )
 
             result_reveal_time = post.created_time + timedelta(hours=delay)
-            post.result_reveal_time = result_reveal_time
+            print(
+                post.created_time,
+                datetime.now(),
+                timezone.now(),
+                result_reveal_time.replace(tzinfo=None),
+            )
+            post.result_reveal_time = result_reveal_time.replace(tzinfo=None)
             post.save()
 
             post_id = post.id
@@ -683,3 +793,14 @@ def create_poll(request):
 
     context = {"form": form, "categories": categories}
     return render(request, "pages/poll_create.html", context)
+
+
+def get_back_api_view(request, category, pid):
+    if is_ajax(request):
+        post_view_class = PostsView()
+        return post_view_class.get(
+            request=request, call="api", pid=pid, change_url=False, category=category
+        )
+
+    else:
+        return HttpResponse("Thou Shall not Enter!!")

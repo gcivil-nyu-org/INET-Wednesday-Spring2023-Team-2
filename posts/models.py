@@ -11,10 +11,10 @@ from django.utils.timezone import make_aware
 
 from django.utils.timezone import get_current_timezone
 
-naive_datetime = datetime.now()
-settings.TIME_ZONE
-aware_datetime = make_aware(naive_datetime)
-aware_datetime.tzinfo
+# naive_datetime = datetime.now()
+# settings.TIME_ZONE
+# aware_datetime = make_aware(naive_datetime)
+# aware_datetime.tzinfo
 
 
 def resut_reveal_time_function():
@@ -100,6 +100,13 @@ class Comments_Model(models.Model):
         Custom_User, related_name="downvoted_comment_user", blank=True
     )
     vote_count = models.IntegerField(default=0)
+    option_voted = models.ForeignKey(
+        Options_Model,
+        on_delete=models.CASCADE,
+        related_name="comment_option_voted",
+        null=True,
+        blank=True,
+    )
 
     def __str__(self):
         return (

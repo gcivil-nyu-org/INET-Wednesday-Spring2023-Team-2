@@ -1,10 +1,113 @@
 <div>
-{% for friend in friends %}
+{% for friend in friends_data %}
+<li>
+    <div class="friend-request-container">
 
-<div>
-    <li><a href="{% url 'account:profile_page' friend %}">{{ friend }}</a></li>
-</div>
+
+        {% if friend.connection_status == "Accepted" %}
+        <div class="profile-picture-container">
+            <a href="{% url 'account:profile_page' friend.friend.username %}">
+            <img src="{{ friend.friend.profile_picture.url }}" class="profile-picture" alt="{{ friend.username }}" height="50px" width="50px">
+            </a>
+            <p>{{ friend.friend.username }}</p>
+        </div>
+        {% endif %}
+
+        {% if block_access %}
+        {% if friend.connection_status == "Blocked" and friend.blocked_by == request.user %}
+        <div class="profile-picture-container">
+            <a href="{% url 'account:profile_page' friend.friend.username %}">
+            <img src="{{ friend.friend.profile_picture.url }}" class="profile-picture" alt="{{ friend.username }}" height="50px" width="50px">
+            </a>
+            <p>{{ friend.friend.username }}</p>
+        </div>
+
+        {% endif %}
+        {% endif %}
+
+
+        {% if block_access %}
+        {% if friend.connection_status == "Accepted" %}
+        <div class="block-button-container">
+            
+            <a class="decline" onclick="blockFriend(event, '{{ friend.connection_id }}')">Block</a>
+
+        </div>
+        {% endif %}
+        {% endif %}
+
+        {% if block_access %}
+        {% if friend.connection_status == "Blocked" and friend.blocked_by == request.user %}
+
+        <div class="block-button-container">
+            
+            <a class="accept" onclick="unblockFriend(event, '{{ friend.connection_id }}')">Unblock</a>
+
+        </div>
+
+        {% endif %}
+        {% endif %}
+    </div>
+</li>
 
 {% endfor %}
 
 </div>
+
+
+<script>
+
+function blockFriend(event, connection_id) {
+    event.preventDefault();
+    $.ajax({
+        url: "{% url 'account:block_friend' connection_id=1 %}".replace(/1/, connection_id.toString()),
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            getFriends();
+            showMessage(response.message);
+        },
+        error: function(xhr, reported, error) {
+            console.log("Error accepting friend request");
+        },
+    });
+}
+
+function unblockFriend(event, connection_id) {
+    event.preventDefault();
+    $.ajax({
+        url: "{% url 'account:unblock_friend' connection_id=1 %}".replace(/1/, connection_id.toString()),
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            getFriends();
+            showMessage(response.message);
+        },
+        error: function(xhr, reported, error) {
+            console.log("Error accepting friend request");
+        },
+    });
+}
+
+function showMessage(message) {
+            var $message = $('<div class="report-message">' + message + '</div>');
+            $('body').append($message);
+            $message.css({
+                'position': 'fixed',
+                'top': '0',
+                'left': '0',
+                'width': '100%',
+                'padding': '10px',
+                'text-align': 'center',
+                'background-color': '#eee6f3',
+                'color':'#18191a',
+            });
+            $message.slideDown(300).delay(3000).slideUp(300, function () {
+                $message.remove();
+            });
+        }
+
+
+
+
+</script>

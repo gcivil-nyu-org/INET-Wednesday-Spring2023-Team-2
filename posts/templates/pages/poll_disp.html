@@ -36,7 +36,9 @@
 
     </div>     
     <br>
+    {% if request.user.is_authenticated %}
     <button type="submit" value="Submit" name="access_info" id="voteSubmit">Submit</button>
+    {% endif %}
     <br>
 
 
@@ -48,14 +50,18 @@
       </div>
     </section> -->
 
-       </div>
-       <section class="footer">
-        <div class="text-center">
-        Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
-        <a class="report" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
-        </div>
-      </section>
-       
+       </div class="footer">
+          <div class="text-center">
+            Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
+          </div>
+      <a id="PostReport" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
+     
+        {% if request.user in post.reported_by.all %}
+        <script>$("#PostReport").addClass("reported");</script>
+        {% else %}
+        <script>$("#PostReport").addClass("report");</script>
+        {% endif %}
+
 	</div>
 
 
@@ -101,18 +107,18 @@
 {% endfor %}
 
 
+{% if change_url %}
+<script>changeurl("{{ pid }}", "{{ category }}");</script>
+{% endif %}
+
+
 <script>
-  changeurl();
+  // changeurl();
 
   function reportPost(event, postId) {
     event.preventDefault();
     
     // Add a confirmation message
-    var result = confirm("Do you want to report this post for inappropriate content?");
-    if (!result) {
-        alert("Report has been canceled!")
-    }
-    else {
         $.ajax({
             url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
             type: "GET",
@@ -123,7 +129,7 @@
                     alert("Post has been reported!");
                 } else if (response.report === "already_reported") {
                     // Handle the case when the user has already reported the comment
-                    alert("You have already reported this post.");
+                    alert("Report canceled.");
                 } else {
                     // Handle any other errors
                     alert("An error occurred while reporting the post.");
@@ -135,6 +141,5 @@
             },
         });
     }
-  } 
 
 </script>

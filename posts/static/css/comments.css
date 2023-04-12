@@ -102,10 +102,22 @@
 .comment-action .upvote {
     font-size: 15px;
     color: #5a5a5a;
-    text-align: left;
 }
 
 .comment-action .upvote:hover {
+    font-size: 15px;
+    color: green;
+    text-align: left;
+    cursor: pointer;
+}
+
+.comment-action .upvoted {
+    font-size: 15px;
+    color: green;
+    text-align: left;
+}
+
+.comment-action .upvoted:hover {
     font-size: 15px;
     color: green;
     text-align: left;
@@ -132,10 +144,22 @@
     cursor: pointer;
 }
 
+.comment-action .downvoted {
+    font-size: 15px;
+    color: red;
+    text-align: left;
+}
+
+.comment-action .downvoted:hover {
+    font-size: 15px;
+    color: red;
+    text-align: left;
+    cursor: pointer;
+}
+
 .comment-action .delete {
     font-size: 15px;
     color: #5a5a5a;
-    text-align: left;
 }
 
 .comment-action .delete:hover {
@@ -165,6 +189,13 @@
 }
 
 .comment-action .report:hover {
+    font-size: 15px;
+    color: red;
+    text-align: left;
+    cursor: pointer;
+}
+
+.comment-action .reported {
     font-size: 15px;
     color: red;
     text-align: left;
@@ -220,4 +251,13 @@ p {
 }
 
 
-/* the voting section, not used yet */
+/* the message, not used yet */
+
+.report-message {
+    position: 'fixed';
+    top: '0';
+    left: '50%';
+    transform: 'translateX(-50%)';
+    z-index: '1000';
+    display: 'none';
+}

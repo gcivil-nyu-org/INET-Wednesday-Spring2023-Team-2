@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import Chat_History, Connection_Model
+from django.template import loader
+from django.views.generic import TemplateView
 
 from django.contrib.auth.decorators import login_required
 
@@ -13,7 +15,6 @@ def is_ajax(request):
 # Create your views here.
 
 
-##todo: similiar function to get friends list for each user show up in profile page
 def get_friends_info(request):
     connections_sent = request.user.connection_requests_sent.filter(
         connection_status="Accepted"
@@ -34,14 +35,7 @@ def get_friends_info(request):
 
 @login_required
 def chat_page(request):
-    connections_sent = request.user.connection_requests_sent.filter(
-        connection_status="Accepted"
-    )
-    connections_recieved = request.user.connection_requests_received.filter(
-        connection_status="Accepted"
-    )
-
-    friends = connections_sent | connections_recieved
+    friends = get_friends_info(request)
     friend_object = [
         (
             friend.get_friend(request.user),
@@ -69,28 +63,53 @@ def get_chat_history(connection_id):
     history_list = chat_history.history.order_by(
         "-timestamp"
     ).all()  # [:100] ##todo: return top 100msg everytime to reduce query time
-    return history_list[::-1]
+    return history_list
 
 
 # delete later
-@login_required
-def chat_view_test(request, connection_id):
-    # if connection doesn't exists (i.e. users don't know each other) or
-    # if connection is not in accepted status (i.e. users agreed to chat with each other) or
-    # if request isnot from ajax (url request not accepted)
+# @login_required
+# def chat_view_test(request, connection_id):
+#     # if connection doesn't exists (i.e. users don't know each other) or
+#     # if connection is not in accepted status (i.e. users agreed to chat with each other) or
+#     # if request isnot from ajax (url request not accepted)
 
+#     if (
+#         Connection_Model.objects.filter(id=connection_id).exists()
+#         and Connection_Model.objects.get(id=connection_id).connection_status
+#         == "Accepted"
+#     ):  # and is_ajax(request):
+#         messages = get_chat_history(connection_id)
+
+#         return render(
+#             request,
+#             "pages/chat_test.html",
+#             {"connection_id": connection_id, "messages": messages},
+#         )
+
+#     else:
+#         return HttpResponse("Thou Shall not Enter!!")
+
+
+def chat_history_box_view(request, connection_id):
     if (
         Connection_Model.objects.filter(id=connection_id).exists()
         and Connection_Model.objects.get(id=connection_id).connection_status
         == "Accepted"
-    ):  # and is_ajax(request):
+    ) and is_ajax(request):
         messages = get_chat_history(connection_id)
 
-        return render(
-            request,
-            "pages/chat_test.html",
-            {"connection_id": connection_id, "messages": messages},
-        )
+        template = loader.get_template("pages/chat_box.html")
+        contents = {
+            "connection_id": connection_id,
+            "messages": messages,
+            "friend_name": Connection_Model.objects.get(id=connection_id).get_friend(
+                request.user
+            ),
+            "friend_pic": Connection_Model.objects.get(id=connection_id)
+            .get_friend(request.user)
+            .profile_picture.url,
+        }
+        return HttpResponse(template.render(contents, request))
 
     else:
         return HttpResponse("Thou Shall not Enter!!")

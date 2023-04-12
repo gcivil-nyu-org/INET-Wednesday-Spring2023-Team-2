@@ -20,6 +20,9 @@
             <a  class="nav-tab" id="nav-entertainment-tab"  data-url="entertainment" onclick="openCatTab(event, 'entertainment');">Entertainment</a>
             </div>
             <div class="tab-wrapper">
+                <a class="nav-tab" id="nav-fantasy-tab"  data-url="fantasy" onclick="openCatTab(event, 'fantasy');">Fantasy</a>
+            </div>
+            <div class="tab-wrapper">
                 <a  class="nav-tab" id="nav-misc-tab"  data-url="misc" onclick="openCatTab(event, 'misc');">Misc</a>
             </div>
     </div>
@@ -48,9 +51,44 @@
 
 {% endblock scripts %}
 
+
 <script>
 
 getCurrPost();
+
+openCatTabforback("{{ category }}");
+
+
+// // trying to fix back button not loading ajax contents issue
+window.onpopstate = function (e) {
+    var current_url = getCurrentURL();
+    // console.log(url);
+    // var res = sessionStorage.getItem('cat');
+    // console.log(res);
+    // if(res){
+    //     openCatTabforback(res);
+    // }
+    current_cat = current_url.split("/").at(-3);
+    openCatTabforback(current_cat);
+    getBack(current_url);
+}
+//     console.log(getCurrentURL());
+//     $.ajax({
+//         url:getCurrentURL(),
+//         type:"GET",
+//         success: function(resp){
+//             // changeurl();
+//             localStorage.setItem("response", resp);
+//             $("#postDispDiv").html(resp);
+//         },
+//             error: function(resp){
+//               console.log("getnextpost error")
+//             }
+//         })
+//     // console.log(getCurrentURL());
+//     // location.reload();
+//     // getCurrPost();
+// }
 
 
 function openCatTab(evt, currentCat){
@@ -61,6 +99,16 @@ function openCatTab(evt, currentCat){
 
     evt.currentTarget.className += " active";
     getCategoryBasedPosts(currentCat);
+}
+
+function openCatTabforback(currentCat){
+    tablinks = document.getElementsByClassName("nav-tab");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+
+    main_tablink = document.getElementById("nav-" + currentCat.toString() + "-tab");
+    main_tablink.className += " active";
 }
 
 </script>
