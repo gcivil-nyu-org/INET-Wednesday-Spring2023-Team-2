@@ -28,7 +28,7 @@ class Custom_User(AbstractUser):
 
     profile_picture = models.ImageField(
         upload_to="Profile-Pictures/",
-        default="default-profile.jpeg",
+        default="Profile-Pictures/default-profile.jpeg",
         validators=[validate_image_extension],
     )
 

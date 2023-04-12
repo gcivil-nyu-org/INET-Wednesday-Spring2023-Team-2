@@ -1,0 +1,32 @@
+{% include 'includes/messages.html' %}
+{% include 'includes/header.html' %}
+{% load static %}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}" />
+</head>
+
+
+<div class="container" id="container">
+    <!-- 1L -->
+	<div class="form-container sign-in-container">
+		<h2 class="question">There is currently no polls available.</h2>
+        {% if request.user.is_authenticated %}
+            <h3>Add to the page by posting your own polls!</h3>
+            <br>
+            <a href={% url 'posts:create_poll' %}> CREATE A POLL</a>
+        {% elif not request.user.is_authenticated %}
+            <h3>Log in and submit your own polls!</h3>
+            <br>
+            <a href={% url 'account:login_page' %}>SIGN IN</a>
+        {% endif %}
+	</div>
+	<div class="overlay-container">
+		<div class="overlay">
+            <!-- 1R -->
+			<div class="overlay-panel overlay-right">
+                <p>No comments.</p>
+			</div>
+		</div>
+	</div>
+</div>

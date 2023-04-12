@@ -702,19 +702,35 @@ def unblock_friend(request, connection_id):
 def send_friend_request(request, uid):
     from_user = request.user
     to_user = Custom_User.objects.get(id=uid)
-    friend_request, created = Connection_Model.objects.get_or_create(
-        from_user=from_user, to_user=to_user
-    )
 
-    if created or friend_request.connection_status == "Declined":
-        friend_request.connection_status = "Pending"
-        friend_request.save()
+    if not Connection_Model.connection_exists(Connection_Model, from_user, to_user):
+        friend_request = Connection_Model.objects.create(
+            from_user=from_user, to_user=to_user
+        )
+        # friend_request.save()
         messages.success(request, f"Friend request sent to {to_user.username}!")
 
     else:
-        messages.info(
-            request, f"You have already sent a friend request to {to_user.username}."
+        friend_request = (
+            Connection_Model.objects.filter(
+                from_user=from_user, to_user=to_user
+            ).first()
+            or Connection_Model.objects.filter(
+                from_user=to_user, to_user=from_user
+            ).first()
         )
+
+        if friend_request.connection_status == "Declined":
+            friend_request.connection_status = "Pending"
+            friend_request.save()
+            messages.success(request, f"Friend request sent to {to_user.username}!")
+
+        else:
+            messages.info(
+                request,
+                f"You have already sent a friend request to {to_user.username}.",
+            )
+
     return redirect("account:profile_page", username_=to_user.username)
 
 
