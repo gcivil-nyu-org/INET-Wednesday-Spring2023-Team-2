@@ -55,13 +55,13 @@
         Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
         </div>
       <a id="PostReport" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
-      <script>
+     
         {% if request.user in post.reported_by.all %}
-        $("#PostReport").addClass("reported");
+        <script>$("#PostReport").addClass("reported");</script>
         {% else %}
-        $("#PostReport").addClass("report");
+        <script>$("#PostReport").addClass("report");</script>
         {% endif %}
-      </script>
+
 	</div>
 
 

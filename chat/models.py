@@ -16,6 +16,13 @@ class Connection_Model(models.Model):
         on_delete=models.CASCADE,
         related_name="connection_requests_received",
     )
+    blocked_by = models.OneToOneField(
+        Custom_User,
+        on_delete=models.CASCADE,
+        related_name="blocked_users",
+        blank=True,
+        null=True,
+    )
 
     connection_request_time = models.DateTimeField(auto_now_add=True)
     connection_answer_time = models.DateTimeField(default=datetime.now)

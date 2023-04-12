@@ -344,6 +344,34 @@ def profile_page_contents(request, username_):
 
         contents["coming_request"] = coming_request
 
+    block_connection_exists = (
+        Connection_Model.objects.filter(
+            from_user=profile, to_user=request.user, connection_status="Blocked"
+        ).exists()
+        or Connection_Model.objects.filter(
+            from_user=request.user, to_user=profile, connection_status="Blocked"
+        ).exists()
+    )
+
+    contents["block_connection_exists"] = block_connection_exists
+    contents["view_access"] = True
+
+    if block_connection_exists:
+        block_connection = (
+            Connection_Model.objects.filter(
+                from_user=profile, to_user=request.user, connection_status="Blocked"
+            ).first()
+            or Connection_Model.objects.filter(
+                from_user=request.user, to_user=profile, connection_status="Blocked"
+            ).first()
+        )
+
+        if block_connection.blocked_by == request.user:
+            contents["view_access"] = True
+        else:
+            # TODO:fix later
+            contents["view_access"] = False
+
     # Get friends list
     # user_ = Custom_User.objects.get(username=username_)
     # friends = get_user_friends_list(user_).order_by("-connection_answer_time")
@@ -483,6 +511,7 @@ class UserFriends(APIView):
             for connection in friends:
                 friend = connection.get_friend(user_)
                 connection_status = connection.connection_status
+                blocked_by = connection.blocked_by
                 # prevent showing duplicate friends in friends list
 
                 # if friend not in friends_set:
@@ -492,6 +521,7 @@ class UserFriends(APIView):
                         "friend": friend,
                         "connection_id": connection.id,
                         "connection_status": connection_status,
+                        "blocked_by": blocked_by,
                     }
                 )
 
@@ -564,6 +594,7 @@ def block_friend(request, connection_id):
                 or connection.from_user == request.user
             ) and connection.connection_status == "Accepted":
                 connection.connection_status = "Blocked"
+                connection.blocked_by = request.user
                 connection.save()
 
                 # also change the connection status of opposite connection if exists
@@ -616,6 +647,7 @@ def unblock_friend(request, connection_id):
                 or connection.from_user == request.user
             ) and connection.connection_status == "Blocked":
                 connection.connection_status = "Accepted"
+                connection.blocked_by = None
                 connection.save()
 
                 # also change the connection status of opposite connection if exists

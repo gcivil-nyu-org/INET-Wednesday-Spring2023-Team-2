@@ -14,7 +14,7 @@
         {% endif %}
 
         {% if block_access %}
-        {% if friend.connection_status == "Blocked" %}
+        {% if friend.connection_status == "Blocked" and friend.blocked_by == request.user %}
         <div class="profile-picture-container">
             <a href="{% url 'account:profile_page' friend.friend.username %}">
             <img src="{{ friend.friend.profile_picture.url }}" class="profile-picture" alt="{{ friend.username }}" height="50px" width="50px">
@@ -37,7 +37,7 @@
         {% endif %}
 
         {% if block_access %}
-        {% if friend.connection_status == "Blocked" %}
+        {% if friend.connection_status == "Blocked" and friend.blocked_by == request.user %}
 
         <div class="block-button-container">
             

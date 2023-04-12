@@ -30,25 +30,25 @@
                     {% endif %}
                     <a class="reply" data-username="{{ comment.commented_by.username }}"><i class="fas fa-comment"></i></a>
 
-                    <script>
+                  
                         {% if request.user in comment.upvoted_by.all %}
-                        $("#Upvote{{ comment.id }}").addClass("upvoted");
+                        <script>$("#Upvote{{ comment.id }}").addClass("upvoted");</script>
                         {% else %}
-                        $("#Upvote{{ comment.id }}").addClass("upvote");
+                        <script>$("#Upvote{{ comment.id }}").addClass("upvote");</script>
                         {% endif %}
                     
                         {% if request.user in comment.downvoted_by.all %}
-                        $("#Downvote{{ comment.id }}").addClass("downvoted");
+                        <script>$("#Downvote{{ comment.id }}").addClass("downvoted");</script>
                         {% else %}
-                        $("#Downvote{{ comment.id }}").addClass("downvote");
+                        <script>$("#Downvote{{ comment.id }}").addClass("downvote");</script>
                         {% endif %}
 
                         {% if request.user in comment.reported_by.all %}
-                        $("#Report{{comment.id}}").addClass("reported");
+                        <script>$("#Report{{comment.id}}").addClass("reported");</script>
                         {% else %}
-                        $("#Report{{comment.id}}").addClass("report");
+                        <script>$("#Report{{comment.id}}").addClass("report");</script>
                         {% endif %}
-                    </script>
+                   
 
 
                 </div>

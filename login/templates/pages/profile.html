@@ -10,6 +10,7 @@
 
 
 
+
 <div class="container" id="profile-container">
 	<div class="nav-tabs" id="profile-tabs">
 		<div class="tab-wrapper">
@@ -37,7 +38,9 @@
 		{% endif %} -->
 	</div>
 
+	
 
+	{% if edit_access or view_access %}
 	<div class="form-container profile-container tabcontent" id="nav-profile">
 		<div class="profile-pic-container">
 		<form action="{% url 'account:profile_page' profile.username %}" method = "POST" enctype="multipart/form-data">
@@ -140,6 +143,7 @@
 		</div>
     
     </div>
+	
 
 	<!-- posts created tab -->
 	<!-- <div class="form-container tabcontent user-history-container" id="nav-postscreated" style="display: none;">
@@ -191,6 +195,7 @@
 		
        
     </div>
+	{% endif %}
 
 
 
