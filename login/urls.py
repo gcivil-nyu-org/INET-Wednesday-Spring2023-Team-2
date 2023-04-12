@@ -80,11 +80,6 @@ urlpatterns = [
         name="block_friend",
     ),
     path(
-        "profile/get_back/<username>/<tab>/",
-        views.backactivetab_view,
-        name="profile_backactivetab",
-    ),
-    path(
         "profile/block_friend/<int:connection_id>/",
         views.block_friend,
         name="block_friend",

@@ -33,7 +33,9 @@ function openTab(evt, tabName) {
   
     // Show the current tab, and add an "active" class to the button that opened the tab
     document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
+    // evt.currentTarget.className += " active";
+    main_tablink = document.getElementById(tabName.toString() + "-tab");
+    main_tablink.className += " active";
 
 
     if (tabName === "nav-profile") {

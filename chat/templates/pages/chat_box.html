@@ -67,6 +67,16 @@
     }
 </script>
 
+<script>
+    var element = document.getElementById('test1');
+    console.log(element.scrollTop);
+    element.scrollTop = element.scrollHeight;
+    console.log(element.scrollTop);
+    // window.scrollTo(0, document.body.scrollHeight);
+    // $('#history').scrollTop($('#history')[0].scrollHeight);
+    // window.scrollTo(0, document.body.scrollHeight);
+    // document.getElementById('test1').scrollTop = 9999999;
+</script>
 
 <!-- import chatSocket.js -->
 <script type="text/javascript" src="{% static '../static/js/chatSocket.js' %}"></script>

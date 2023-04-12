@@ -14,7 +14,7 @@
         {% endif %}
 
         {% if block_access %}
-        {% if friend.connection_status == "Blocked" %}
+        {% if friend.connection_status == "Blocked" and friend.blocked_by == request.user %}
         <div class="profile-picture-container">
             <a href="{% url 'account:profile_page' friend.friend.username %}">
             <img src="{{ friend.friend.profile_picture.url }}" class="profile-picture" alt="{{ friend.username }}" height="50px" width="50px">
@@ -37,7 +37,7 @@
         {% endif %}
 
         {% if block_access %}
-        {% if friend.connection_status == "Blocked" %}
+        {% if friend.connection_status == "Blocked" and friend.blocked_by == request.user %}
 
         <div class="block-button-container">
             
@@ -65,6 +65,7 @@ function blockFriend(event, connection_id) {
         dataType: "json",
         success: function(response) {
             getFriends();
+            showMessage(response.message);
         },
         error: function(xhr, reported, error) {
             console.log("Error accepting friend request");
@@ -80,12 +81,33 @@ function unblockFriend(event, connection_id) {
         dataType: "json",
         success: function(response) {
             getFriends();
+            showMessage(response.message);
         },
         error: function(xhr, reported, error) {
             console.log("Error accepting friend request");
         },
     });
 }
+
+function showMessage(message) {
+            var $message = $('<div class="report-message">' + message + '</div>');
+            $('body').append($message);
+            $message.css({
+                'position': 'fixed',
+                'top': '0',
+                'left': '0',
+                'width': '100%',
+                'padding': '10px',
+                'text-align': 'center',
+                'background-color': '#eee6f3',
+                'color':'#18191a',
+            });
+            $message.slideDown(300).delay(3000).slideUp(300, function () {
+                $message.remove();
+            });
+        }
+
+
 
 
 </script>

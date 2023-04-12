@@ -344,6 +344,35 @@ def profile_page_contents(request, username_):
 
         contents["coming_request"] = coming_request
 
+    block_connection_exists = (
+        Connection_Model.objects.filter(
+            from_user=profile, to_user=request.user, connection_status="Blocked"
+        ).exists()
+        or Connection_Model.objects.filter(
+            from_user=request.user, to_user=profile, connection_status="Blocked"
+        ).exists()
+    )
+
+    contents["block_connection_exists"] = block_connection_exists
+    contents["view_access"] = True
+
+    if block_connection_exists:
+        block_connection = (
+            Connection_Model.objects.filter(
+                from_user=profile, to_user=request.user, connection_status="Blocked"
+            ).first()
+            or Connection_Model.objects.filter(
+                from_user=request.user, to_user=profile, connection_status="Blocked"
+            ).first()
+        )
+
+        ##admin can view blocked user profiles
+        if block_connection.blocked_by == request.user or request.user.is_superuser:
+            contents["view_access"] = True
+        else:
+            # TODO:fix later
+            contents["view_access"] = False
+
     # Get friends list
     # user_ = Custom_User.objects.get(username=username_)
     # friends = get_user_friends_list(user_).order_by("-connection_answer_time")
@@ -353,14 +382,22 @@ def profile_page_contents(request, username_):
             from_user=request.user, to_user=profile, connection_status="Accepted"
         ).exists()
         or Connection_Model.objects.filter(
-            from_user=request.user, to_user=profile, connection_status="Declined"
+            from_user=request.user, to_user=profile, connection_status="Blocked"
         ).exists()
+        ##declined can request again
+        # or Connection_Model.objects.filter(
+        #     from_user=request.user, to_user=profile, connection_status="Declined"
+        # ).exists()
         or Connection_Model.objects.filter(
             from_user=profile, to_user=request.user, connection_status="Accepted"
         ).exists()
         or Connection_Model.objects.filter(
-            from_user=profile, to_user=request.user, connection_status="Declined"
+            from_user=profile, to_user=request.user, connection_status="Blocked"
         ).exists()
+        ##declined can request again
+        # or Connection_Model.objects.filter(
+        #     from_user=profile, to_user=request.user, connection_status="Declined"
+        # ).exists()
     )
 
     contents["request_exists"] = request_exists
@@ -483,6 +520,7 @@ class UserFriends(APIView):
             for connection in friends:
                 friend = connection.get_friend(user_)
                 connection_status = connection.connection_status
+                blocked_by = connection.blocked_by
                 # prevent showing duplicate friends in friends list
 
                 # if friend not in friends_set:
@@ -492,6 +530,7 @@ class UserFriends(APIView):
                         "friend": friend,
                         "connection_id": connection.id,
                         "connection_status": connection_status,
+                        "blocked_by": blocked_by,
                     }
                 )
 
@@ -564,6 +603,7 @@ def block_friend(request, connection_id):
                 or connection.from_user == request.user
             ) and connection.connection_status == "Accepted":
                 connection.connection_status = "Blocked"
+                connection.blocked_by = request.user
                 connection.save()
 
                 # also change the connection status of opposite connection if exists
@@ -588,7 +628,9 @@ def block_friend(request, connection_id):
                 #         opposite_request.connection_status = "Blocked"
                 #         opposite_request.save()
 
-                return JsonResponse({"status": "success"})
+                return JsonResponse(
+                    {"status": "success", "message": "The user has been blocked"}
+                )
             else:
                 return JsonResponse(
                     {
@@ -614,6 +656,7 @@ def unblock_friend(request, connection_id):
                 or connection.from_user == request.user
             ) and connection.connection_status == "Blocked":
                 connection.connection_status = "Accepted"
+                connection.blocked_by = None
                 connection.save()
 
                 # also change the connection status of opposite connection if exists
@@ -638,7 +681,9 @@ def unblock_friend(request, connection_id):
                 #         opposite_request.connection_status = "Accepted"
                 #         opposite_request.save()
 
-                return JsonResponse({"status": "success"})
+                return JsonResponse(
+                    {"status": "success", "message": "The user has been unblocked"}
+                )
             else:
                 return JsonResponse(
                     {
@@ -661,8 +706,11 @@ def send_friend_request(request, uid):
         from_user=from_user, to_user=to_user
     )
 
-    if created:
+    if created or friend_request.connection_status == "Declined":
+        friend_request.connection_status = "Pending"
+        friend_request.save()
         messages.success(request, f"Friend request sent to {to_user.username}!")
+
     else:
         messages.info(
             request, f"You have already sent a friend request to {to_user.username}."
@@ -769,7 +817,7 @@ def decline_friend_request(request, uid):
     return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
-def backactivetab_view(request, username, tab):
-    # implement map for each tab to corresponding func
-    tab_map = {"history": UserHistory(), "postscreated": None}
-    return
+# def backactivetab_view(request, username, tab):
+#     # implement map for each tab to corresponding func
+#     tab_map = {"history": UserHistory(), "postscreated": None}
+#     return

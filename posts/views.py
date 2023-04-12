@@ -596,6 +596,7 @@ def report_post(request, post_id):
     if is_ajax(request):
         try:
             post = Post_Model.objects.get(id=post_id)
+            print(post)
             if request.user not in post.reported_by.all():
                 post.reported_by.add(request.user)
                 post.reported_count += 1
@@ -626,122 +627,6 @@ def delete_comment(request, comment_id):
             )
         else:
             return JsonResponse({"delete": "fail", "message": "Something went wrong"})
-    return JsonResponse({"delete": "error"})
-
-
-def upvote_comment(request, comment_id):
-    if is_ajax(request):
-        try:
-            comment = Comments_Model.objects.get(id=comment_id)
-            if (
-                request.user not in comment.upvoted_by.all()
-                and request.user not in comment.downvoted_by.all()
-            ):
-                comment.upvoted_by.add(request.user)
-                comment.vote_count += 1
-                comment.save()
-                return JsonResponse({"upvote": "success"})
-            elif (
-                request.user in comment.upvoted_by.all()
-                and request.user not in comment.downvoted_by.all()
-            ):
-                comment.upvoted_by.remove(request.user)
-                comment.vote_count -= 1
-                comment.save()
-            elif (
-                request.user not in comment.upvoted_by.all()
-                and request.user in comment.downvoted_by.all()
-            ):
-                comment.upvoted_by.add(request.user)
-                comment.vote_count += 2
-                comment.downvoted_by.remove(request.user)
-                comment.save()
-                return JsonResponse({"upvote": "change vote success"})
-            else:
-                return JsonResponse({"upvote": "already upvoted"})
-
-        except Comments_Model.DoesNotExist:
-            return JsonResponse({"upvote": "error"})
-    return JsonResponse({"upvote": "not ajax"})
-
-
-def downvote_comment(request, comment_id):
-    if is_ajax(request):
-        try:
-            comment = Comments_Model.objects.get(id=comment_id)
-            if (
-                request.user not in comment.downvoted_by.all()
-                and request.user not in comment.upvoted_by.all()
-            ):
-                comment.downvoted_by.add(request.user)
-                comment.vote_count -= 1
-                comment.save()
-                return JsonResponse({"downvote": "success"})
-            elif (
-                request.user in comment.downvoted_by.all()
-                and request.user not in comment.upvoted_by.all()
-            ):
-                comment.downvoted_by.remove(request.user)
-                comment.vote_count += 1
-                comment.save()
-            elif (
-                request.user not in comment.downvoted_by.all()
-                and request.user in comment.upvoted_by.all()
-            ):
-                comment.downvoted_by.add(request.user)
-                comment.vote_count -= 2
-                comment.upvoted_by.remove(request.user)
-                comment.save()
-                return JsonResponse({"downvote": "change vote success"})
-            else:
-                return JsonResponse({"downvote": "already downvoted"})
-        except Comments_Model.DoesNotExist:
-            return JsonResponse({"downvote": "error"})
-    return JsonResponse({"downvote": "not ajax"})
-
-
-def report_comment(request, comment_id):
-    if is_ajax(request):
-        try:
-            comment = Comments_Model.objects.get(id=comment_id)
-            if request.user not in comment.reported_by.all():
-                comment.reported_by.add(request.user)
-                comment.reported_count += 1
-                comment.save()
-                return JsonResponse({"report": "success"})
-            else:
-                return JsonResponse({"report": "already_reported"})
-        except Comments_Model.DoesNotExist:
-            return JsonResponse({"report": "error"})
-    return JsonResponse({"report": "not ajax"})
-
-
-def report_post(request, post_id):
-    if is_ajax(request):
-        try:
-            post = Post_Model.objects.get(id=post_id)
-            print(post)
-            if request.user not in post.reported_by.all():
-                post.reported_by.add(request.user)
-                post.reported_count += 1
-                post.save()
-                return JsonResponse({"report": "success"})
-            else:
-                return JsonResponse({"report": "already_reported"})
-        except Post_Model.DoesNotExist:
-            return JsonResponse({"report": "error"})
-    return JsonResponse({"report": "not ajax"})
-
-
-def delete_comment(request, comment_id):
-    if is_ajax(request):
-        comment = Comments_Model.objects.get(id=comment_id)
-
-        if comment.commented_by == request.user:
-            comment.delete()
-            return JsonResponse({"delete": "success"})
-        else:
-            return JsonResponse({"delete": "fail"})
     return JsonResponse({"delete": "error"})
 
 
@@ -911,7 +796,11 @@ def create_poll(request):
 
 
 def get_back_api_view(request, category, pid):
-    post_view_class = PostsView()
-    return post_view_class.get(
-        request=request, call="api", pid=pid, change_url=False, category=category
-    )
+    if is_ajax(request):
+        post_view_class = PostsView()
+        return post_view_class.get(
+            request=request, call="api", pid=pid, change_url=False, category=category
+        )
+
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
