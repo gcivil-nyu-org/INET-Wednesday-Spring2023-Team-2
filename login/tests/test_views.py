@@ -408,7 +408,7 @@ class TestViews(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             Custom_User.objects.get(username=self.user.username).profile_picture.url,
-            f"/media/default-profile.jpeg",
+            f"/media/Profile-Pictures/default-profile.jpeg",
         )
 
     # change password from profile as user authenicated: success

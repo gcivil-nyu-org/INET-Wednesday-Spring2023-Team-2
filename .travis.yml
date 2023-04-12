@@ -52,7 +52,7 @@ deploy:
   secret_access_key: $ACCESS_KEY
   region: "us-east-1"
   app: "ShowOfHands"
-  env: "ShowofHands-dev-2"
+  env: "ShowofHands-dev"
   bucket_name: $AWS_STORAGE_BUCKET_NAME
   bucket_path: "ShowofHands/"
   on:

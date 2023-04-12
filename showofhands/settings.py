@@ -259,7 +259,7 @@ if "USE_REDIS_ENDPOINT" in os.environ and os.environ["USE_REDIS_ENDPOINT"]:
             "BACKEND": "channels_redis.core.RedisChannelLayer",
             "CONFIG": {
                 "hosts": [
-                    ("aws-my-1sw7m30jtg0i4.yxaols.0001.use1.cache.amazonaws.com", 6379)
+                    ("aws-my-fd3gs6sfd4xi.yxaols.0001.use1.cache.amazonaws.com", 6379)
                 ],
             },
         },

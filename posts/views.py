@@ -540,7 +540,7 @@ class CommentsView(View):
             pid = current_pid
             # print('whyyyy:', pid)
             post_ = Post_Model.objects.get(pk=pid)
-            comments_ = post_.comments_model_set.all().order_by("-vote_count")
+            comments_ = post_.comments_model_set.all().order_by("-commented_time")
 
             template = loader.get_template("pages/comments.html")
             contents = {
@@ -553,20 +553,7 @@ class CommentsView(View):
             contents["post"] = post_
             return HttpResponse(template.render(contents, request))
         else:
-            # return HttpResponse("Thou Shall not Enter!!")
-            pid = current_pid
-            post_ = Post_Model.objects.get(pk=pid)
-            comments_ = post_.comments_model_set.all().order_by("-commented_time")
-            template = loader.get_template("pages/comments.html")
-            contents = {
-                "pid": pid,
-                "comments": comments_,
-                "show_comments_text": False,
-            }
-            contents["post"] = post_
-            contents["show_comments_text"] = True
-            return HttpResponse(template.render(contents, request))
-            # return render(request, "pages/comments.html", contents)
+            return HttpResponse("Thou Shall not Enter!!")
 
 
 def report_comment(request, comment_id):

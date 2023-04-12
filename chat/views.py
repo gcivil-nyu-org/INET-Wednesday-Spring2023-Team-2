@@ -61,7 +61,8 @@ def get_chat_history(connection_id):
         return []
 
     history_list = chat_history.history.order_by(
-        "-timestamp"
+        "timestamp"
+        # "-timestamp"
     ).all()  # [:100] ##todo: return top 100msg everytime to reduce query time
     return history_list
 
