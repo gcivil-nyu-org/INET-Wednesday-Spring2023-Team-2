@@ -700,38 +700,49 @@ def unblock_friend(request, connection_id):
 
 @login_required
 def send_friend_request(request, uid):
-    from_user = request.user
-    to_user = Custom_User.objects.get(id=uid)
+    if is_ajax(request):
+        try:
+            from_user = request.user
+            to_user = Custom_User.objects.get(id=uid)
 
-    if not Connection_Model.connection_exists(Connection_Model, from_user, to_user):
-        friend_request = Connection_Model.objects.create(
-            from_user=from_user, to_user=to_user
-        )
-        # friend_request.save()
-        messages.success(request, f"Friend request sent to {to_user.username}!")
+            if not Connection_Model.connection_exists(
+                Connection_Model, from_user, to_user
+            ):
+                friend_request = Connection_Model.objects.create(
+                    from_user=from_user, to_user=to_user
+                )
+                return JsonResponse(
+                    {"status": "Friend request sent to {to_user.username}!"}
+                )
 
-    else:
-        friend_request = (
-            Connection_Model.objects.filter(
-                from_user=from_user, to_user=to_user
-            ).first()
-            or Connection_Model.objects.filter(
-                from_user=to_user, to_user=from_user
-            ).first()
-        )
+            else:
+                friend_request = (
+                    Connection_Model.objects.filter(
+                        from_user=from_user, to_user=to_user
+                    ).first()
+                    or Connection_Model.objects.filter(
+                        from_user=to_user, to_user=from_user
+                    ).first()
+                )
 
-        if friend_request.connection_status == "Declined":
-            friend_request.connection_status = "Pending"
-            friend_request.save()
-            messages.success(request, f"Friend request sent to {to_user.username}!")
-
-        else:
-            messages.info(
-                request,
-                f"You have already sent a friend request to {to_user.username}.",
+                if friend_request.connection_status == "Declined":
+                    friend_request.connection_status = "Pending"
+                    friend_request.save()
+                    return JsonResponse(
+                        {"status": "Friend request sent to {to_user.username}!"}
+                    )
+                else:
+                    return JsonResponse(
+                        {
+                            "status": "error",
+                            "message": "You have already sent a friend request to {to_user.username}.",
+                        }
+                    )
+        except Connection_Model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Friend request not found."}
             )
-
-    return redirect("account:profile_page", username_=to_user.username)
+    return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
 @login_required
