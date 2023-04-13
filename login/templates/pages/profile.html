@@ -61,16 +61,16 @@
 
 			{% if profile != request.user and not friend_exists and not request_exists %}
 				<p class="friend_request">
-					<a href="{% url 'account:send_friend_request' profile.id %}" class="friend_request_button">Send Friend Request</a>
+					<a class="friend_request_button" onclick="sendFriendRequestProfile('{{ profile.id }}')">Send Friend Request</a>
 				</p>
 			{% endif %}
 
 			{% if profile != request.user and coming_request_exists %}
 			<div class="block-button-container">
 
-                <a class="accept" href="{% url 'account:accept_friend_request_profilepage' coming_request.id %}">Accept</a>
+                <a class="accept" onclick="acceptFriendRequestProfile(event, '{{ coming_request.id }}')">Accept</a>
 
-                <a class="decline" href="{% url 'account:decline_friend_request_profilepage' coming_request.id %}">Decline</a>
+                <a class="decline" onclick="declineFriendRequestProfile(event, '{{ coming_request.id }}')">Decline</a>
             </div> 
 			{% endif %} 
 	
@@ -305,14 +305,14 @@ function changeurlProfile(page)
         });
   }
 
-function acceptFriendRequest(event, requestId) {
+function acceptFriendRequestProfile(event, requestId) {
     event.preventDefault();
     $.ajax({
-        url: "{% url 'account:accept_friend_request' uid=1 %}".replace(/1/, requestId.toString()),
+        url: "{% url 'account:accept_friend_request_profilepage' uid=1 %}".replace('1', requestId.toString()),
         type: "GET",
         dataType: "json",
         success: function(response) {
-            getFriends();
+            $('.accept').parent().remove();
         },
         error: function(xhr, reported, error) {
             console.log("Error accepting friend request");
@@ -320,19 +320,33 @@ function acceptFriendRequest(event, requestId) {
     });
 }
 
-function declineFriendRequest(event, requestId) {
+function declineFriendRequestProfile(event, requestId) {
     event.preventDefault();
     $.ajax({
-        url: "{% url 'account:decline_friend_request' uid=1 %}".replace(/1/, requestId.toString()),
+        url: "{% url 'account:decline_friend_request_profilepage' uid=1 %}".replace('1', requestId.toString()),
         type: "GET",
         dataType: "json",
         success: function(response) {
-            getFriends();
+            $('.accept').parent().remove();
         },
         error: function(xhr, reported, error) {
             console.log("Error declining friend request");
         },
     });
+}
+
+function sendFriendRequestProfile(uid) {
+	$.ajax({
+		url: "{% url 'account:send_friend_request' uid=1 %}".replace('1', uid.toString()),
+		type: "GET",
+		dataType: "json",
+		success: function(response) {
+			$('.friend_request_button').parent().remove();
+		},
+		error: function(xhr, reported, error) {
+			// handle error response
+		},
+	});
 }
 
 

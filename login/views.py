@@ -736,22 +736,50 @@ def send_friend_request(request, uid):
 
 @login_required
 def accept_friend_request_profilepage(request, uid):
-    friend_request = Connection_Model.objects.get(id=uid)
+    if is_ajax(request):
+        try:
+            friend_request = Connection_Model.objects.get(id=uid)
+            if friend_request.to_user == request.user:
+                friend_request.connection_status = "Accepted"
+                friend_request.save()
 
-    friend_request.connection_status = "Accepted"
-    friend_request.save()
-
-    return redirect("account:profile_page", username_=friend_request.from_user.username)
+                return JsonResponse({"status": "success"})
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "You don't have permission to accept this friend request.",
+                    }
+                )
+        except Connection_Model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Friend request not found."}
+            )
+    return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
 @login_required
 def decline_friend_request_profilepage(request, uid):
-    friend_request = Connection_Model.objects.get(id=uid)
+    if is_ajax(request):
+        try:
+            friend_request = Connection_Model.objects.get(id=uid)
+            if friend_request.to_user == request.user:
+                friend_request.connection_status = "Declined"
+                friend_request.save()
 
-    friend_request.connection_status = "Declined"
-    friend_request.save()
-
-    return redirect("account:profile_page", username_=friend_request.from_user.username)
+                return JsonResponse({"status": "success"})
+            else:
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": "You don't have permission to decline this friend request.",
+                    }
+                )
+        except Connection_Model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Friend request not found."}
+            )
+    return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
 @login_required
