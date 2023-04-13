@@ -38,9 +38,13 @@ chatSocket.onmessage = function (e) {
     // document.querySelector('#chat-text').value += (data.message + ' sent by ' + data.username   + '\n')
     
     // add message to text box
-
     addMessagestoChatBox(data);
 }
+
+//display message on socket close
+// chatSocket.onclose = function (e) {
+//     alert("Socket closed unexpectedly, please reload the page.");
+//   };
 
 // submit on pressing enter
 document.querySelector("#input").focus();
