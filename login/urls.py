@@ -60,19 +60,9 @@ urlpatterns = [
         name="accept_friend_request",
     ),
     path(
-        "profile/accept_friend_request_profilepage/<int:uid>/",
-        views.accept_friend_request_profilepage,
-        name="accept_friend_request_profilepage",
-    ),
-    path(
         "profile/decline_friend_request/<int:uid>/",
         views.decline_friend_request,
         name="decline_friend_request",
-    ),
-    path(
-        "profile/decline_friend_request_profilepage/<int:uid>/",
-        views.decline_friend_request_profilepage,
-        name="decline_friend_request_profilepage",
     ),
     path(
         "profile/block_friend/<int:connection_id>/",

@@ -4,6 +4,7 @@ import json
 from PIL import Image
 from django.test import TestCase, Client
 from login.models import Custom_User, validate_image_extension
+from chat.models import Connection_Model
 from django.core import mail
 from unittest.mock import patch
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -629,3 +630,250 @@ class TestRegister(TestCase):
         messages = list(get_messages(response.wsgi_request))
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Invalid Link!!")
+
+
+class TestSendFriendRequest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+        self.user1 = Custom_User.objects.create_user(
+            username="testuser1", password="testpassword1"
+        )
+
+        self.user2 = Custom_User.objects.create_user(
+            username="testuser2", password="testpassword2"
+        )
+
+    def test_send_friend_request_not_ajax(self):
+        self.client.login(username="testuser1", password="testpassword1")
+        response = self.client.get(
+            reverse("account:send_friend_request", args=[self.user2.id])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            str(response.content, encoding="utf8"),
+            {"status": "error", "message": "Not an AJAX request."},
+        )
+
+    def test_send_friend_request_new_request(self):
+        self.client.login(username="testuser1", password="testpassword1")
+        response = self.client.post(
+            reverse("account:send_friend_request", args=[self.user2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            str(response.content, encoding="utf8"),
+            {"status": f"Friend request sent to {self.user2.username}!"},
+        )
+        self.assertTrue(
+            Connection_Model.objects.filter(
+                from_user=self.user1, to_user=self.user2, connection_status="Pending"
+            ).exists()
+        )
+
+    def test_send_friend_request_declined_request(self):
+        # Create a declined friend request
+        declined_request = Connection_Model.objects.create(
+            from_user=self.user1, to_user=self.user2, connection_status="Declined"
+        )
+
+        self.client.login(username="testuser1", password="testpassword1")
+        response = self.client.post(
+            reverse("account:send_friend_request", args=[self.user2.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertJSONEqual(
+            str(response.content, encoding="utf8"),
+            {"status": f"Friend request sent to {self.user2.username}!"},
+        )
+
+        declined_request.refresh_from_db()
+        self.assertEqual(declined_request.connection_status, "Pending")
+
+
+class TestAcceptFriendRequest(TestCase):
+    def setUp(self):
+        self.user1 = Custom_User.objects.create_user(
+            username="testuser1", password="testpassword1"
+        )
+        self.user2 = Custom_User.objects.create_user(
+            username="testuser2", password="testpassword2"
+        )
+        self.friend_request = Connection_Model.objects.create(
+            from_user=self.user1, to_user=self.user2
+        )
+
+    def test_accept_friend_request_success(self):
+        self.client.login(username="testuser2", password="testpassword2")
+        response = self.client.post(
+            reverse(
+                "account:accept_friend_request", kwargs={"uid": self.friend_request.id}
+            ),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.friend_request.refresh_from_db()
+        self.assertEqual(self.friend_request.connection_status, "Accepted")
+        self.assertJSONEqual(response.content, {"status": "success"})
+
+    def test_accept_friend_request_no_permission(self):
+        self.client.login(username="testuser1", password="testpassword1")
+        response = self.client.post(
+            reverse(
+                "account:accept_friend_request", kwargs={"uid": self.friend_request.id}
+            ),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.friend_request.refresh_from_db()
+        self.assertEqual(self.friend_request.connection_status, "Pending")
+        self.assertJSONEqual(
+            response.content,
+            {
+                "status": "error",
+                "message": "You don't have permission to accept this friend request.",
+            },
+        )
+
+
+class TestDeclineFriendRequest(TestCase):
+    def setUp(self):
+        self.user1 = Custom_User.objects.create_user(
+            username="testuser1", password="testpassword1"
+        )
+        self.user2 = Custom_User.objects.create_user(
+            username="testuser2", password="testpassword2"
+        )
+        self.friend_request = Connection_Model.objects.create(
+            from_user=self.user1, to_user=self.user2
+        )
+
+    def test_decline_friend_request_success(self):
+        self.client.login(username="testuser2", password="testpassword2")
+        response = self.client.post(
+            reverse(
+                "account:decline_friend_request", kwargs={"uid": self.friend_request.id}
+            ),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.friend_request.refresh_from_db()
+        self.assertEqual(self.friend_request.connection_status, "Declined")
+        self.assertJSONEqual(response.content, {"status": "success"})
+
+    def test_decline_friend_request_no_permission(self):
+        self.client.login(username="testuser1", password="testpassword1")
+        response = self.client.post(
+            reverse(
+                "account:decline_friend_request", kwargs={"uid": self.friend_request.id}
+            ),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.friend_request.refresh_from_db()
+        self.assertEqual(self.friend_request.connection_status, "Pending")
+        self.assertJSONEqual(
+            response.content,
+            {
+                "status": "error",
+                "message": "You don't have permission to decline this friend request.",
+            },
+        )
+
+
+class TestBlockAndUnblockFriend(TestCase):
+    def setUp(self):
+        self.user1 = Custom_User.objects.create_user(
+            username="testuser1", password="testpassword1"
+        )
+        self.user2 = Custom_User.objects.create_user(
+            username="testuser2", password="testpassword2"
+        )
+        self.user3 = Custom_User.objects.create_user(
+            username="testuser3", password="testpassword3"
+        )
+        self.friend_connection = Connection_Model.objects.create(
+            from_user=self.user1, to_user=self.user2, connection_status="Accepted"
+        )
+
+    def test_block_friend_success(self):
+        self.client.login(username="testuser1", password="testpassword1")
+        response = self.client.post(
+            reverse(
+                "account:block_friend",
+                kwargs={"connection_id": self.friend_connection.id},
+            ),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.friend_connection.refresh_from_db()
+        self.assertEqual(self.friend_connection.connection_status, "Blocked")
+        self.assertJSONEqual(
+            response.content,
+            {"status": "success", "message": "The user has been blocked"},
+        )
+
+    def test_block_friend_no_permission(self):
+        self.client.login(username="testuser3", password="testpassword3")
+        response = self.client.post(
+            reverse(
+                "account:block_friend",
+                kwargs={"connection_id": self.friend_connection.id},
+            ),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.friend_connection.refresh_from_db()
+        self.assertEqual(self.friend_connection.connection_status, "Accepted")
+        self.assertJSONEqual(
+            response.content,
+            {
+                "status": "error",
+                "message": "You don't have permission to block this user.",
+            },
+        )
+
+    def test_unblock_friend_success(self):
+        self.friend_connection.connection_status = "Blocked"
+        self.friend_connection.blocked_by = self.user1
+        self.friend_connection.save()
+        self.client.login(username="testuser1", password="testpassword1")
+        response = self.client.post(
+            reverse(
+                "account:unblock_friend",
+                kwargs={"connection_id": self.friend_connection.id},
+            ),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.friend_connection.refresh_from_db()
+        self.assertEqual(self.friend_connection.connection_status, "Accepted")
+        self.assertJSONEqual(
+            response.content,
+            {"status": "success", "message": "The user has been unblocked"},
+        )
+
+    def test_unblock_friend_no_permission(self):
+        self.friend_connection.connection_status = "Blocked"
+        self.friend_connection.blocked_by = self.user1
+        self.friend_connection.save()
+        self.client.login(username="testuser3", password="testpassword3")
+        response = self.client.post(
+            reverse(
+                "account:unblock_friend",
+                kwargs={"connection_id": self.friend_connection.id},
+            ),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        )
+        self.assertEqual(response.status_code, 200)
+        self.friend_connection.refresh_from_db()
+        self.assertEqual(self.friend_connection.connection_status, "Blocked")
+        self.assertJSONEqual(
+            response.content,
+            {
+                "status": "error",
+                "message": "You don't have permission to unblock this user.",
+            },
+        )

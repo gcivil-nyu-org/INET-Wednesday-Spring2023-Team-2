@@ -308,7 +308,7 @@ function changeurlProfile(page)
 function acceptFriendRequestProfile(event, requestId) {
     event.preventDefault();
     $.ajax({
-        url: "{% url 'account:accept_friend_request_profilepage' uid=1 %}".replace('1', requestId.toString()),
+        url: "{% url 'account:accept_friend_request' uid=1 %}".replace('1', requestId.toString()),
         type: "GET",
         dataType: "json",
         success: function(response) {
@@ -323,7 +323,7 @@ function acceptFriendRequestProfile(event, requestId) {
 function declineFriendRequestProfile(event, requestId) {
     event.preventDefault();
     $.ajax({
-        url: "{% url 'account:decline_friend_request_profilepage' uid=1 %}".replace('1', requestId.toString()),
+        url: "{% url 'account:decline_friend_request' uid=1 %}".replace('1', requestId.toString()),
         type: "GET",
         dataType: "json",
         success: function(response) {
