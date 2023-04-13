@@ -5,7 +5,7 @@ from login.models import Custom_User
 
 from datetime import datetime, timedelta
 
-from asgiref.sync import sync_to_async
+from asgiref.sync import sync_to_async, async_to_sync
 
 
 # chat_box_name = connection_id
@@ -21,6 +21,18 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
+    async def blockclose(self, connection_id):
+        await self.channel_layer.group_send(
+            self.group_name,
+            {
+                "type": "chatbox_message",
+                "message": "",
+                "username": "",
+                "timestamp": "",
+                "closed": True,
+            },
+        )
+
     @sync_to_async
     def store_info_db(self, message, username, connection_id, timestamp):
         try:
@@ -35,11 +47,20 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         # chat_history.history.append({"message": message,"username": username, "timestamp": timestamp},)
         # chat_history.save()
 
+        if (
+            Connection_Model.objects.get(id=connection_id).connection_status
+            == "Blocked"
+        ):
+            async_to_sync(self.blockclose)(connection_id)
+            return False
+
         chat_history.history.create(
             user=Custom_User.objects.get(username=username),
             message=message,
             timestamp=timestamp,
         )
+
+        return True
 
     # This function receive messages from WebSocket.
     async def receive(self, text_data):
@@ -49,23 +70,26 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         connection_id = text_data_json["connection_id"]
         timestamp = datetime.now()
 
-        await self.channel_layer.group_send(
-            self.group_name,
-            {
-                "type": "chatbox_message",
-                "message": message,
-                "username": username,
-                "timestamp": str(timestamp),
-            },
-        )
+        success = await self.store_info_db(message, username, connection_id, timestamp)
 
-        await self.store_info_db(message, username, connection_id, timestamp)
+        if success:
+            await self.channel_layer.group_send(
+                self.group_name,
+                {
+                    "type": "chatbox_message",
+                    "message": message,
+                    "username": username,
+                    "timestamp": str(timestamp),
+                    "closed": False,
+                },
+            )
 
     # Receive message from room group.
     async def chatbox_message(self, event):
         message = event["message"]
         username = event["username"]
         timestamp = event["timestamp"]
+        closed = event["closed"]
 
         # send message and username of sender to websocket
         await self.send(
@@ -74,6 +98,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                     "message": message,
                     "username": username,
                     "timestamp": timestamp,
+                    "closed": closed,
                 }
             )
         )

@@ -253,7 +253,7 @@ ASGI_APPLICATION = "showofhands.asgi.application"
 
 # TODO: temp fix for inmem chat to work, change later before deploy
 # Redis for AWS
-if "USE_REDIS_ENDPOINT" in os.environ and os.environ["USE_REDIS_ENDPOINT"]:
+if ("USE_REDIS_ENDPOINT" in os.environ) and (os.environ["USE_REDIS_ENDPOINT"] == 1):
     CHANNEL_LAYERS = {
         "default": {
             "BACKEND": "channels_redis.core.RedisChannelLayer",

@@ -57,14 +57,50 @@
 <!-- add chat messages func -->
 <script>
     function addMessagestoChatBox(data){
-        const user_username = JSON.parse(document.getElementById('user_username').textContent);
-        if (user_username == data.username){
-            document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data-right"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message other-message float-right"> ' + data.message + ' </div></li>');
+        if (data.closed){
+            chatSocketClosed();
         }
-        else{
-            document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + data.message + ' </div></li>');
+        else {
+            const user_username = JSON.parse(document.getElementById('user_username').textContent);
+            if (user_username == data.username){
+                document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data-right"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message other-message float-right"> ' + data.message + ' </div></li>');
+            }
+            else{
+                document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + data.message + ' </div></li>');
+            }
         }
     }
+
+    function chatSocketClosed() {
+        // location.reload();
+        // alert("Socket closed unexpectedly, please reload the page.");
+        message = "Connection lost, please reload the page!";
+        showMessage(message);
+        // location.reload();
+    };
+
+
+    function showMessage(message) {
+            var $message = $('<div class="report-message">' + message + '</div>');
+            $('body').append($message);
+            $message.css({
+                'position': 'fixed',
+                'top': '0',
+                'left': '0',
+                'width': '100%',
+                'padding': '10px',
+                'text-align': 'center',
+                'background-color': '#eee6f3',
+                'color':'#18191a',
+            });
+            $message.slideDown(300).delay(3000).slideUp(300, function () {
+                $message.remove();
+            });
+        }
+
+
+
+
 </script>
 
 <!-- <script>
