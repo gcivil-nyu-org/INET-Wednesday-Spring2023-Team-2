@@ -600,7 +600,7 @@ def report_post(request, post_id):
                 )
         except Comments_Model.DoesNotExist:
             return JsonResponse({"report": "error"})
-    return JsonResponse({"report": "not ajax"})
+    return HttpResponse("Thou Shall not Enter!!")
 
 
 def delete_comment(request, comment_id):
@@ -614,7 +614,7 @@ def delete_comment(request, comment_id):
             )
         else:
             return JsonResponse({"delete": "fail", "message": "Something went wrong"})
-    return JsonResponse({"delete": "error"})
+    return HttpResponse("Thou Shall not Enter!!")
 
 
 def upvote_comment(request, comment_id):
@@ -650,7 +650,7 @@ def upvote_comment(request, comment_id):
 
         except Comments_Model.DoesNotExist:
             return JsonResponse({"upvote": "error"})
-    return JsonResponse({"upvote": "not ajax"})
+    return HttpResponse("Thou Shall not Enter!!")
 
 
 def downvote_comment(request, comment_id):
@@ -685,7 +685,7 @@ def downvote_comment(request, comment_id):
                 return JsonResponse({"downvote": "already downvoted"})
         except Comments_Model.DoesNotExist:
             return JsonResponse({"downvote": "error"})
-    return JsonResponse({"downvote": "not ajax"})
+    return HttpResponse("Thou Shall not Enter!!")
 
 
 def show_comments_text_api(request, current_pid):
