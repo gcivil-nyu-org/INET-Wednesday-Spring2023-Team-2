@@ -4,79 +4,56 @@
   <div class="form-container sign-in-container poll-display-container">
     <!-- Question -->
     <div class="poll-display-container2">
-    <!-- <br><br><br><br> -->
-    <div class="inner-poll-display">
-    <h2 class="question">{{ post.question_text }}</h2>
-    <br>
+      <div class="inner-poll-display">
+        <h2 class="question">{{ post.question_text }}</h2>
+        <br>
 
-    <div class="section over-hide z-bigger">
-      <input class="checkbox" type="checkbox" name="general" id="general">
-      <div class="section over-hide z-bigger">
-        <div class="checkcontain pb-5">
-          <div class="row justify-content-center pb-5">
-            <div class="col-12 pb-5">
-              {% for option in options %}
+        <div class="section over-hide z-bigger">
+          <input class="checkbox" type="checkbox" name="general" id="general">
+          <div class="section over-hide z-bigger">
+            <div class="checkcontain pb-5">
+              <div class="row justify-content-center pb-5">
+                <div class="col-12 pb-5">
+                  {% for option in options %}
 
-              <!-- TO DO: fix to check the selection the user made -->
-              <!-- <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" disabled>
-              <label class="for-checkbox-tools" for="option{{ forloop.counter }}" style="background-image: linear-gradient(75deg, #ececec 1%, #{{ option.color }})">
-                <i class='uil uil-vector-square'></i>
-                {{ option.choice_text }} : {{ option.votes }}
-              </label> -->
-
+                  <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" disabled {% if user_option == option %} checked {% endif %}>
               
-              <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}" disabled {% if user_option == option %} checked {% endif %}>
+                  <label class="for-checkbox-tools" for="option{{ forloop.counter }}" id = "option_{{ forloop.counter }}">
+                    <i class='uil uil-vector-square'></i>
+                    {{ option.choice_text }}{% if show_poll_results %} : {{ option.votes }}{% endif %}
+                  </label> 
               
-              <label class="for-checkbox-tools" for="option{{ forloop.counter }}" id = "option_{{ forloop.counter }}">
-                <i class='uil uil-vector-square'></i>
-                {{ option.choice_text }}{% if show_poll_results %} : {{ option.votes }}{% endif %}
-              </label> 
-              
-              {% endfor %}
+                  {% endfor %}
+                </div>
+              </div>
             </div>
-          </div>
+          </div>    
         </div>
-      </div>    
+      </div>
+      <div class="footer">
+        <div class="text-center">
+          Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
+          <a id="PostReport{{ post.id }}" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
+                
+          {% if request.user in post.reported_by.all %}
+          <script>$("#PostReport{{ post.id }}").addClass("reported");</script>
+          {% else %}
+          <script>$("#PostReport{{ post.id }}").addClass("report");</script>
+          {% endif %}
+        </div>
+      </div>
     </div>
-    </div>
-    </div>
-    
-    <section class="footer">
-      <div class="text-center">
-      <p id="resultReveal"></p>
-      Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
-      <a id="PostReport{{ post.id }}" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
-
-        {% if request.user in post.reported_by.all %}
-        <script>$("#PostReport{{ post.id }}").addClass("reported");</script>
-        {% else %}
-        <script>$("#PostReport{{ post.id }}").addClass("report");</script>
-        {% endif %}
-
-    </div>
-    </section>
-    <!-- <br><br> -->
 	</div>
-
 
   <div class="overlay-container">
 		<div class="overlay">
-      
       <!-- 1R: Comments -->
 			<div class="overlay-panel overlay-right">
-        <!-- Comments Text -->
-        
-          <!-- Danny, essentially the whatever u put in comments_text.html, it will be replaced here. You dont have to edit this file,
-          only comments_text.html and comments.html. But keep in mind that I have invode the form tag here already. So u can't have
-        another form tag inside comments_text.html. Alter ur code accordingly. -->
-       
         <!-- Comments -->
         <div id="commentTextDisp">
-          <!-- Danny, essentially the whatever u put in comments.html, it will be replaced here -->
+          
         </div>
-        
 			</div>
-
 		</div>
 	</div>
 
@@ -115,74 +92,67 @@ getCommentsText();
 <script>
   var countDownDate = new Date("{{ post.result_reveal_time.isoformat }}").getTime();
 
-// Update the count down every 1 second
-var x = setInterval(function() {
+  // Update the count down every 1 second
+  var x = setInterval(function() {
 
-  // Get today's date and time
-  var now = new Date().getTime();
-  // temperary fix of display time
-  // var now = new Date();
-  // now.setHours(now.getHours() + 3);
-  // now = now.toLocaleTimeString();
+    // Get today's date and time
+    var now = new Date().getTime();
+    // temperary fix of display time
+    // var now = new Date();
+    // now.setHours(now.getHours() + 3);
+    // now = now.toLocaleTimeString();
 
+      
+    // Find the distance between now and the count down date
+    var distance = countDownDate - now;
+      
+    // Time calculations for days, hours, minutes and seconds
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      
+    // Output the result in an element with id="demo"
+    if (distance > 0){
+    document.getElementById("resultReveal").innerHTML = "Result Reveal in " + days + "d " + hours + "h "
+    + minutes + "m " + seconds + "s ";
+    }
+      
+    // If the count down is over, write some text 
+    // if (distance < 0) {
+    //   clearInterval(x);
+    //   document.getElementById("demo").innerHTML = "EXPIRED";
+    // }
+  }, 1000);
+
+  function reportPost(event, postId) {
+    event.preventDefault();
     
-  // Find the distance between now and the count down date
-  var distance = countDownDate - now;
-    
-  // Time calculations for days, hours, minutes and seconds
-  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    
-  // Output the result in an element with id="demo"
-  if (distance > 0){
-  document.getElementById("resultReveal").innerHTML = "Result Reveal in " + days + "d " + hours + "h "
-  + minutes + "m " + seconds + "s ";
+    // Get the report button element
+    var reportButton = $("#PostReport" + postId);
+
+    // Add a confirmation message
+    $.ajax({
+        url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            if (response.report === "success") {
+                showMessage(response.message);
+                // Change the button color to red by toggling the classes
+                reportButton.removeClass("report").addClass("reported");
+            } else if (response.report === "cancel") {
+                showMessage(response.message);
+                // Change the button color to grey by toggling the classes
+                reportButton.removeClass("reported").addClass("report");
+            } else {
+                alert("An error occurred while reporting the post.");
+            }
+        },
+        error: function(xhr, reported, error) {
+            // Handle the error here
+            alert("Request error");
+        },
+    });
   }
-    
-  // If the count down is over, write some text 
-  // if (distance < 0) {
-  //   clearInterval(x);
-  //   document.getElementById("demo").innerHTML = "EXPIRED";
-  // }
-}, 1000);
-
-function reportPost(event, postId) {
-  event.preventDefault();
-  
-  // Get the report button element
-  var reportButton = $("#PostReport" + postId);
-
-  // Add a confirmation message
-  $.ajax({
-      url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
-      type: "GET",
-      dataType: "json",
-      success: function(response) {
-          if (response.report === "success") {
-              showMessage(response.message);
-              // Change the button color to red by toggling the classes
-              reportButton.removeClass("report").addClass("reported");
-          } else if (response.report === "cancel") {
-              showMessage(response.message);
-              // Change the button color to grey by toggling the classes
-              reportButton.removeClass("reported").addClass("report");
-          } else {
-              alert("An error occurred while reporting the post.");
-          }
-      },
-      error: function(xhr, reported, error) {
-          // Handle the error here
-          alert("Request error");
-      },
-  });
-}
-
-
-
-
-
-
-
 </script>

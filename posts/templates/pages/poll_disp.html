@@ -3,72 +3,59 @@
   <form action="." method="post" id="postDispForm">
   {% csrf_token %}
   <!-- 1L -->
-<!-- <div class="main-container"> -->
+  <!-- <div class="main-container"> -->
   <div class="form-container sign-in-container poll-display-container">   
     <!-- Question -->
     <!-- <div class="poll-display-container"> -->
     <div class="poll-display-container2">
-      <!-- <br><br><br><br> -->
       <div class="inner-poll-display">
-    <h2 class="question">{{ post.question_text }}</h2>
-    <br>
+        <h2 class="question">{{ post.question_text }}</h2>
+        <br>
 
-    <div class="section over-hide z-bigger">
-      <input class="checkbox" type="checkbox" name="general" id="general">
-      <div class="section over-hide z-bigger">
-        <div class="checkcontain pb-5">
-          <div class="row justify-content-center pb-5">
-            <div class="col-12 pb-5">
-              {% for option in options %}
+        <div class="section over-hide z-bigger">
+          <input class="checkbox" type="checkbox" name="general" id="general">
+          <div class="section over-hide z-bigger">
+            <div class="checkcontain pb-5">
+              <div class="row justify-content-center pb-5">
+                <div class="col-12 pb-5">
+                  {% for option in options %}
               
-              <!-- TO DO: fix the coloring & formating to match -->
-              <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
-              <label class="for-checkbox-tools" for="option{{ forloop.counter }}" id = "option_{{ forloop.counter }}">
-                <i class='uil'></i>
-                {{ option.choice_text }}
-              </label>
+                  <input class="checkbox-tools" type="radio" name="option" id="option{{ forloop.counter }}" value="{{ option.id }}">
+                  <label class="for-checkbox-tools" for="option{{ forloop.counter }}" id = "option_{{ forloop.counter }}">
+                    <i class='uil'></i>
+                    {{ option.choice_text }}
+                  </label>
   
-              {% endfor %}
+                  {% endfor %}
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </div> 
-
-    </div>     
-    <br>
-    {% if request.user.is_authenticated %}
-    <button type="submit" value="Submit" name="access_info" id="voteSubmit">Submit</button>
-    {% endif %}
-    <br>
-
-
-    </div>
-    
-    <!-- <section class="footer">
-      <div class="text-center">
-      Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
-      </div>
-    </section> -->
-
-       </div class="footer">
-          <div class="text-center">
-            Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
-          </div>
-      <a id="PostReport" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
-     
-        {% if request.user in post.reported_by.all %}
-        <script>$("#PostReport").addClass("reported");</script>
-        {% else %}
-        <script>$("#PostReport").addClass("report");</script>
+          </div> 
+        </div>     
+        <br>
+        {% if request.user.is_authenticated %}
+        <button type="submit" value="Submit" name="access_info" id="voteSubmit">Submit</button>
         {% endif %}
-
-	</div>
-
+        <br>
+      </div>
+      <div class="footer">
+        <div class="text-center">
+          Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
+          <a id="PostReport{{ post.id }}" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
+                
+          {% if request.user in post.reported_by.all %}
+          <script>$("#PostReport{{ post.id }}").addClass("reported");</script>
+          {% else %}
+          <script>$("#PostReport{{ post.id }}").addClass("report");</script>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- 1R: Comments -->
 	<div class="overlay-container">
 		<div class="overlay">
-      
 			<div class="overlay-panel overlay-right comment-content">
         {% if request.user.is_authenticated %}
 				<p>Vote to see the comments!</p>
@@ -81,13 +68,10 @@
         </a>
         {% endif %}
 			</div>
-
 		</div>
 	</div>
-</form>
-
+  </form>
 </div>
-
 
 
 {% block scripts %}
@@ -95,8 +79,6 @@
 {% include "includes/ajax_functions.html" %}
 
 {% endblock scripts %}
-
-
 
 {% for option in options %}
 
@@ -114,32 +96,65 @@
 
 <script>
   // changeurl();
+  function reportPost(event, postId) {
+    event.preventDefault();
+    
+    // Get the report button element
+    var reportButton = $("#PostReport" + postId);
+
+    // Add a confirmation message
+    $.ajax({
+      url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
+      type: "GET",
+      dataType: "json",
+      success: function(response) {
+          if (response.report === "success") {
+              showMessage(response.message);
+              // Change the button color to red by toggling the classes
+              reportButton.removeClass("report").addClass("reported");
+          } else if (response.report === "cancel") {
+              showMessage(response.message);
+              // Change the button color to grey by toggling the classes
+              reportButton.removeClass("reported").addClass("report");
+          } else {
+              alert("An error occurred while reporting the post.");
+          }
+      },
+      error: function(xhr, reported, error) {
+          // Handle the error here
+          alert("Request error");
+      },
+    });
+  }
 
   function reportPost(event, postId) {
     event.preventDefault();
     
-    // Add a confirmation message
-        $.ajax({
-            url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
-            type: "GET",
-            dataType: "json",
-            success: function(response) {
-                if (response.report === "success") {
-                    // Handle a successful report here
-                    alert("Post has been reported!");
-                } else if (response.report === "already_reported") {
-                    // Handle the case when the user has already reported the comment
-                    alert("Report canceled.");
-                } else {
-                    // Handle any other errors
-                    alert("An error occurred while reporting the post.");
-                }
-            },
-            error: function(xhr, reported, error) {
-                // Handle the error here
-                alert("Request error");
-            },
-        });
-    }
+    // Get the report button element
+    var reportButton = $("#PostReport" + postId);
 
+    // Add a confirmation message
+    $.ajax({
+        url: "{% url 'posts:report_post' post_id=1 %}".replace(/1/, postId.toString()),
+        type: "GET",
+        dataType: "json",
+        success: function(response) {
+            if (response.report === "success") {
+                showMessage(response.message);
+                // Change the button color to red by toggling the classes
+                reportButton.removeClass("report").addClass("reported");
+            } else if (response.report === "cancel") {
+                showMessage(response.message);
+                // Change the button color to grey by toggling the classes
+                reportButton.removeClass("reported").addClass("report");
+            } else {
+                alert("An error occurred while reporting the post.");
+            }
+        },
+        error: function(xhr, reported, error) {
+            // Handle the error here
+            alert("Request error");
+        },
+    });
+  }
 </script>

@@ -163,6 +163,10 @@
         },
         renderResult: (result, props) => {
             if (result.type === "post") {
+                let optionsString = result.options.join(', ');
+                if (optionsString.length > 30) {
+                    optionsString = optionsString.substring(0, 30) + '...';
+                }
                 return `
                     <a href="#" onclick="handleResultClick('${result.type}', ${result.id})">
                         <ul class="autocomplete-result" data-id="${result.id}">
@@ -170,7 +174,7 @@
                                 ${result.question}
                             </li>
                             <li class="autocomplete-options">
-                                ${result.options.join(', ')}
+                                ${optionsString}
                             </li>
                         </ul>
                     </a>`;
