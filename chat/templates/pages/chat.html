@@ -24,7 +24,7 @@
                                 <img src="{{ friend.0.profile_picture.url }}" alt="avatar">
                                 <div class="about">
                                     <div class="name">{{ friend.0 }}</div>
-                                    <div class="status"> <i class="fa fa-circle online"></i> online </div>
+                                    <div class="status" id="connection_status-{{friend.1.id}}"> <i class="fa fa-circle online"></i> online </div>
                                 </div>
                             </a>
                         </li>
@@ -40,6 +40,7 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static '../static/js/chatSocketUniv.js' %}"></script>
 
 <script>
     function openChatBox(connection_id){

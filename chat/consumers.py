@@ -51,6 +51,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                 "username": "",
                 "timestamp": "",
                 "closed": True,
+                "connection_id": connection_id,
             },
         )
 
@@ -102,6 +103,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                     "username": username,
                     "timestamp": str(timestamp),
                     "closed": False,
+                    "connection_id": connection_id,
                 },
             )
 
@@ -111,6 +113,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         username = event["username"]
         timestamp = event["timestamp"]
         closed = event["closed"]
+        connection_id = event["connection_id"]
         
         # send message and username of sender to websocket
         await self.send(
@@ -120,6 +123,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                     "username": username,
                     "timestamp": timestamp,
                     "closed": closed,
+                    "connection_id": connection_id,
                 }
             )
         )
