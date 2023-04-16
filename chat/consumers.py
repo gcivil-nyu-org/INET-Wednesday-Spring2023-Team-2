@@ -10,11 +10,31 @@ from asgiref.sync import sync_to_async, async_to_sync
 
 # chat_box_name = connection_id
 class ChatRoomConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.chat_box_name = self.scope["url_route"]["kwargs"]["connection_id"]
-        self.group_name = "chat_%s" % self.chat_box_name
+    async def initiate_connections(self, user):
+        connections_sent = user.connection_requests_sent.filter(
+            connection_status="Accepted"
+        )
+        connections_recieved = user.connection_requests_received.filter(
+            connection_status="Accepted"
+        )
 
-        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        connections = connections_sent | connections_recieved
+
+        self.group_name_map = {}
+        async for connection in connections:
+            self.group_name_map[f"{connection.id}"] = f"chat_{connection.id}"
+            await self.channel_layer.group_add(self.group_name_map[f"{connection.id}"], self.channel_name)
+
+
+    async def connect(self):
+        user = self.scope["user"]
+        
+        await self.initiate_connections(user)
+
+        # self.chat_box_name = self.scope["url_route"]["kwargs"]["connection_id"]
+        # self.group_name_map = {"chat_%s" % self.chat_box_name}
+
+        # await self.channel_layer.group_add(self.group_name, self.channel_name)
 
         await self.accept()
 
@@ -23,7 +43,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
 
     async def blockclose(self, connection_id):
         await self.channel_layer.group_send(
-            self.group_name,
+            self.group_name_map[connection_id],
             {
                 "type": "chatbox_message",
                 "message": "",
@@ -74,7 +94,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
 
         if success:
             await self.channel_layer.group_send(
-                self.group_name,
+                self.group_name_map[connection_id],
                 {
                     "type": "chatbox_message",
                     "message": message,
@@ -90,7 +110,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         username = event["username"]
         timestamp = event["timestamp"]
         closed = event["closed"]
-
+        
         # send message and username of sender to websocket
         await self.send(
             text_data=json.dumps(

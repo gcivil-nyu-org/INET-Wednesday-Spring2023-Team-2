@@ -14,9 +14,7 @@ catch{
 var chatSocket = new WebSocket(
     'ws://' +
     window.location.host +
-    '/ws/chat/' +
-    boxName +
-    '/'
+    '/ws/chat/'
 );
 
 // send message and other info to backend (consumers.py through routing.py)
