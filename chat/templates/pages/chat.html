@@ -24,7 +24,7 @@
                                 <img src="{{ friend.0.profile_picture.url }}" alt="avatar">
                                 <div class="about">
                                     <div class="name">{{ friend.0 }}</div>
-                                    <div class="status" id="connection_status-{{friend.1.id}}"> <i class="fa fa-circle online"></i> online </div>
+                                    <div class="status" id="connection_status-{{friend.1.id}}"> <i class="fa fa-circle online"></i> {{ friend.1.latest_message }} </div>
                                 </div>
                             </a>
                         </li>
@@ -43,6 +43,7 @@
 <script type="text/javascript" src="{% static '../static/js/chatSocketUniv.js' %}"></script>
 
 <script>
+    // console.log("{{ friend_object.1.1.get_chat_history }}")
     function openChatBox(connection_id){
         $.ajax({
             url: "{% url 'connections:get_chat_history_box' connection_id=1 %}".replace(/1/, connection_id.toString()),

@@ -82,6 +82,8 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             timestamp=timestamp,
         )
 
+        chat_history.append_latest_message(message)
+
         return True
 
     # This function receive messages from WebSocket.
