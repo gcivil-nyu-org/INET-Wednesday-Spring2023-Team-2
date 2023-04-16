@@ -38,8 +38,9 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+    #TODO: need to find a way to get connection_id here
+    # async def disconnect(self, close_code):
+    #     await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def blockclose(self, connection_id):
         await self.channel_layer.group_send(
