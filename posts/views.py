@@ -30,7 +30,13 @@ from django.contrib.auth.decorators import login_required
 import random
 
 
-from .models import Post_Model, Options_Model, Comments_Model, UserPostViewTime
+from .models import (
+    Post_Model,
+    Options_Model,
+    Comments_Model,
+    UserPostViewTime,
+    Noti_Model,
+)
 from .forms import CommentsForm
 from login.models import Custom_User
 
@@ -513,11 +519,24 @@ class CommentsView(View):
                     question=post_, chosen_by=request.user
                 ).first()
                 comment_text = comments_form.cleaned_data["comment_text"]
+                noti_post = Noti_Model.objects.create(
+                    recipient=post_.created_by,
+                    sender=request.user,
+                    post_at=post_,
+                    noti_type="Comment",
+                )
 
             def check_mention_user_exist(match):
                 username = match.group(1)
                 try:
                     Custom_User.objects.get(username=username)
+                    target = Custom_User.objects.get(username=username)
+                    noti = Noti_Model.objects.create(
+                        recipient=target,
+                        sender=request.user,
+                        post_at=post_,
+                        noti_type="At",
+                    )
                     return f'<a href="{reverse("account:profile_page", args=[username])}"><strong>@{username}</strong></a>'
                 except Custom_User.DoesNotExist:
                     return f"@{username}"
@@ -720,6 +739,7 @@ def show_comments_text_api(request, current_pid):
 
 @login_required
 def create_poll(request):
+    # if request.user.is_authenticated:
     # print("create poll")
     categories = Post_Model.category_list
     if request.method == "POST":
@@ -780,6 +800,9 @@ def create_poll(request):
 
     context = {"form": form, "categories": categories}
     return render(request, "pages/poll_create.html", context)
+
+
+# return HttpResponse("Thou Shall not Enter!!")
 
 
 def get_back_api_view(request, category, pid):

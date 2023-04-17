@@ -85,6 +85,9 @@ cover/
 # Translations
 *.mo
 *.pot
+*.pyc 
+*.pyo
+*.pyd
 
 # Django stuff:
 *.log
