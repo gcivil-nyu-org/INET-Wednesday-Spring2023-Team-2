@@ -35,22 +35,22 @@ def get_friends_info(request):
 
 @login_required
 def chat_page(request):
-    friends = get_friends_info(request)
-    friends = friends.order_by('-latest_message_time')
-    friend_object = [
-        (
-            friend.get_friend(request.user),
-            friend,
-        )
-        for friend in friends
-    ]
+    # friends = get_friends_info(request)
+    # friends = friends.order_by('-latest_message_time')
+    # friend_object = [
+    #     (
+    #         friend.get_friend(request.user),
+    #         friend,
+    #     )
+    #     for friend in friends
+    # ]
 
-    context = {
-        "friends": friends,
-        "friend_object": friend_object,
-    }
+    # context = {
+    #     "friends": friends,
+    #     "friend_object": friend_object,
+    # }
 
-    return render(request, "pages/chat.html", context)
+    return render(request, "pages/chat.html")
 
 
 def get_chat_history(connection_id):
@@ -115,3 +115,25 @@ def chat_history_box_view(request, connection_id):
 
     else:
         return HttpResponse("Thou Shall not Enter!!")
+
+
+
+def get_chat_connections_list_view(request):
+    friends = get_friends_info(request)
+    friends = friends.order_by('-latest_message_time')
+    friend_object = [
+        (
+            friend.get_friend(request.user),
+            friend,
+        )
+        for friend in friends
+    ]
+
+    contents = {
+        "friends": friends,
+        "friend_object": friend_object,
+    }
+
+    template = loader.get_template("includes/chat_connections_list.html")
+
+    return HttpResponse(template.render(contents, request))

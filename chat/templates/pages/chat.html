@@ -17,18 +17,8 @@
                         <input type="text" class="form-control" placeholder="Search...">
                     </div>
                 </div>
-                <ul class="list-unstyled chat-list mt-2 mb-0">
-                    {% for friend in friend_object %}
-                        <li class="cleafix">
-                            <a onclick="openChatBox('{{ friend.1.id }}');">
-                                <img src="{{ friend.0.profile_picture.url }}" alt="avatar">
-                                <div class="about">
-                                    <div class="name">{{ friend.0 }}</div>
-                                    <div class="status" id="connection_status-{{friend.1.id}}"> <i class="fa fa-circle online"></i> {{ friend.1.latest_message }} </div>
-                                </div>
-                            </a>
-                        </li>
-                    {% endfor %}
+                <ul class="list-unstyled chat-list mt-2 mb-0" id="chat_connections_list">
+                    <!-- Contents of chat_connections_list.html here -->
                 </ul>
             </div>
             <div class="chat" id="chat_box">
@@ -56,4 +46,19 @@
             }
         });
     }
+
+    function getConnectionsList(){
+        $.ajax({
+            url: "{% url 'connections:get_chat_connections_list' %}",
+            type: "GET",
+            success: function(resp){
+                $("#chat_connections_list").html(resp);
+            },
+            error: function(resp){
+                console.log("getConnectionsList error");
+            }
+        });
+    }
+
+    getConnectionsList();
 </script>

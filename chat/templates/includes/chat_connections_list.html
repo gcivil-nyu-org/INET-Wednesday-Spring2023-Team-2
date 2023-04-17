@@ -1,0 +1,11 @@
+{% for friend in friend_object %}
+    <li class="cleafix">
+        <a onclick="openChatBox('{{ friend.1.id }}');">
+            <img src="{{ friend.0.profile_picture.url }}" alt="avatar">
+            <div class="about">
+                <div class="name">{{ friend.0 }}</div>
+                <div class="status" id="connection_status-{{friend.1.id}}"> <i class="fa fa-circle online"></i> {{ friend.1.latest_message }} </div>
+            </div>
+        </a>
+    </li>
+{% endfor %}

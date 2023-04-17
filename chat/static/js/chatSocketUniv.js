@@ -14,6 +14,6 @@ chatSocket.onmessage = function (e) {
 
 
 function addMessagestoStatus(data){
-    console.log("thissss");
-    document.getElementById("connection_status-" + data.connection_id).innerHTML = " <i class='fa fa-circle online'></i> " + data.message + " ";
+    // document.getElementById("connection_status-" + data.connection_id).innerHTML = " <i class='fa fa-circle online'></i> " + data.message + " ";
+    getConnectionsList();
 }
