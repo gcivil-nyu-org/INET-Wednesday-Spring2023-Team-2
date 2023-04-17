@@ -54,6 +54,8 @@ class Connection_Model(models.Model):
     
     latest_message = models.CharField(max_length=23, blank=True)
 
+    latest_message_time = models.DateTimeField(blank=True, null=True)
+
     def save_checks(self, to_user, from_user):
         if Connection_Model.objects.filter(
             from_user=from_user, to_user=to_user
@@ -196,11 +198,13 @@ class Chat_History(models.Model):
 
     history = models.ManyToManyField(Chat_Message, blank=True)
 
-    def append_latest_message(self, message):
+    def append_latest_message(self, message, timestamp):
         if len(message)<=20:
             self.connection.latest_message = message
+            self.connection.latest_message_time = timestamp
         else:
             self.connection.latest_message = message[:20] + "..."
+            self.connection.latest_message_time = timestamp
         
         self.connection.save()
 

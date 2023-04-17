@@ -82,7 +82,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             timestamp=timestamp,
         )
 
-        chat_history.append_latest_message(message)
+        chat_history.append_latest_message(message, timestamp)
 
         return True
 

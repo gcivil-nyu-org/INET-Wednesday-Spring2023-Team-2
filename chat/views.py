@@ -36,6 +36,7 @@ def get_friends_info(request):
 @login_required
 def chat_page(request):
     friends = get_friends_info(request)
+    friends = friends.order_by('-latest_message_time')
     friend_object = [
         (
             friend.get_friend(request.user),
