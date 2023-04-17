@@ -30,6 +30,7 @@
 	
 		<div class="tab-wrapper">
 			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends(1);">Friends</a>
+			<span id="notification-badge" class="hidden"></span>
 		</div>
 		<!-- {% if edit_access %}
 		<div class="tab-wrapper">
@@ -285,6 +286,8 @@ function getFriends(changeurl) {
             console.log("getFriendRequests error");
         }
     });
+
+	fetchPendingRequests();
 }
 
 
@@ -364,6 +367,32 @@ window.onpopstate = function (e) {
 
 	map_[current_tab](0);
 }
+
+function fetchPendingRequests() {
+    $.ajax({
+        url: "{% url 'account:friend_requests' profile.username %}",
+        type: "GET",
+        success: function(resp) {
+            let pendingRequests = $(resp).find('.friend-request-item').length;
+            updateNotificationBadge(pendingRequests);
+        },
+        error: function(resp) {
+            console.log("fetchPendingRequests error");
+        }
+    });
+}
+
+function updateNotificationBadge(requestCount) {
+    const badge = document.getElementById('notification-badge');
+
+    if (requestCount > 0) {
+        badge.classList.remove('hidden');
+        badge.textContent = requestCount;
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
 
 
 

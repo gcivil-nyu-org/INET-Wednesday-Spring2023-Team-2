@@ -841,3 +841,22 @@ select {
 	width: auto;
 	white-space: nowrap;
   }
+
+
+ 
+  
+  #notification-badge {
+	position: relative;
+	/* top: 5px;
+	right: 10px; */
+	background-color: red;
+	color: white;
+	border-radius: 100%;
+	padding: 2px 6px;
+	font-size: 12px;
+  }
+  
+  .hidden {
+	display: none;
+  }
+  
