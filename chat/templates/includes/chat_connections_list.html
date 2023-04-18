@@ -3,9 +3,43 @@
         <a onclick="openChatBox('{{ friend.1.id }}');">
             <img src="{{ friend.0.profile_picture.url }}" alt="avatar">
             <div class="about">
-                <div class="name">{{ friend.0 }} => {{ friend.2 }}</div>
+                <div class="name">{{ friend.0 }} <span id="notification-badge{{ forloop.counter }}" class="chat-badge hidden" >{{ friend.2 }}</span></div>
                 <div class="status" id="connection_status-{{friend.1.id}}"> <i class="fa fa-circle online"></i> {{ friend.1.latest_message }} </div>
             </div>
         </a>
     </li>
+{% endfor %}
+
+
+<script>
+
+function updateNotificationBadge(requestCount, id) {
+    const badge = document.getElementById(id);
+    console.log(badge);
+
+
+    if (requestCount > 0) {
+        badge.classList.remove('hidden');
+        badge.textContent = requestCount;
+        console.log("here");
+    } else {
+        badge.classList.add('hidden');
+
+    }
+
+
+    
+}
+
+
+</script>
+
+{% for friend in friend_object %}
+
+<script>
+    updateNotificationBadge("{{ friend.2 }}", "notification-badge{{ forloop.counter }}");
+</script>
+
+
+
 {% endfor %}

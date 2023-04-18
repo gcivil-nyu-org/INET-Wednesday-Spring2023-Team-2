@@ -879,3 +879,20 @@ select {
     position: relative;
     padding: 0 8px;
 }
+
+.chat-badge {
+    position: absolute;
+    top: 50%;
+    right: 50px;
+    transform: translateY(-50%);
+
+    background-color: red;
+    color: white;
+    border-radius: 100%;
+    padding: 4px;
+    font-size: 12px;
+    text-align: center;
+    min-width: 18px;
+    min-height: 18px;
+    line-height: 1;
+}

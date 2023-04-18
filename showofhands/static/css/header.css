@@ -430,6 +430,7 @@ body.dark .home .text{
 
 .autocomplete-question {
     font-weight: bold;
+    word-break: break-word;
 }
 
 .autocomplete-username {
