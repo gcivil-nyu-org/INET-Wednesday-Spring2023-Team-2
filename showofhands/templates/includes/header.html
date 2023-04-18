@@ -64,8 +64,13 @@
 
                     <li class="nav-link" id="ProfilePageNavB">
                         <a href={% url 'account:profile_page' request.user %}>
+                            <div class="profile-notification-container">
                             <i class='bx bx-user icon'></i>
+                            <span class="red-dot "></span>
+                            </div>
                             <span class="text nav-text">Profile</span>
+                        
+                            
                         </a>
                     </li>
 
@@ -199,4 +204,6 @@
             window.location.href = `/account/profile/${id}/`;
         }
     }
+
+
 </script>

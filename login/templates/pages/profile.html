@@ -395,12 +395,15 @@ function fetchPendingRequests() {
 
 function updateNotificationBadge(requestCount) {
     const badge = document.getElementById('notification-badge');
+	const redDot = document.querySelector('.red-dot');
 
     if (requestCount > 0) {
         badge.classList.remove('hidden');
         badge.textContent = requestCount;
+		redDot.classList.remove("hidden");
     } else {
         badge.classList.add('hidden');
+		redDot.classList.add("hidden");
     }
 }
 
@@ -413,6 +416,6 @@ document.getElementById("{{ tab_to_click }}").click();
 //   updateNotificationBadge();
 // });
 
-
+document.addEventListener('DOMContentLoaded', fetchPendingRequests);
 
 </script>

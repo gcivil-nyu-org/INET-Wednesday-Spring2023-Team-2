@@ -453,3 +453,18 @@ body.dark .home .text{
     color:#18191a;
 	text-align: center;
 }
+
+.red-dot {
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    background-color: var(--text-color);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .profile-notification-container {
+    position: relative;
+    display: inline-block;
+}
