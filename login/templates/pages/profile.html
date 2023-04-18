@@ -36,7 +36,9 @@
 		<div class="tab-wrapper">
 			<a class="nav-tab tab-content" id="nav-friends-tab" onclick="getFriends(1);">
 					Friends
+					{% if edit_access %}
 					<span id="notification-badge" class="hidden"></span>
+					{% endif %}
 			</a>
 		</div>
 
@@ -381,7 +383,7 @@ window.onpopstate = function (e) {
 
 function fetchPendingRequests() {
     $.ajax({
-        url: "{% url 'account:friend_requests' profile.username %}",
+        url: "{% url 'account:friend_requests' request.user.username %}",
         type: "GET",
         success: function(resp) {
             let pendingRequests = $(resp).find('.friend-request-item').length;
@@ -397,14 +399,18 @@ function updateNotificationBadge(requestCount) {
     const badge = document.getElementById('notification-badge');
 	const redDot = document.querySelector('.red-dot');
 
-    if (requestCount > 0) {
-        badge.classList.remove('hidden');
-        badge.textContent = requestCount;
-		redDot.classList.remove("hidden");
-    } else {
-        badge.classList.add('hidden');
-		redDot.classList.add("hidden");
-    }
+	if (badge && redDot) {
+		if (requestCount > 0) {
+			badge.classList.remove('hidden');
+			badge.textContent = requestCount;
+			redDot.classList.remove("hidden");
+		} else {
+			badge.classList.add('hidden');
+			redDot.classList.add("hidden");
+		}
+	}
+
+    
 }
 
 
