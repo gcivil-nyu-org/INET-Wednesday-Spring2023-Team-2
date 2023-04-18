@@ -20,6 +20,26 @@
                 <ul class="list-unstyled chat-list mt-2 mb-0" id="chat_connections_list">
                     <!-- Contents of chat_connections_list.html here -->
                 </ul>
+                <script>
+                    function setActive(li) {
+                        // Remove "active" class from all "li" elements
+                        const lis = document.querySelectorAll('.chat-list li');
+                        for (let i = 0; i < lis.length; i++) {
+                            lis[i].classList.remove('active');
+                        }
+
+                        // Add "active" class to the clicked "li" element
+                        li.classList.add('active');
+                    }
+
+                    // Attach click event listeners to all "li" elements
+                    const lis = document.querySelectorAll('.chat-list li');
+                    for (let i = 0; i < lis.length; i++) {
+                        lis[i].addEventListener('click', function() {
+                            setActive(this);
+                        });
+                    }
+                </script>
             </div>
             <div class="chat" id="chat_box">
                 <!-- Contents of chat_box.html here -->

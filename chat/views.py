@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.template import loader
 from django.views.generic import TemplateView
 from django.db.models import Q
+import datetime
 
 from django.contrib.auth.decorators import login_required
 
@@ -33,6 +34,27 @@ def get_friends_info(request):
     # friends = get_friends_info(request)
     #  for i in friends:
     #      print(i.get_friend(request.user), i.id)
+
+
+@login_required
+def get_num_new_messages(request):
+    friends = get_friends_info(request)
+    friend_object = [
+        (
+            friend.get_friend(request.user),
+            friend,
+            get_chat_history(friend.id),
+        )
+        for friend in friends
+    ]
+
+    num_new_messages = sum(
+        1
+        for friend in friend_object
+        if friend[2] and friend[2][len(friend[2]) - 1].user != request.user
+    )
+
+    return num_new_messages
 
 
 @login_required
@@ -68,30 +90,6 @@ def get_chat_history(connection_id):
         # "-timestamp"
     ).all()  # [:100] ##todo: return top 100msg everytime to reduce query time
     return history_list
-
-
-# delete later
-# @login_required
-# def chat_view_test(request, connection_id):
-#     # if connection doesn't exists (i.e. users don't know each other) or
-#     # if connection is not in accepted status (i.e. users agreed to chat with each other) or
-#     # if request isnot from ajax (url request not accepted)
-
-#     if (
-#         Connection_Model.objects.filter(id=connection_id).exists()
-#         and Connection_Model.objects.get(id=connection_id).connection_status
-#         == "Accepted"
-#     ):  # and is_ajax(request):
-#         messages = get_chat_history(connection_id)
-
-#         return render(
-#             request,
-#             "pages/chat_test.html",
-#             {"connection_id": connection_id, "messages": messages},
-#         )
-
-#     else:
-#         return HttpResponse("Thou Shall not Enter!!")
 
 
 def chat_history_box_view(request, connection_id):

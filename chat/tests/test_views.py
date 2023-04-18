@@ -1,8 +1,8 @@
-from django.test import TestCase, Client
+from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 
 from login.models import Custom_User
-from chat.views import get_chat_history
+from chat.views import get_chat_history, get_num_new_messages
 from chat.models import (
     Connection_Model,
     Chat_Message,
@@ -77,3 +77,21 @@ class TestChatViews(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Thou Shall not Enter!!")
+
+    def test_get_num_new_messages(self):
+        self.client.login(username="test", password="test1234")
+
+        chat_history = Chat_History.objects.create(connection=self.connection)
+
+        self.chat_message1 = Chat_Message.objects.create(
+            user=self.user, message="Hello"
+        )
+        self.chat_message2 = Chat_Message.objects.create(user=self.user1, message="Hi")
+        chat_history.history.add(self.chat_message1)
+        chat_history.history.add(self.chat_message2)
+
+        factory = RequestFactory()
+        request = factory.get("/")
+        request.user = self.user
+        num_new_messages = get_num_new_messages(request)
+        self.assertEqual(num_new_messages, 1)
