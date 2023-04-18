@@ -23,12 +23,13 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         self.group_name_map = {}
         async for connection in connections:
             self.group_name_map[f"{connection.id}"] = f"chat_{connection.id}"
-            await self.channel_layer.group_add(self.group_name_map[f"{connection.id}"], self.channel_name)
-
+            await self.channel_layer.group_add(
+                self.group_name_map[f"{connection.id}"], self.channel_name
+            )
 
     async def connect(self):
         user = self.scope["user"]
-        
+
         await self.initiate_connections(user)
 
         # self.chat_box_name = self.scope["url_route"]["kwargs"]["connection_id"]
@@ -38,7 +39,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-    #TODO: need to find a way to get connection_id here
+    # TODO: need to find a way to get connection_id here
     # async def disconnect(self, close_code):
     #     await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
@@ -97,7 +98,9 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         connection_id = text_data_json["connection_id"]
         timestamp = datetime.now()
 
-        success, message_id = await self.store_info_db(message, username, connection_id, timestamp)
+        success, message_id = await self.store_info_db(
+            message, username, connection_id, timestamp
+        )
 
         if success:
             await self.channel_layer.group_send(
@@ -121,7 +124,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         closed = event["closed"]
         connection_id = event["connection_id"]
         message_id = event["message_id"]
-        
+
         # send message and username of sender to websocket
         await self.send(
             text_data=json.dumps(

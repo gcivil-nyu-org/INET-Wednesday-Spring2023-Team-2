@@ -119,16 +119,18 @@ def chat_history_box_view(request, connection_id):
         return HttpResponse("Thou Shall not Enter!!")
 
 
-
 def get_chat_connections_list_view(request):
     friends = get_friends_info(request)
-    friends = friends.order_by('-latest_message_time')
+    friends = friends.order_by("-latest_message_time")
     # print(friends[0].get_chat_history.all()[0].history.filter(~Q(user=request.user)).filter(~Q(seen_by__username__contains=request.user.username)).count())
     friend_object = [
         (
             friend.get_friend(request.user),
             friend,
-            friend.get_chat_history.all()[0].history.filter(~Q(user=request.user)).filter(~Q(seen_by__username__contains=request.user.username)).count(),
+            friend.get_chat_history.all()[0]
+            .history.filter(~Q(user=request.user))
+            .filter(~Q(seen_by__username__contains=request.user.username))
+            .count(),
         )
         for friend in friends
     ]
@@ -145,7 +147,7 @@ def get_chat_connections_list_view(request):
 
 def update_msg_seen_view(request, message_id):
     if is_ajax(request):
-        message = Chat_Message.objects.get(id = message_id)
+        message = Chat_Message.objects.get(id=message_id)
 
         message.seen_by.add(request.user)
 
