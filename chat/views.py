@@ -122,17 +122,32 @@ def get_chat_connections_list_view(request):
         friends = get_friends_info(request)
         friends = friends.order_by("-latest_message_time")
         # print(friends[0].get_chat_history.all()[0].history.filter(~Q(user=request.user)).filter(~Q(seen_by__username__contains=request.user.username)).count())
-        friend_object = [
-            (
-                friend.get_friend(request.user),
-                friend,
-                friend.get_chat_history.all()[0]
-                .history.filter(~Q(user=request.user))
-                .filter(~Q(seen_by__username__contains=request.user.username))
-                .count(),
+        # friend_object = [
+        #     (
+        #         friend.get_friend(request.user),
+        #         friend,
+        #         friend.get_chat_history.all()[0]
+        #         .history.filter(~Q(user=request.user))
+        #         .filter(~Q(seen_by__username__contains=request.user.username))
+        #         .count(),
+        #     )
+        #     for friend in friends
+        # ]
+
+        friend_object = []
+        for friend in friends:
+            try:
+                unread_msg_count = (
+                    friend.get_chat_history.all()[0]
+                    .history.filter(~Q(user=request.user))
+                    .filter(~Q(seen_by__username__contains=request.user.username))
+                    .count()
+                )
+            except:
+                unread_msg_count = 0
+            friend_object.append(
+                (friend.get_friend(request.user), friend, unread_msg_count)
             )
-            for friend in friends
-        ]
 
         contents = {
             "friends": friends,
