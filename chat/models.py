@@ -16,7 +16,7 @@ class Connection_Model(models.Model):
         on_delete=models.CASCADE,
         related_name="connection_requests_received",
     )
-    blocked_by = models.OneToOneField(
+    blocked_by = models.ForeignKey(
         Custom_User,
         on_delete=models.CASCADE,
         related_name="blocked_users",
