@@ -120,29 +120,33 @@ def chat_history_box_view(request, connection_id):
 
 
 def get_chat_connections_list_view(request):
-    friends = get_friends_info(request)
-    friends = friends.order_by("-latest_message_time")
-    # print(friends[0].get_chat_history.all()[0].history.filter(~Q(user=request.user)).filter(~Q(seen_by__username__contains=request.user.username)).count())
-    friend_object = [
-        (
-            friend.get_friend(request.user),
-            friend,
-            friend.get_chat_history.all()[0]
-            .history.filter(~Q(user=request.user))
-            .filter(~Q(seen_by__username__contains=request.user.username))
-            .count(),
-        )
-        for friend in friends
-    ]
+    if is_ajax(request):
+        friends = get_friends_info(request)
+        friends = friends.order_by("-latest_message_time")
+        # print(friends[0].get_chat_history.all()[0].history.filter(~Q(user=request.user)).filter(~Q(seen_by__username__contains=request.user.username)).count())
+        friend_object = [
+            (
+                friend.get_friend(request.user),
+                friend,
+                friend.get_chat_history.all()[0]
+                .history.filter(~Q(user=request.user))
+                .filter(~Q(seen_by__username__contains=request.user.username))
+                .count(),
+            )
+            for friend in friends
+        ]
 
-    contents = {
-        "friends": friends,
-        "friend_object": friend_object,
-    }
+        contents = {
+            "friends": friends,
+            "friend_object": friend_object,
+        }
 
-    template = loader.get_template("includes/chat_connections_list.html")
+        template = loader.get_template("includes/chat_connections_list.html")
 
-    return HttpResponse(template.render(contents, request))
+        return HttpResponse(template.render(contents, request))
+
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
 
 
 def update_msg_seen_view(request, message_id):
@@ -154,3 +158,6 @@ def update_msg_seen_view(request, message_id):
         message.save()
 
         return HttpResponse("success")
+
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
