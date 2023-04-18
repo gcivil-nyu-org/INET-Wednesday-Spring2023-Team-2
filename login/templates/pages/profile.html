@@ -28,10 +28,18 @@
 		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
 		</div> -->
 	
-		<div class="tab-wrapper">
+		<!-- <div class="tab-wrapper">
 			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends(1);">Friends</a>
 			<span id="notification-badge" class="hidden"></span>
+		</div> -->
+
+		<div class="tab-wrapper">
+			<a class="nav-tab tab-content" id="nav-friends-tab" onclick="getFriends(1);">
+					Friends
+					<span id="notification-badge" class="hidden"></span>
+			</a>
 		</div>
+
 		<!-- {% if edit_access %}
 		<div class="tab-wrapper">
 			<a class="nav-tab" id="nav-requests-tab" onclick="getFriendRequests();">Friend Requests</a>
@@ -215,6 +223,9 @@ function getProfileInfo(changeurl){
 	if (Boolean(changeurl)){
 		changeurlProfile("profile");
 	}
+
+	fetchPendingRequests();
+	
 }
 
 
@@ -397,6 +408,10 @@ function updateNotificationBadge(requestCount) {
 
 
 document.getElementById("{{ tab_to_click }}").click();
+
+// document.addEventListener('DOMContentLoaded', () => {
+//   updateNotificationBadge();
+// });
 
 
 
