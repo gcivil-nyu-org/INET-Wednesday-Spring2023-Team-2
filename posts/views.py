@@ -506,7 +506,6 @@ class CurrentPostURL(APIView):
 ##to show comments
 class CommentsView(View):
     def post(self, request, current_pid):
-        # print("ll", current_pid)
         if is_ajax(request):
             pid = current_pid
             post_ = Post_Model.objects.get(pk=pid)
@@ -519,35 +518,56 @@ class CommentsView(View):
                     question=post_, chosen_by=request.user
                 ).first()
                 comment_text = comments_form.cleaned_data["comment_text"]
-                noti_post = Noti_Model.objects.create(
+
+                # Comment notification
+                noti_post = Noti_Model.objects.filter(
                     recipient=post_.created_by,
                     sender=request.user,
                     post_at=post_,
                     noti_type="Comment",
-                )
+                    is_read=False,
+                ).first()
 
-            def check_mention_user_exist(match):
-                username = match.group(1)
-                try:
-                    Custom_User.objects.get(username=username)
-                    target = Custom_User.objects.get(username=username)
-                    noti = Noti_Model.objects.create(
-                        recipient=target,
+                if not noti_post:
+                    noti_post = Noti_Model.objects.create(
+                        recipient=post_.created_by,
                         sender=request.user,
                         post_at=post_,
-                        noti_type="At",
+                        noti_type="Comment",
                     )
-                    return f'<a href="{reverse("account:profile_page", args=[username])}"><strong>@{username}</strong></a>'
-                except Custom_User.DoesNotExist:
-                    return f"@{username}"
 
-            comment_text = re.sub(r"@(\w+)", check_mention_user_exist, comment_text)
+                def check_mention_user_exist(match):
+                    username = match.group(1)
+                    try:
+                        Custom_User.objects.get(username=username)
+                        target = Custom_User.objects.get(username=username)
 
-            comment_text = comment_text.replace("\r\n", "<br>")
-            comments_.comment_text = comment_text
-            comments_.save()
-            return JsonResponse({"commment": "success"})
+                        # Mention notification
+                        noti_at = Noti_Model.objects.filter(
+                            recipient=target,
+                            sender=request.user,
+                            post_at=post_,
+                            noti_type="At",
+                            is_read=False,
+                        ).first()
 
+                        if not noti_at:
+                            noti_at = Noti_Model.objects.create(
+                                recipient=target,
+                                sender=request.user,
+                                post_at=post_,
+                                noti_type="At",
+                            )
+
+                        return f'<a href="{reverse("account:profile_page", args=[username])}"><strong>@{username}</strong></a>'
+                    except Custom_User.DoesNotExist:
+                        return f"@{username}"
+
+                comment_text = re.sub(r"@(\w+)", check_mention_user_exist, comment_text)
+                comment_text = comment_text.replace("\r\n", "<br>")
+                comments_.comment_text = comment_text
+                comments_.save()
+                return JsonResponse({"commment": "success"})
         else:
             return HttpResponse("Thou Shall not Enter!!")
 
