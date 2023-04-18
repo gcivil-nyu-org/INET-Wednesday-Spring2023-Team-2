@@ -39,6 +39,7 @@ chatSocket.onmessage = function (e) {
         // add message to text box
         addMessagestoChatBox(data);
         addMessagestoStatus(data);
+        updateMsgSeen(data.message_id);
     }
     else{
         addMessagestoStatus(data);

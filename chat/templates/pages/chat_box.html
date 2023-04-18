@@ -32,6 +32,18 @@
     </ul>
 </div>
 
+
+<script>
+    function updateMsgSeen(message_id){
+        $.ajax({
+            url: "{% url 'connections:update_msg_seen' message_id='mesrep' %}".replace('mesrep', message_id.toString()),
+            type: "GET",
+        });
+    }
+
+</script>
+
+
 <!-- add history -->
 {% for message in messages %}
 {% if message.user == request.user %}
@@ -44,6 +56,13 @@
     document.getElementById('history').insertAdjacentHTML('afterbegin', 
     '<ul class="m-b-0"><li class="clearfix"><div class="message-data"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message my-message"> {{ message.message }} </div></li></ul>');
 </script>
+
+{% if request.user not in message.seen_by.all %}
+<script>
+    updateMsgSeen("{{ message.id }}");
+</script>
+{% endif %}
+
 {% endif %}
 {% endfor %}
 
@@ -97,8 +116,6 @@
                 $message.remove();
             });
         }
-
-
 
 
 </script>

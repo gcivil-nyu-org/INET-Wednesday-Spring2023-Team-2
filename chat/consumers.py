@@ -52,6 +52,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                 "timestamp": "",
                 "closed": True,
                 "connection_id": connection_id,
+                "message_id": "",
             },
         )
 
@@ -74,7 +75,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             == "Blocked"
         ):
             async_to_sync(self.blockclose)(connection_id)
-            return False
+            return False, None
 
         chat_history.history.create(
             user=Custom_User.objects.get(username=username),
@@ -82,9 +83,11 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
             timestamp=timestamp,
         )
 
+        message_id = chat_history.history.last().id
+
         chat_history.append_latest_message(message, timestamp)
 
-        return True
+        return True, message_id
 
     # This function receive messages from WebSocket.
     async def receive(self, text_data):
@@ -94,7 +97,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         connection_id = text_data_json["connection_id"]
         timestamp = datetime.now()
 
-        success = await self.store_info_db(message, username, connection_id, timestamp)
+        success, message_id = await self.store_info_db(message, username, connection_id, timestamp)
 
         if success:
             await self.channel_layer.group_send(
@@ -106,6 +109,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                     "timestamp": str(timestamp),
                     "closed": False,
                     "connection_id": connection_id,
+                    "message_id": str(message_id),
                 },
             )
 
@@ -116,6 +120,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         timestamp = event["timestamp"]
         closed = event["closed"]
         connection_id = event["connection_id"]
+        message_id = event["message_id"]
         
         # send message and username of sender to websocket
         await self.send(
@@ -126,6 +131,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                     "timestamp": timestamp,
                     "closed": closed,
                     "connection_id": connection_id,
+                    "message_id": message_id,
                 }
             )
         )

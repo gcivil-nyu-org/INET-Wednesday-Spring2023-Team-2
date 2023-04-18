@@ -34,18 +34,6 @@
 
 <script>
     // console.log("{{ friend_object.1.1.get_chat_history }}")
-    function openChatBox(connection_id){
-        $.ajax({
-            url: "{% url 'connections:get_chat_history_box' connection_id=1 %}".replace(/1/, connection_id.toString()),
-            type: "GET",
-            success: function(resp){
-                $("#chat_box").html(resp);
-            },
-            error: function(resp){
-                console.log("openChatBox error");
-            }
-        });
-    }
 
     function getConnectionsList(){
         $.ajax({
@@ -56,6 +44,20 @@
             },
             error: function(resp){
                 console.log("getConnectionsList error");
+            }
+        });
+    }
+
+    function openChatBox(connection_id){
+        $.ajax({
+            url: "{% url 'connections:get_chat_history_box' connection_id=1 %}".replace(/1/, connection_id.toString()),
+            type: "GET",
+            success: function(resp){
+                $("#chat_box").html(resp);
+                getConnectionsList();
+            },
+            error: function(resp){
+                console.log("openChatBox error");
             }
         });
     }

@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Chat_History, Connection_Model
 from django.template import loader
 from django.views.generic import TemplateView
+from django.db.models import Q
 
 from django.contrib.auth.decorators import login_required
+
+from .models import Chat_History, Connection_Model, Chat_Message
 
 
 # to check if request is form ajax
@@ -121,10 +123,12 @@ def chat_history_box_view(request, connection_id):
 def get_chat_connections_list_view(request):
     friends = get_friends_info(request)
     friends = friends.order_by('-latest_message_time')
+    # print(friends[0].get_chat_history.all()[0].history.filter(~Q(user=request.user)).filter(~Q(seen_by__username__contains=request.user.username)).count())
     friend_object = [
         (
             friend.get_friend(request.user),
             friend,
+            friend.get_chat_history.all()[0].history.filter(~Q(user=request.user)).filter(~Q(seen_by__username__contains=request.user.username)).count(),
         )
         for friend in friends
     ]
@@ -137,3 +141,14 @@ def get_chat_connections_list_view(request):
     template = loader.get_template("includes/chat_connections_list.html")
 
     return HttpResponse(template.render(contents, request))
+
+
+def update_msg_seen_view(request, message_id):
+    if is_ajax(request):
+        message = Chat_Message.objects.get(id = message_id)
+
+        message.seen_by.add(request.user)
+
+        message.save()
+
+        return HttpResponse("success")

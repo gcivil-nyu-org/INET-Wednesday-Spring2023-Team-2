@@ -179,6 +179,8 @@ class Chat_Message(models.Model):
     message = models.CharField(max_length=10000)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    seen_by = models.ManyToManyField(Custom_User, related_name="messages_seen")
+
     def __str__(self):
         return str(self.id) + " => " + str(self.user) + " " + str(self.timestamp)
 
