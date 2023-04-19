@@ -1,0 +1,35 @@
+{% include 'includes/header.html' %}
+
+{% load static %}
+
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}" />
+	<!-- <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}"> -->
+</head>
+
+
+
+
+<div class="container" id="profile-container">
+  <div class="nav-tabs" id="profile-tabs">
+  </div>
+  <br>
+  <div class="notif-header">
+    <h4>Notifications</h4>
+  </div>
+    <br>
+    <div class="notification-list">
+        <ul>
+          {% for noti in notifications reversed %}
+              {% if noti.noti_type == 'At' %}
+                <strong><a href="{% url 'account:profile_page' noti.sender.username %}">{{ noti.sender }}</a></strong> mentioned you in a post: <a href="{% url 'posts:post_generation_page' category='all' pid=noti.post_at.id %}">{{ noti.post_at }}</a>
+              {% elif noti.noti_type == 'Comment' %}
+                <strong><a href="{% url 'account:profile_page' noti.sender.username %}">{{ noti.sender }}</a></strong> commented on your post: <a href="{% url 'posts:post_generation_page' category='all' pid=noti.post_at.id %}">{{ noti.post_at }}</a>
+              {% endif %}
+              <span class="text-muted">{{ noti.created_at }}</span>
+            </li><br>
+          {% endfor %}
+        </ul>
+    </div>
+</div>

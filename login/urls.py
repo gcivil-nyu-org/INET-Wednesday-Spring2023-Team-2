@@ -74,4 +74,7 @@ urlpatterns = [
         views.unblock_friend,
         name="unblock_friend",
     ),
+    path(
+        "notifications/", login_required(views.notification_page), name="notifications"
+    ),
 ]

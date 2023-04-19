@@ -21,7 +21,7 @@ from .tokens import account_activation_token, password_reset_token
 from .models import Custom_User
 from chat.models import Connection_Model
 from chat.views import get_friends_info
-from posts.models import Post_Model, Options_Model
+from posts.models import Post_Model, Options_Model, Noti_Model
 
 
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
@@ -870,6 +870,23 @@ def decline_friend_request(request, uid):
                 {"status": "error", "message": "Friend request not found."}
             )
     return JsonResponse({"status": "error", "message": "Not an AJAX request."})
+
+
+@login_required
+def notification_page(request):
+    # Retrieve all notifications for the current user
+    notifications = Noti_Model.objects.filter(recipient=request.user)
+
+    # Mark all unread notifications as read
+    for notification in notifications.filter(is_read=False):
+        notification.is_read = True
+        notification.save()
+
+    context = {
+        "notifications": notifications,
+    }
+
+    return render(request, "pages/notification_page.html", context)
 
 
 # def backactivetab_view(request, username, tab):
