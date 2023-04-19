@@ -11,7 +11,7 @@
 
 
 
-<div class="container" id="profile-container">
+<div class="notif-container" id="notifs">
   <div class="nav-tabs" id="profile-tabs">
   </div>
   <br>
@@ -33,3 +33,19 @@
         </ul>
     </div>
 </div>
+ 
+<!-- <script>
+function fetchPendingRequests() {
+  $.ajax({
+      url: "{% url 'account:friend_requests' request.user.username %}",
+      type: "GET",
+      success: function(resp) {
+          let pendingRequests = $(resp).find('.friend-request-item').length;
+          updateNotificationBadge(pendingRequests);
+      },
+      error: function(resp) {
+          console.log("fetchPendingRequests error");
+      }
+  });
+</script>
+} -->

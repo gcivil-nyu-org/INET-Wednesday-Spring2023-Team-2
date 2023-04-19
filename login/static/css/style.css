@@ -900,7 +900,7 @@ select {
 	padding-left: 40px;
 	padding-right: 40px;
 	font-size: 14px;
-	height: 80%;
+	height: 70%;
 	overflow-y: auto;
 	overflow-x: auto;
     white-space: nowrap;
@@ -917,3 +917,16 @@ select {
   .text-muted {
 	font-size: 14px;
   }
+
+  .notif-container {
+	background-color: #fff;
+	border-radius: 10px;
+  	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 
+			0 10px 10px rgba(0,0,0,0.22);
+	position: relative;
+	width: 55%;
+	max-width: 100%;
+	min-height: 75%;
+	/* max-height: 75%; */
+	color:#222;
+}
