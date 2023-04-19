@@ -117,10 +117,19 @@ def chat_history_box_view(request, connection_id):
         return HttpResponse("Thou Shall not Enter!!")
 
 
+def latest_message_formatting(message):
+    if len(message) <= 20:
+        return message
+    
+    return message[:20] + "..."
+
+
 def get_chat_connections_list_view(request):
     if is_ajax(request):
         friends = get_friends_info(request)
         friends = friends.order_by("-latest_message_time")
+
+        # friends = friends.order_by("-get_chat_history__latest_message_time")
         # print(friends[0].get_chat_history.all()[0].history.filter(~Q(user=request.user)).filter(~Q(seen_by__username__contains=request.user.username)).count())
         # friend_object = [
         #     (
@@ -138,15 +147,19 @@ def get_chat_connections_list_view(request):
         for friend in friends:
             try:
                 unread_msg_count = (
-                    friend.get_chat_history.all()[0]
+                    friend.get_chat_history
                     .history.filter(~Q(user=request.user))
                     .filter(~Q(seen_by__username__contains=request.user.username))
                     .count()
                 )
+                latest_message = friend.get_chat_history.history.last().message
+                latest_message = latest_message_formatting(latest_message)
             except:
                 unread_msg_count = 0
+                latest_message = None
+
             friend_object.append(
-                (friend.get_friend(request.user), friend, unread_msg_count)
+                (friend.get_friend(request.user), friend, unread_msg_count, latest_message)
             )
 
         contents = {

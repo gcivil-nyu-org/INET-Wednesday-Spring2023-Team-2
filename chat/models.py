@@ -52,7 +52,7 @@ class Connection_Model(models.Model):
             or cls.objects.filter(from_user=to_user, to_user=from_user).exists()
         )
 
-    latest_message = models.CharField(max_length=23, blank=True)
+    # latest_message = models.CharField(max_length=23, blank=True)
 
     latest_message_time = models.DateTimeField(blank=True, null=True)
 
@@ -197,7 +197,7 @@ class Chat_History(models.Model):
     # user1 = models.ForeignKey(Custom_User, on_delete=models.CASCADE)
     # user2 = models.ForeignKey(Custom_User, on_delete=models.CASCADE)
 
-    connection = models.ForeignKey(
+    connection = models.OneToOneField(
         Connection_Model, on_delete=models.CASCADE, related_name="get_chat_history"
     )
 
@@ -206,12 +206,13 @@ class Chat_History(models.Model):
     history = models.ManyToManyField(Chat_Message, blank=True)
 
     def append_latest_message(self, message, timestamp):
-        if len(message) <= 20:
-            self.connection.latest_message = message
-            self.connection.latest_message_time = timestamp
-        else:
-            self.connection.latest_message = message[:20] + "..."
-            self.connection.latest_message_time = timestamp
+        # if len(message) <= 20:
+        #     self.connection.latest_message = message
+        #     self.connection.latest_message_time = timestamp
+        # else:
+        #     self.connection.latest_message = message[:20] + "..."
+       
+        self.connection.latest_message_time = timestamp
 
         self.connection.save()
 
