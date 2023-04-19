@@ -1,7 +1,7 @@
 
 {% for friend_request in pending_requests %}
     <li>
-        <div class="friend-request-container">
+        <div class="friend-request-container friend-request-item" >
             <div class="profile-picture-container">
 
                 <a href="{% url 'account:profile_page' friend_request.from_user.username %}">

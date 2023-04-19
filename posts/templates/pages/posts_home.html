@@ -91,6 +91,7 @@ window.onpopstate = function (e) {
 // }
 
 
+
 function openCatTab(evt, currentCat){
     tablinks = document.getElementsByClassName("nav-tab");
     for (i = 0; i < tablinks.length; i++) {
@@ -110,5 +111,8 @@ function openCatTabforback(currentCat){
     main_tablink = document.getElementById("nav-" + currentCat.toString() + "-tab");
     main_tablink.className += " active";
 }
+
+
+document.addEventListener('DOMContentLoaded', fetchPendingRequests);
 
 </script>

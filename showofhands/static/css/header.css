@@ -430,6 +430,7 @@ body.dark .home .text{
 
 .autocomplete-question {
     font-weight: bold;
+    word-break: break-word;
 }
 
 .autocomplete-username {
@@ -452,4 +453,19 @@ body.dark .home .text{
 	background-color: #eee6f3;
     color:#18191a;
 	text-align: center;
+}
+
+.red-dot {
+    position: absolute;
+    top: 20px;
+    right: 10px;
+    background-color: var(--text-color);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .profile-notification-container {
+    position: relative;
+    display: inline-block;
 }

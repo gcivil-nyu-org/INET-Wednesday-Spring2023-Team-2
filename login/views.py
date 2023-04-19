@@ -21,7 +21,7 @@ from .tokens import account_activation_token, password_reset_token
 from .models import Custom_User
 from chat.models import Connection_Model
 from chat.views import get_friends_info
-from posts.models import Post_Model, Options_Model
+from posts.models import Post_Model, Options_Model, Noti_Model
 
 
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
@@ -700,58 +700,97 @@ def unblock_friend(request, connection_id):
 
 @login_required
 def send_friend_request(request, uid):
-    from_user = request.user
-    to_user = Custom_User.objects.get(id=uid)
+    if is_ajax(request):
+        try:
+            from_user = request.user
+            to_user = Custom_User.objects.get(id=uid)
 
-    if not Connection_Model.connection_exists(Connection_Model, from_user, to_user):
-        friend_request = Connection_Model.objects.create(
-            from_user=from_user, to_user=to_user
-        )
-        # friend_request.save()
-        messages.success(request, f"Friend request sent to {to_user.username}!")
+            if not Connection_Model.connection_exists(
+                Connection_Model, from_user, to_user
+            ):
+                friend_request = Connection_Model.objects.create(
+                    from_user=from_user, to_user=to_user
+                )
+                return JsonResponse(
+                    {"status": f"Friend request sent to {to_user.username}!"}
+                )
 
-    else:
-        friend_request = (
-            Connection_Model.objects.filter(
-                from_user=from_user, to_user=to_user
-            ).first()
-            or Connection_Model.objects.filter(
-                from_user=to_user, to_user=from_user
-            ).first()
-        )
+            else:
+                friend_request = (
+                    Connection_Model.objects.filter(
+                        from_user=from_user, to_user=to_user
+                    ).first()
+                    or Connection_Model.objects.filter(
+                        from_user=to_user, to_user=from_user
+                    ).first()
+                )
 
-        if friend_request.connection_status == "Declined":
-            friend_request.connection_status = "Pending"
-            friend_request.save()
-            messages.success(request, f"Friend request sent to {to_user.username}!")
-
-        else:
-            messages.info(
-                request,
-                f"You have already sent a friend request to {to_user.username}.",
+                if friend_request.connection_status == "Declined":
+                    friend_request.connection_status = "Pending"
+                    friend_request.save()
+                    return JsonResponse(
+                        {"status": f"Friend request sent to {to_user.username}!"}
+                    )
+                else:
+                    return JsonResponse(
+                        {
+                            "status": "error",
+                            "message": "You have already sent a friend request to {to_user.username}.",
+                        }
+                    )
+        except Connection_Model.DoesNotExist:
+            return JsonResponse(
+                {"status": "error", "message": "Friend request not found."}
             )
-
-    return redirect("account:profile_page", username_=to_user.username)
-
-
-@login_required
-def accept_friend_request_profilepage(request, uid):
-    friend_request = Connection_Model.objects.get(id=uid)
-
-    friend_request.connection_status = "Accepted"
-    friend_request.save()
-
-    return redirect("account:profile_page", username_=friend_request.from_user.username)
+    return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
-@login_required
-def decline_friend_request_profilepage(request, uid):
-    friend_request = Connection_Model.objects.get(id=uid)
+# @login_required
+# def accept_friend_request_profilepage(request, uid):
+#     if is_ajax(request):
+#         try:
+#             friend_request = Connection_Model.objects.get(id=uid)
+#             if friend_request.to_user == request.user:
+#                 friend_request.connection_status = "Accepted"
+#                 friend_request.save()
 
-    friend_request.connection_status = "Declined"
-    friend_request.save()
+#                 return JsonResponse({"status": "success"})
+#             else:
+#                 return JsonResponse(
+#                     {
+#                         "status": "error",
+#                         "message": "You don't have permission to accept this friend request.",
+#                     }
+#                 )
+#         except Connection_Model.DoesNotExist:
+#             return JsonResponse(
+#                 {"status": "error", "message": "Friend request not found."}
+#             )
+#     return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
-    return redirect("account:profile_page", username_=friend_request.from_user.username)
+
+# @login_required
+# def decline_friend_request_profilepage(request, uid):
+#     if is_ajax(request):
+#         try:
+#             friend_request = Connection_Model.objects.get(id=uid)
+#             if friend_request.to_user == request.user:
+#                 friend_request.connection_status = "Declined"
+#                 friend_request.save()
+
+#                 return JsonResponse({"status": "success"})
+#             else:
+#                 return JsonResponse(
+#                     {
+#                         "status": "error",
+#                         "message": "You don't have permission to decline this friend request.",
+#                     }
+#                 )
+#         except Connection_Model.DoesNotExist:
+#             return JsonResponse(
+#                 {"status": "error", "message": "Friend request not found."}
+#             )
+#     return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
 @login_required
@@ -831,6 +870,23 @@ def decline_friend_request(request, uid):
                 {"status": "error", "message": "Friend request not found."}
             )
     return JsonResponse({"status": "error", "message": "Not an AJAX request."})
+
+
+@login_required
+def notification_page(request):
+    # Retrieve all notifications for the current user
+    notifications = Noti_Model.objects.filter(recipient=request.user)
+
+    # Mark all unread notifications as read
+    for notification in notifications.filter(is_read=False):
+        notification.is_read = True
+        notification.save()
+
+    context = {
+        "notifications": notifications,
+    }
+
+    return render(request, "pages/notification_page.html", context)
 
 
 # def backactivetab_view(request, username, tab):

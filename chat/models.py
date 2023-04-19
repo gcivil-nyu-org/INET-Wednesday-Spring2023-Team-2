@@ -16,7 +16,7 @@ class Connection_Model(models.Model):
         on_delete=models.CASCADE,
         related_name="connection_requests_received",
     )
-    blocked_by = models.OneToOneField(
+    blocked_by = models.ForeignKey(
         Custom_User,
         on_delete=models.CASCADE,
         related_name="blocked_users",
@@ -51,6 +51,10 @@ class Connection_Model(models.Model):
             cls.objects.filter(from_user=from_user, to_user=to_user).exists()
             or cls.objects.filter(from_user=to_user, to_user=from_user).exists()
         )
+
+    latest_message = models.CharField(max_length=23, blank=True)
+
+    latest_message_time = models.DateTimeField(blank=True, null=True)
 
     def save_checks(self, to_user, from_user):
         if Connection_Model.objects.filter(
@@ -93,6 +97,14 @@ class Connection_Model(models.Model):
                     from_user=from_user, to_user=to_user
                 ).connection_status
                 == "Blocked"
+            ):
+                return True
+
+            elif (
+                self.connection_status
+                == Connection_Model.objects.get(
+                    from_user=from_user, to_user=to_user
+                ).connection_status
             ):
                 return True
 
@@ -172,6 +184,8 @@ class Chat_Message(models.Model):
     message = models.CharField(max_length=10000)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    seen_by = models.ManyToManyField(Custom_User, related_name="messages_seen")
+
     def __str__(self):
         return str(self.id) + " => " + str(self.user) + " " + str(self.timestamp)
 
@@ -190,5 +204,15 @@ class Chat_History(models.Model):
     # history = models.JSONField(blank=True, default=list)
 
     history = models.ManyToManyField(Chat_Message, blank=True)
+
+    def append_latest_message(self, message, timestamp):
+        if len(message) <= 20:
+            self.connection.latest_message = message
+            self.connection.latest_message_time = timestamp
+        else:
+            self.connection.latest_message = message[:20] + "..."
+            self.connection.latest_message_time = timestamp
+
+        self.connection.save()
 
     # REQUIRED_FIELDS = ["user1", "user2", "history"]

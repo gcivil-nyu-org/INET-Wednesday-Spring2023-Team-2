@@ -30,7 +30,13 @@ from django.contrib.auth.decorators import login_required
 import random
 
 
-from .models import Post_Model, Options_Model, Comments_Model, UserPostViewTime
+from .models import (
+    Post_Model,
+    Options_Model,
+    Comments_Model,
+    UserPostViewTime,
+    Noti_Model,
+)
 from .forms import CommentsForm
 from login.models import Custom_User
 
@@ -500,7 +506,6 @@ class CurrentPostURL(APIView):
 ##to show comments
 class CommentsView(View):
     def post(self, request, current_pid):
-        # print("ll", current_pid)
         if is_ajax(request):
             pid = current_pid
             post_ = Post_Model.objects.get(pk=pid)
@@ -514,21 +519,55 @@ class CommentsView(View):
                 ).first()
                 comment_text = comments_form.cleaned_data["comment_text"]
 
-            def check_mention_user_exist(match):
-                username = match.group(1)
-                try:
-                    Custom_User.objects.get(username=username)
-                    return f'<a href="{reverse("account:profile_page", args=[username])}"><strong>@{username}</strong></a>'
-                except Custom_User.DoesNotExist:
-                    return f"@{username}"
+                # Comment notification
+                noti_post = Noti_Model.objects.filter(
+                    recipient=post_.created_by,
+                    sender=request.user,
+                    post_at=post_,
+                    noti_type="Comment",
+                    is_read=False,
+                ).first()
 
-            comment_text = re.sub(r"@(\w+)", check_mention_user_exist, comment_text)
+                if not noti_post:
+                    noti_post = Noti_Model.objects.create(
+                        recipient=post_.created_by,
+                        sender=request.user,
+                        post_at=post_,
+                        noti_type="Comment",
+                    )
 
-            comment_text = comment_text.replace("\r\n", "<br>")
-            comments_.comment_text = comment_text
-            comments_.save()
-            return JsonResponse({"commment": "success"})
+                def check_mention_user_exist(match):
+                    username = match.group(1)
+                    try:
+                        Custom_User.objects.get(username=username)
+                        target = Custom_User.objects.get(username=username)
 
+                        # Mention notification
+                        noti_at = Noti_Model.objects.filter(
+                            recipient=target,
+                            sender=request.user,
+                            post_at=post_,
+                            noti_type="At",
+                            is_read=False,
+                        ).first()
+
+                        if not noti_at:
+                            noti_at = Noti_Model.objects.create(
+                                recipient=target,
+                                sender=request.user,
+                                post_at=post_,
+                                noti_type="At",
+                            )
+
+                        return f'<a href="{reverse("account:profile_page", args=[username])}"><strong>@{username}</strong></a>'
+                    except Custom_User.DoesNotExist:
+                        return f"@{username}"
+
+                comment_text = re.sub(r"@(\w+)", check_mention_user_exist, comment_text)
+                comment_text = comment_text.replace("\r\n", "<br>")
+                comments_.comment_text = comment_text
+                comments_.save()
+                return JsonResponse({"commment": "success"})
         else:
             return HttpResponse("Thou Shall not Enter!!")
 
@@ -600,7 +639,7 @@ def report_post(request, post_id):
                 )
         except Comments_Model.DoesNotExist:
             return JsonResponse({"report": "error"})
-    return JsonResponse({"report": "not ajax"})
+    return HttpResponse("Thou Shall not Enter!!")
 
 
 def delete_comment(request, comment_id):
@@ -614,7 +653,7 @@ def delete_comment(request, comment_id):
             )
         else:
             return JsonResponse({"delete": "fail", "message": "Something went wrong"})
-    return JsonResponse({"delete": "error"})
+    return HttpResponse("Thou Shall not Enter!!")
 
 
 def upvote_comment(request, comment_id):
@@ -650,7 +689,7 @@ def upvote_comment(request, comment_id):
 
         except Comments_Model.DoesNotExist:
             return JsonResponse({"upvote": "error"})
-    return JsonResponse({"upvote": "not ajax"})
+    return HttpResponse("Thou Shall not Enter!!")
 
 
 def downvote_comment(request, comment_id):
@@ -685,7 +724,7 @@ def downvote_comment(request, comment_id):
                 return JsonResponse({"downvote": "already downvoted"})
         except Comments_Model.DoesNotExist:
             return JsonResponse({"downvote": "error"})
-    return JsonResponse({"downvote": "not ajax"})
+    return HttpResponse("Thou Shall not Enter!!")
 
 
 def show_comments_text_api(request, current_pid):
@@ -720,6 +759,7 @@ def show_comments_text_api(request, current_pid):
 
 @login_required
 def create_poll(request):
+    # if request.user.is_authenticated:
     # print("create poll")
     categories = Post_Model.category_list
     if request.method == "POST":
@@ -780,6 +820,9 @@ def create_poll(request):
 
     context = {"form": form, "categories": categories}
     return render(request, "pages/poll_create.html", context)
+
+
+# return HttpResponse("Thou Shall not Enter!!")
 
 
 def get_back_api_view(request, category, pid):

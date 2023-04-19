@@ -126,3 +126,38 @@ class UserPostViewTime(models.Model):
     post = models.ForeignKey(Post_Model, on_delete=models.CASCADE)
 
     view_time = models.DateTimeField(default=datetime.now, blank=True)
+
+
+class Noti_Model(models.Model):
+    recipient = models.ForeignKey(
+        Custom_User, on_delete=models.CASCADE, related_name="notifications"
+    )
+    sender = models.ForeignKey(
+        Custom_User, on_delete=models.CASCADE, related_name="sent_notifications"
+    )
+    post_at = models.ForeignKey(
+        Post_Model, on_delete=models.CASCADE, related_name="post_notifications_at"
+    )
+    noti_type_options = [
+        ("Invalid", "Invalid"),
+        ("At", "At"),
+        ("Comment", "Comment"),
+    ]
+
+    noti_type = models.CharField(
+        max_length=20, choices=noti_type_options, default="Invalid"
+    )
+    created_at = models.DateTimeField(default=datetime.now, blank=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return (
+            "recipient:"
+            + self.recipient.__str__()
+            + "<= sender: "
+            + self.sender.__str__()
+            + "//postid: "
+            + self.post_at.id.__str__()
+            + "//type: "
+            + self.noti_type.__str__()
+        )

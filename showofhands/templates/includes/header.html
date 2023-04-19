@@ -64,14 +64,22 @@
 
                     <li class="nav-link" id="ProfilePageNavB">
                         <a href={% url 'account:profile_page' request.user %}>
+                            <div class="profile-notification-container">
                             <i class='bx bx-user icon'></i>
+                            <span class="red-dot hidden"></span>
+                            </div>
                             <span class="text nav-text">Profile</span>
+                        
+                            
                         </a>
                     </li>
 
                     <li class="nav-link" id="testy" onclick="getPosts();">
-                        <a>
+                        <a href={% url 'account:notifications' %}>
+                            <!-- <div class="profile-notification-container"> -->
                             <i class='bx bx-bell icon'></i>
+                            <!-- <span class="red-dot "></span>
+                            </div> -->
                             <span class="text nav-text">Notifications</span>
                         </a>
                     </li>
@@ -80,7 +88,9 @@
                     <li class="nav-link">
                         <!-- modify link later -->
                         <a href={% url 'connections:chat_page' %}>
-                            <i class='bx bx-chat icon'></i>
+                            <i class='bx bx-chat icon'>
+                                {{ num_new_messages }}
+                            </i>
                             <span class="text nav-text">Chat</span>
                         </a>
                     </li>
@@ -163,14 +173,23 @@
         },
         renderResult: (result, props) => {
             if (result.type === "post") {
+                let optionsString = result.options.join(', ');
+                if (optionsString.length > 30) {
+                    optionsString = optionsString.substring(0, 30) + '...';
+                }
+
+                let resultString = result.question;
+                if (resultString.length > 50) {
+                    resultString = resultString.substring(0, 50) + '...';
+                }
                 return `
                     <a href="#" onclick="handleResultClick('${result.type}', ${result.id})">
                         <ul class="autocomplete-result" data-id="${result.id}">
                             <li class="autocomplete-question">
-                                ${result.question}
+                                ${resultString}
                             </li>
                             <li class="autocomplete-options">
-                                ${result.options.join(', ')}
+                                ${optionsString}
                             </li>
                         </ul>
                     </a>`;
@@ -193,4 +212,6 @@
             window.location.href = `/account/profile/${id}/`;
         }
     }
+
+
 </script>

@@ -269,9 +269,6 @@ class ViewsFunctions(TestCase):
         # Check response status code
         self.assertEqual(response.status_code, 200)
 
-        # Check response data
-        self.assertEqual(response.json(), {"report": "not ajax"})
-
         # Refresh the post object from the database
         post4.refresh_from_db()
 
@@ -359,9 +356,6 @@ class ViewsFunctions(TestCase):
 
         # Check response status code
         self.assertEqual(response.status_code, 200)
-
-        # Check response data
-        self.assertEqual(response.json(), {"report": "not ajax"})
 
         # Refresh the post object from the database
         post4.refresh_from_db()

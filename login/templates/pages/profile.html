@@ -28,9 +28,20 @@
 		<a  class="nav-tab" id="nav-postscreated-tab"   onclick="getPostsCreated();">PostsCreated</a>
 		</div> -->
 	
-		<div class="tab-wrapper">
+		<!-- <div class="tab-wrapper">
 			<a  class="nav-tab" id="nav-friends-tab" onclick="getFriends(1);">Friends</a>
+			<span id="notification-badge" class="hidden"></span>
+		</div> -->
+
+		<div class="tab-wrapper">
+			<a class="nav-tab tab-content" id="nav-friends-tab" onclick="getFriends(1);">
+					Friends
+					{% if edit_access %}
+					<span id="notification-badge" class="hidden"></span>
+					{% endif %}
+			</a>
 		</div>
+
 		<!-- {% if edit_access %}
 		<div class="tab-wrapper">
 			<a class="nav-tab" id="nav-requests-tab" onclick="getFriendRequests();">Friend Requests</a>
@@ -61,16 +72,16 @@
 
 			{% if profile != request.user and not friend_exists and not request_exists %}
 				<p class="friend_request">
-					<a href="{% url 'account:send_friend_request' profile.id %}" class="friend_request_button">Send Friend Request</a>
+					<a class="friend_request_button" onclick="sendFriendRequestProfile('{{ profile.id }}')">Send Friend Request</a>
 				</p>
 			{% endif %}
 
 			{% if profile != request.user and coming_request_exists %}
 			<div class="block-button-container">
 
-                <a class="accept" href="{% url 'account:accept_friend_request_profilepage' coming_request.id %}">Accept</a>
+                <a class="accept" onclick="acceptFriendRequestProfile(event, '{{ coming_request.id }}')">Accept</a>
 
-                <a class="decline" href="{% url 'account:decline_friend_request_profilepage' coming_request.id %}">Decline</a>
+                <a class="decline" onclick="declineFriendRequestProfile(event, '{{ coming_request.id }}')">Decline</a>
             </div> 
 			{% endif %} 
 	
@@ -214,6 +225,9 @@ function getProfileInfo(changeurl){
 	if (Boolean(changeurl)){
 		changeurlProfile("profile");
 	}
+
+	fetchPendingRequests();
+	
 }
 
 
@@ -285,6 +299,8 @@ function getFriends(changeurl) {
             console.log("getFriendRequests error");
         }
     });
+
+	fetchPendingRequests();
 }
 
 
@@ -305,14 +321,14 @@ function changeurlProfile(page)
         });
   }
 
-function acceptFriendRequest(event, requestId) {
+function acceptFriendRequestProfile(event, requestId) {
     event.preventDefault();
     $.ajax({
-        url: "{% url 'account:accept_friend_request' uid=1 %}".replace(/1/, requestId.toString()),
+        url: "{% url 'account:accept_friend_request' uid=1 %}".replace('1', requestId.toString()),
         type: "GET",
         dataType: "json",
         success: function(response) {
-            getFriends();
+            $('.accept').parent().remove();
         },
         error: function(xhr, reported, error) {
             console.log("Error accepting friend request");
@@ -320,20 +336,53 @@ function acceptFriendRequest(event, requestId) {
     });
 }
 
-function declineFriendRequest(event, requestId) {
+function declineFriendRequestProfile(event, requestId) {
     event.preventDefault();
     $.ajax({
-        url: "{% url 'account:decline_friend_request' uid=1 %}".replace(/1/, requestId.toString()),
+        url: "{% url 'account:decline_friend_request' uid=1 %}".replace('1', requestId.toString()),
         type: "GET",
         dataType: "json",
         success: function(response) {
-            getFriends();
+            $('.accept').parent().remove();
         },
         error: function(xhr, reported, error) {
             console.log("Error declining friend request");
         },
     });
 }
+
+function sendFriendRequestProfile(uid) {
+	$.ajax({
+		url: "{% url 'account:send_friend_request' uid=1 %}".replace('1', uid.toString()),
+		type: "GET",
+		dataType: "json",
+		success: function(response) {
+			$('.friend_request_button').parent().remove();
+			showMessage(response.status);
+		},
+		error: function(xhr, reported, error) {
+			// handle error response
+		},
+	});
+}
+
+function showMessage(message) {
+            var $message = $('<div class="report-message">' + message + '</div>');
+            $('body').append($message);
+            $message.css({
+                'position': 'fixed',
+                'top': '0',
+                'left': '0',
+                'width': '100%',
+                'padding': '10px',
+                'text-align': 'center',
+                'background-color': '#eee6f3',
+                'color':'#18191a',
+            });
+            $message.slideDown(300).delay(3000).slideUp(300, function () {
+                $message.remove();
+            });
+        }
 
 
 function getCurrentURL(){
@@ -351,10 +400,47 @@ window.onpopstate = function (e) {
 	map_[current_tab](0);
 }
 
+function fetchPendingRequests() {
+    $.ajax({
+        url: "{% url 'account:friend_requests' request.user.username %}",
+        type: "GET",
+        success: function(resp) {
+            let pendingRequests = $(resp).find('.friend-request-item').length;
+            updateNotificationBadge(pendingRequests);
+        },
+        error: function(resp) {
+            console.log("fetchPendingRequests error");
+        }
+    });
+}
+
+function updateNotificationBadge(requestCount) {
+    const badge = document.getElementById('notification-badge');
+	const redDot = document.querySelector('.red-dot');
+
+	if (badge && redDot) {
+		if (requestCount > 0) {
+			badge.classList.remove('hidden');
+			badge.textContent = requestCount;
+			redDot.classList.remove("hidden");
+		} else {
+			badge.classList.add('hidden');
+			redDot.classList.add("hidden");
+		}
+	}
+
+    
+}
+
+
 
 
 document.getElementById("{{ tab_to_click }}").click();
 
+// document.addEventListener('DOMContentLoaded', () => {
+//   updateNotificationBadge();
+// });
 
+document.addEventListener('DOMContentLoaded', fetchPendingRequests);
 
 </script>

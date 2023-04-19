@@ -17,19 +17,29 @@
                         <input type="text" class="form-control" placeholder="Search...">
                     </div>
                 </div>
-                <ul class="list-unstyled chat-list mt-2 mb-0">
-                    {% for friend in friend_object %}
-                        <li class="cleafix">
-                            <a onclick="openChatBox('{{ friend.1.id }}');">
-                                <img src="{{ friend.0.profile_picture.url }}" alt="avatar">
-                                <div class="about">
-                                    <div class="name">{{ friend.0 }}</div>
-                                    <div class="status"> <i class="fa fa-circle online"></i> online </div>
-                                </div>
-                            </a>
-                        </li>
-                    {% endfor %}
+                <ul class="list-unstyled chat-list mt-2 mb-0" id="chat_connections_list">
+                    <!-- Contents of chat_connections_list.html here -->
                 </ul>
+                <script>
+                    function setActive(li) {
+                        // Remove "active" class from all "li" elements
+                        const lis = document.querySelectorAll('.chat-list li');
+                        for (let i = 0; i < lis.length; i++) {
+                            lis[i].classList.remove('active');
+                        }
+
+                        // Add "active" class to the clicked "li" element
+                        li.classList.add('active');
+                    }
+
+                    // Attach click event listeners to all "li" elements
+                    const lis = document.querySelectorAll('.chat-list li');
+                    for (let i = 0; i < lis.length; i++) {
+                        lis[i].addEventListener('click', function() {
+                            setActive(this);
+                        });
+                    }
+                </script>
             </div>
             <div class="chat" id="chat_box">
                 <!-- Contents of chat_box.html here -->
@@ -40,18 +50,37 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% static '../static/js/chatSocketUniv.js' %}"></script>
 
 <script>
+    // console.log("{{ friend_object.1.1.get_chat_history }}")
+
+    function getConnectionsList(){
+        $.ajax({
+            url: "{% url 'connections:get_chat_connections_list' %}",
+            type: "GET",
+            success: function(resp){
+                $("#chat_connections_list").html(resp);
+            },
+            error: function(resp){
+                console.log("getConnectionsList error");
+            }
+        });
+    }
+
     function openChatBox(connection_id){
         $.ajax({
             url: "{% url 'connections:get_chat_history_box' connection_id=1 %}".replace(/1/, connection_id.toString()),
             type: "GET",
             success: function(resp){
                 $("#chat_box").html(resp);
+                getConnectionsList();
             },
             error: function(resp){
                 console.log("openChatBox error");
             }
         });
     }
+
+    getConnectionsList();
 </script>

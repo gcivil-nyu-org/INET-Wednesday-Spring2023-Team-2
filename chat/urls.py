@@ -13,4 +13,14 @@ urlpatterns = [
         views.chat_history_box_view,
         name="get_chat_history_box",
     ),
+    path(
+        "chat/get_chat_connections_list/",
+        views.get_chat_connections_list_view,
+        name="get_chat_connections_list",
+    ),
+    path(
+        "chat/update_msg_seen/<message_id>/",
+        views.update_msg_seen_view,
+        name="update_msg_seen",
+    ),
 ]
