@@ -120,7 +120,7 @@ def chat_history_box_view(request, connection_id):
 def latest_message_formatting(message):
     if len(message) <= 20:
         return message
-    
+
     return message[:20] + "..."
 
 
@@ -147,8 +147,7 @@ def get_chat_connections_list_view(request):
         for friend in friends:
             try:
                 unread_msg_count = (
-                    friend.get_chat_history
-                    .history.filter(~Q(user=request.user))
+                    friend.get_chat_history.history.filter(~Q(user=request.user))
                     .filter(~Q(seen_by__username__contains=request.user.username))
                     .count()
                 )
@@ -159,7 +158,12 @@ def get_chat_connections_list_view(request):
                 latest_message = None
 
             friend_object.append(
-                (friend.get_friend(request.user), friend, unread_msg_count, latest_message)
+                (
+                    friend.get_friend(request.user),
+                    friend,
+                    unread_msg_count,
+                    latest_message,
+                )
             )
 
         contents = {

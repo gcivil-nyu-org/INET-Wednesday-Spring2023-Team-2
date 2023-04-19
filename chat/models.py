@@ -211,7 +211,7 @@ class Chat_History(models.Model):
         #     self.connection.latest_message_time = timestamp
         # else:
         #     self.connection.latest_message = message[:20] + "..."
-       
+
         self.connection.latest_message_time = timestamp
 
         self.connection.save()
