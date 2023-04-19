@@ -881,7 +881,7 @@ select {
 }
 
 .chat-badge {
-    position: absolute;
+    /* position:inherit; */
     top: 50%;
     right: 50px;
     transform: translateY(-50%);
