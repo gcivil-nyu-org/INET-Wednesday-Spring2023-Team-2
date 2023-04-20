@@ -25,7 +25,7 @@ urlpatterns = [
     ),
     path(
         "chat/get_chat_group_creation/",
-        views.get_chat_group_creation_view,
+        views.Get_Chat_Group_Creation_View.as_view(),
         name="get_chat_group_creation",
     )
 ]

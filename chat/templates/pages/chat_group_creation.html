@@ -30,12 +30,13 @@
                 data: $(this).serialize(),
                 dataType: 'json',
                 success: function(resp){
-                    if(resp.voting === 'success'){
+                    if(resp.group_creation === 'success'){
                         getConnectionsList();
                         document.getElementById("groupChatCreationForm").reset();
                     }
                     else{
-                        alert(resp.voting);
+                        // display error msgs
+                        // alert(resp.group_creation);
                     }
 
                 },

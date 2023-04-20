@@ -95,6 +95,24 @@
         });
     }
 
+    function showMessage(message) {
+        var $message = $('<div class="report-message">' + message + '</div>');
+        $('body').append($message);
+        $message.css({
+            'position': 'fixed',
+            'top': '0',
+            'left': '0',
+            'width': '100%',
+            'padding': '10px',
+            'text-align': 'center',
+            'background-color': '#eee6f3',
+            'color':'#18191a',
+        });
+        $message.slideDown(300).delay(3000).slideUp(300, function () {
+            $message.remove();
+        });
+    }
+
 
     getConnectionsList();
 </script>

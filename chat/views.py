@@ -3,11 +3,16 @@ from django.http import HttpResponse
 from django.template import loader
 from django.views.generic import TemplateView
 from django.db.models import Q
+from django.contrib import messages
+from django.http import JsonResponse
+
 import datetime
+
+from rest_framework.views import APIView
 
 from django.contrib.auth.decorators import login_required
 
-from .models import Chat_History, Connection_Model, Chat_Message
+from .models import Chat_History, Connection_Model, Chat_Message, Group_Connection
 from .forms import Group_Connection_Form
 
 
@@ -194,11 +199,53 @@ def update_msg_seen_view(request, message_id):
         return HttpResponse("Thou Shall not Enter!!")
 
 
+class Get_Chat_Group_Creation_View(APIView):
+    def get(self, request):
+        if is_ajax(request):
+            chat_group_creation_form = Group_Connection_Form()
+            contents = {"chat_group_creation_form": chat_group_creation_form}
+            template = loader.get_template("pages/chat_group_creation.html")
 
-def get_chat_group_creation_view(request):
-    chat_group_creation_form = Group_Connection_Form()
-    contents = {"chat_group_creation_form": chat_group_creation_form}
+            return HttpResponse(template.render(contents, request))
+        
+        else:
+            return HttpResponse("Thou Shall not Enter!!")
 
-    template = loader.get_template("pages/chat_group_creation.html")
+    def post(self, request):
+        if is_ajax(request):
+            chat_group_creation_form = Group_Connection_Form(request.POST)
+            errors_ = ""
 
-    return HttpResponse(template.render(contents, request))
+            if chat_group_creation_form.is_valid():
+                chat_group_creation_form.group_created_by = request.user
+                try:
+                    chat_group_creation_form.save()
+                except:
+                    errors_ = ", ".join(list(chat_group_creation_form.errors.values()))
+                    return JsonResponse({"group_creation": "fail", "errors": errors_})
+                
+                group_connection_model = Group_Connection.objects.get(group_name=chat_group_creation_form["group_name"])
+                try:
+                    Connection_Model.create(group=group_connection_model)
+                except Exception as e:
+                    return JsonResponse({"group_creation": "fail", "errors": str(e.message)})
+
+            else:
+                errors_ = ", ".join(list(chat_group_creation_form.errors.values()))
+                return JsonResponse({"group_creation": "fail", "errors": errors_})
+            
+            return JsonResponse({"group_creation": "success", "errors": errors_})
+
+        else:
+            return HttpResponse("Thou Shall not Enter!!")
+        
+
+
+# def get_chat_group_creation_view(request):
+#     if is_ajax(request):
+#         chat_group_creation_form = Group_Connection_Form()
+#         contents = {"chat_group_creation_form": chat_group_creation_form}
+
+#         template = loader.get_template("pages/chat_group_creation.html")
+
+#         return HttpResponse(template.render(contents, request))
