@@ -17,8 +17,10 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         connections_recieved = user.connection_requests_received.filter(
             connection_status="Accepted"
         )
+        group_connects = user.groups_in.all().values_list('connection_id_for_group', flat=True)
+        group_connects = Connection_Model.objects.filter(connection_status="Accepted", id__in=group_connects)
 
-        connections = connections_sent | connections_recieved
+        connections = connections_sent | connections_recieved | group_connects
 
         self.group_name_map = {}
         async for connection in connections:

@@ -4,9 +4,25 @@ from django.core.exceptions import ValidationError
 
 from datetime import datetime, timedelta
 
+def validate_image_extension(value):
+    allowed_extensions = [".jpg", ".jpeg", ".png"]
+    ext = os.path.splitext(value.name)[-1]
+    if not ext.lower() in allowed_extensions:
+        raise ValidationError(
+            "Only image files with the following extensions are allowed: %s"
+            % ", ".join(allowed_extensions)
+        )
+
+
 # Create your models here.
 
 class Group_Connection(models.Model):
+    # profile_picture = models.ImageField(
+    #     upload_to="Group-Profile-Pictures/",
+    #     default="Group-Profile-Pictures/default-group-profile.jpeg",
+    #     validators=[validate_image_extension],
+    # )
+
     group_name = models.CharField(max_length=50, unique=True)
 
     members = models.ManyToManyField(Custom_User, related_name="groups_in")
@@ -76,7 +92,7 @@ class Connection_Model(models.Model):
         if self.from_user and self.to_user:
             return str(self.id) + " => " + str(self.from_user) + " + " + str(self.to_user)
         else:
-            return self.group.__str__()
+            return str(self.id) + " => " + self.group.__str__()
 
     def get_friend(self, user):
         if self.from_user and self.to_user:
@@ -84,7 +100,7 @@ class Connection_Model(models.Model):
                 return self.to_user
             return self.from_user
         else:
-            return self.group.__str__()
+            return self.group
 
     def connection_exists(cls, from_user, to_user):
         return (

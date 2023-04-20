@@ -32,14 +32,9 @@ def get_friends_info(request):
     connections_recieved = request.user.connection_requests_received.filter(
         connection_status="Accepted"
     )
-    group_connects_ = request.user.groups_in.all()
-    group_connects = group_connects_[0].connection_id_for_group.filter(
-        connection_status="Accepted"
-    )
-    for group_connect_ in group_connects_[1:]:
-        group_connects = group_connects | group_connect_.connection_id_for_group.filter(
-        connection_status="Accepted"
-    )
+    group_connects = request.user.groups_in.all().values_list('connection_id_for_group', flat=True)
+    group_connects = Connection_Model.objects.filter(connection_status="Accepted", id__in=group_connects)
+
     # group_connects = [group_connect.connection_id_for_group for group_connect in group_connects]
 
     friends = connections_sent | connections_recieved | group_connects
@@ -123,10 +118,13 @@ def chat_history_box_view(request, connection_id):
             "friend_name": Connection_Model.objects.get(id=connection_id).get_friend(
                 request.user
             ),
-            "friend_pic": Connection_Model.objects.get(id=connection_id)
-            .get_friend(request.user)
-            .profile_picture.url,
         }
+        ##TODO: fix profile pic in group chat
+        try:
+            contents["friend_pic"] = Connection_Model.objects.get(id=connection_id).get_friend(request.user).profile_picture.url
+        except:
+            contents["friend_pic"] = None
+        
         return HttpResponse(template.render(contents, request))
 
     else:
@@ -171,7 +169,7 @@ def get_chat_connections_list_view(request):
                 latest_message = latest_message_formatting(latest_message)
             except:
                 unread_msg_count = 0
-                latest_message = None
+                latest_message = ""
 
             friend_object.append(
                 (
