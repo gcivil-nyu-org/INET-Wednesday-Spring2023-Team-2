@@ -13,13 +13,11 @@
 
         <br>
 
-        {% comment %}
         <h4>Choose a Group Profile Picture</h4>
         <div class="image-container">
-            <img class="image" src="{{ chat_group_creation_form.profile_picture.url }}" alt="Image">
+            <img class="image" src="{{ chat_group_creation_form.instance.profile_picture.url }}" alt="Image">
         </div>
         {{ chat_group_creation_form.profile_picture }}
-        {% endcomment %}
 
         <button type="submit" value="submit-poll" name="submit-poll" class="submit">Save</button>
 </div>

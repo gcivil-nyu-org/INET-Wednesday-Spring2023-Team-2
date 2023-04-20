@@ -118,12 +118,8 @@ def chat_history_box_view(request, connection_id):
             "friend_name": Connection_Model.objects.get(id=connection_id).get_friend(
                 request.user
             ),
+            "friend_pic": Connection_Model.objects.get(id=connection_id).get_friend(request.user).profile_picture.url
         }
-        ##TODO: fix profile pic in group chat
-        try:
-            contents["friend_pic"] = Connection_Model.objects.get(id=connection_id).get_friend(request.user).profile_picture.url
-        except:
-            contents["friend_pic"] = None
         
         return HttpResponse(template.render(contents, request))
 

@@ -17,11 +17,11 @@ def validate_image_extension(value):
 # Create your models here.
 
 class Group_Connection(models.Model):
-    # profile_picture = models.ImageField(
-    #     upload_to="Group-Profile-Pictures/",
-    #     default="Group-Profile-Pictures/default-group-profile.jpeg",
-    #     validators=[validate_image_extension],
-    # )
+    profile_picture = models.ImageField(
+        upload_to="Group-Profile-Pictures/",
+        default="Group-Profile-Pictures/default-group-profile.jpeg",
+        validators=[validate_image_extension],
+    )
 
     group_name = models.CharField(max_length=50, unique=True)
 
