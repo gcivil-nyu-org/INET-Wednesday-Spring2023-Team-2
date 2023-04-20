@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 
 from datetime import datetime, timedelta
 
+import os
+
 def validate_image_extension(value):
     allowed_extensions = [".jpg", ".jpeg", ".png"]
     ext = os.path.splitext(value.name)[-1]
@@ -33,6 +35,11 @@ class Group_Connection(models.Model):
 
     def __str__(self):
         return self.group_name
+
+    ###USE:
+    ### self._state.adding is True creating
+    ### self._state.adding is False updating
+    
     
     ##TODO: fix  "<Group_Connection: cc>" needs to have a value for field "id" before this many-to-many relationship can be used.
     # def save(self, *args, **kwargs):

@@ -24,7 +24,7 @@ urlpatterns = [
         name="update_msg_seen",
     ),
     path(
-        "chat/get_chat_group_creation/",
+        "chat/get_chat_group_creation/<connection_id>",
         views.Get_Chat_Group_Creation_View.as_view(),
         name="get_chat_group_creation",
     )

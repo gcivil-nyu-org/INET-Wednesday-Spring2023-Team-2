@@ -31,19 +31,24 @@
         if(valid){
             //ajax
             $.ajax({
-                url: "{% url 'connections:get_chat_group_creation' %}",
+                url: "{% url 'connections:get_chat_group_creation' connection_id=connection_id %}",
                 type: "POST",
                 data: $(this).serialize(),
                 dataType: 'json',
                 success: function(resp){
                     if(resp.group_creation === 'success'){
                         getConnectionsList();
-                        document.getElementById("groupChatCreationForm").reset();
+                        if (resp.form_reset){
+                            document.getElementById("groupChatCreationForm").reset();
+                        }
+                        else{
+                            openChatBox(resp.connection_id);
+                        }
                     }
                     else{
                         // display error msgs
-                        alert(resp.errors);
-                        // showMessage(resp.errors);
+                        // alert(resp.errors);
+                        showMessage(resp.errors);
                     }
 
                 },

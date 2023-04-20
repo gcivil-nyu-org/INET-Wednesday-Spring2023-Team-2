@@ -82,9 +82,9 @@
         });
     }
 
-    function openChatGroupCreation(){
+    function openChatGroupCreation(connection_id){
         $.ajax({
-            url: "{% url 'connections:get_chat_group_creation' %}",
+            url: "{% url 'connections:get_chat_group_creation' connection_id=1 %}".replace(/1/, connection_id.toString()),
             type: "GET",
             success: function(resp){
                 $("#chat_box").html(resp);
