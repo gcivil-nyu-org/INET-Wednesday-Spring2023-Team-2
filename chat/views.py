@@ -111,14 +111,21 @@ def chat_history_box_view(request, connection_id):
     ) and is_ajax(request):
         messages = get_chat_history(connection_id)
 
+        connection = Connection_Model.objects.get(id=connection_id)
+
+        is_group = False
+        if connection.group:
+            is_group = True
+
         template = loader.get_template("pages/chat_box.html")
         contents = {
             "connection_id": connection_id,
             "messages": messages,
-            "friend_name": Connection_Model.objects.get(id=connection_id).get_friend(
+            "friend_name": connection.get_friend(
                 request.user
             ),
-            "friend_pic": Connection_Model.objects.get(id=connection_id).get_friend(request.user).profile_picture.url
+            "friend_pic": connection.get_friend(request.user).profile_picture.url,
+            "is_group": is_group,
         }
         
         return HttpResponse(template.render(contents, request))

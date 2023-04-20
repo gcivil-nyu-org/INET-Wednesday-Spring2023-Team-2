@@ -25,13 +25,12 @@
 
 function updateNotificationBadge(requestCount, id) {
     const badge = document.getElementById(id);
-    console.log(badge);
 
 
     if (requestCount > 0) {
         badge.classList.remove('hidden');
         badge.textContent = requestCount;
-        console.log("here");
+
     } else {
         badge.classList.add('hidden');
 

@@ -51,11 +51,20 @@
     document.getElementById('history').insertAdjacentHTML('afterbegin', 
     '<ul class="m-b-0"><li class="clearfix"><div class="message-data-right"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message other-message float-right"> {{ message.message }} </div></li></ul>');
 </script>
+
+{% else %}
+
+{% if is_group %}
+<script>
+    document.getElementById('history').insertAdjacentHTML('afterbegin', 
+    '<ul class="m-b-0"><li class="clearfix"><div class="message-data"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message my-message"> <b>{{ message.user }}:</b> {{ message.message }} </div></li></ul>');
+</script>
 {% else %}
 <script>
     document.getElementById('history').insertAdjacentHTML('afterbegin', 
     '<ul class="m-b-0"><li class="clearfix"><div class="message-data"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message my-message"> {{ message.message }} </div></li></ul>');
 </script>
+{% endif %}
 
 {% if request.user not in message.seen_by.all %}
 <script>
@@ -85,7 +94,12 @@
                 document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data-right"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message other-message float-right"> ' + data.message + ' </div></li>');
             }
             else{
-                document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + data.message + ' </div></li>');
+                if (data.is_group){
+                    document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + '<b>' + data.username + ':</b> ' + data.message + ' </div></li>');
+                }
+                else{
+                    document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + data.message + ' </div></li>');
+                }
             }
         }
     }
