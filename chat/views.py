@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 from django.db.models import Q
 from django.contrib import messages
 from django.http import JsonResponse
+from django.views import View
 
 import datetime
 
@@ -31,8 +32,17 @@ def get_friends_info(request):
     connections_recieved = request.user.connection_requests_received.filter(
         connection_status="Accepted"
     )
+    group_connects_ = request.user.groups_in.all()
+    group_connects = group_connects_[0].connection_id_for_group.filter(
+        connection_status="Accepted"
+    )
+    for group_connect_ in group_connects_[1:]:
+        group_connects = group_connects | group_connect_.connection_id_for_group.filter(
+        connection_status="Accepted"
+    )
+    # group_connects = [group_connect.connection_id_for_group for group_connect in group_connects]
 
-    friends = connections_sent | connections_recieved
+    friends = connections_sent | connections_recieved | group_connects
 
     # returns all connection models that has from_user = user or to_user=user
     return friends
@@ -199,7 +209,7 @@ def update_msg_seen_view(request, message_id):
         return HttpResponse("Thou Shall not Enter!!")
 
 
-class Get_Chat_Group_Creation_View(APIView):
+class Get_Chat_Group_Creation_View(View):
     def get(self, request):
         if is_ajax(request):
             chat_group_creation_form = Group_Connection_Form()
@@ -217,21 +227,31 @@ class Get_Chat_Group_Creation_View(APIView):
             errors_ = ""
 
             if chat_group_creation_form.is_valid():
-                chat_group_creation_form.group_created_by = request.user
-                try:
-                    chat_group_creation_form.save()
-                except:
-                    errors_ = ", ".join(list(chat_group_creation_form.errors.values()))
-                    return JsonResponse({"group_creation": "fail", "errors": errors_})
+                # chat_group_creation_form.group_created_by = request.user
+                # try:
+                #     chat_group_creation_form.save()
+                # except:
+                #     errors_ = ", ".join(list(chat_group_creation_form.errors.values()))
+                #     print("hello", errors_)
+                #     return JsonResponse({"group_creation": "fail", "errors": errors_})
+                # group_ = chat_group_creation_form.save(commit=False)
+                # group_.created_by = request.user
+                # group_.save()
+
+                group_ = Group_Connection.objects.create(group_created_by=request.user, 
+                                                 group_name=chat_group_creation_form.cleaned_data["group_name"])
+                group_.members.set(chat_group_creation_form.cleaned_data["members"])
                 
-                group_connection_model = Group_Connection.objects.get(group_name=chat_group_creation_form["group_name"])
+                # group_connection_model = Group_Connection.objects.get(group_name=chat_group_creation_form["group_name"])
                 try:
-                    Connection_Model.create(group=group_connection_model)
+                    Connection_Model.objects.create(group=group_)
                 except Exception as e:
-                    return JsonResponse({"group_creation": "fail", "errors": str(e.message)})
+                    print("hi", e)
+                    return JsonResponse({"group_creation": "fail", "errors": str(e)})
 
             else:
                 errors_ = ", ".join(list(chat_group_creation_form.errors.values()))
+                print("how", errors_)
                 return JsonResponse({"group_creation": "fail", "errors": errors_})
             
             return JsonResponse({"group_creation": "success", "errors": errors_})

@@ -18,12 +18,16 @@ class Group_Connection(models.Model):
     def __str__(self):
         return self.group_name
     
-    def save(self, *args, **kwargs):
-        #check max number of members <= 15
-        if len(self.members) > 15:
-            raise ValidationError("A Group can only have a max of 15 members!!")
-        
-        super(Group_Connection, self).save(*args, **kwargs)
+    ##TODO: fix  "<Group_Connection: cc>" needs to have a value for field "id" before this many-to-many relationship can be used.
+    # def save(self, *args, **kwargs):
+    #     if self.members:
+    #         #check max number of members <= 15
+    #         if len(self.members) > 15:
+    #             raise ValidationError("A Group can only have a max of 15 members!!")
+    #         else:
+    #             super(Group_Connection, self).save(*args, **kwargs)
+    #     else:  
+    #         super(Group_Connection, self).save(*args, **kwargs)
 
 
 
