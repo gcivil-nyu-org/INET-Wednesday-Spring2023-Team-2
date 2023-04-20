@@ -251,23 +251,26 @@ class Get_Chat_Group_Creation_View(View):
                 # group_ = chat_group_creation_form.save(commit=False)
                 # group_.created_by = request.user
                 # group_.save()
-                if group_:
-                    group_.group_name = chat_group_creation_form.cleaned_data["group_name"]
-                    group_.members.set(chat_group_creation_form.cleaned_data["members"])
-                    group_.save()
 
-                else:
-                    group_ = Group_Connection.objects.create(group_created_by=request.user, 
-                                                    group_name=chat_group_creation_form.cleaned_data["group_name"])
-                    group_.members.set(chat_group_creation_form.cleaned_data["members"])
-                    group_.save()
+                try:
+                    if group_:
+                        group_.group_name = chat_group_creation_form.cleaned_data["group_name"]
+                        group_.members.set(chat_group_creation_form.cleaned_data["members"])
+                        group_.save()
+
+                    else:
+                        group_ = Group_Connection.objects.create(group_created_by=request.user, 
+                                                        group_name=chat_group_creation_form.cleaned_data["group_name"])
+                        group_.members.set(chat_group_creation_form.cleaned_data["members"])
+                        group_.save()
+                except Exception as e:
+                    return JsonResponse({"group_creation": "fail", "errors": str(e), "form_reset": form_reset, "connection_id": connection_id})
                 
                 # group_connection_model = Group_Connection.objects.get(group_name=chat_group_creation_form["group_name"])
                 try:
                     if form_reset:
                         Connection_Model.objects.create(group=group_)
                 except Exception as e:
-                    print("hi", e)
                     return JsonResponse({"group_creation": "fail", "errors": str(e), "form_reset": form_reset, "connection_id": connection_id})
 
             else:

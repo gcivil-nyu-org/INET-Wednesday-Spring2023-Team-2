@@ -36,10 +36,18 @@ class Group_Connection(models.Model):
     def __str__(self):
         return self.group_name
 
+    def save(self, *args, **kwargs):
+        if Custom_User.objects.filter(
+                    username = self.group_name
+                ).exists():
+            raise ValidationError("There's a username with the entered Group Name. Must be Unique!!")
+        else:
+            super(Group_Connection, self).save(*args, **kwargs)
+
     ###USE:
     ### self._state.adding is True creating
     ### self._state.adding is False updating
-    
+
     
     ##TODO: fix  "<Group_Connection: cc>" needs to have a value for field "id" before this many-to-many relationship can be used.
     # def save(self, *args, **kwargs):

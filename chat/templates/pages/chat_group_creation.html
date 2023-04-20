@@ -39,9 +39,11 @@
                     if(resp.group_creation === 'success'){
                         getConnectionsList();
                         if (resp.form_reset){
+                            showMessage("Group Created Successfully!");
                             document.getElementById("groupChatCreationForm").reset();
                         }
                         else{
+                            showMessage("Edits Saved!");
                             openChatBox(resp.connection_id);
                         }
                     }
