@@ -82,5 +82,19 @@
         });
     }
 
+    function openChatGroupCreation(){
+        $.ajax({
+            url: "{% url 'connections:get_chat_group_creation' %}",
+            type: "GET",
+            success: function(resp){
+                $("#chat_box").html(resp);
+            },
+            error: function(resp){
+                console.log("openChatGroupCreation error");
+            }
+        });
+    }
+
+
     getConnectionsList();
 </script>

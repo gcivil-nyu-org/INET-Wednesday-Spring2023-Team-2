@@ -23,4 +23,9 @@ urlpatterns = [
         views.update_msg_seen_view,
         name="update_msg_seen",
     ),
+    path(
+        "chat/get_chat_group_creation/",
+        views.get_chat_group_creation_view,
+        name="get_chat_group_creation",
+    )
 ]

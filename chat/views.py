@@ -191,3 +191,9 @@ def update_msg_seen_view(request, message_id):
 
     else:
         return HttpResponse("Thou Shall not Enter!!")
+
+
+
+def get_chat_group_creation_view(request):
+    
+    return
