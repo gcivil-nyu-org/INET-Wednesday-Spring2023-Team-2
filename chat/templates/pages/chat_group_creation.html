@@ -1,4 +1,50 @@
 {% load static %}
 <div>
-    {{ chat_group_creation_form.as_p }}
+    <form method = "POST" id="groupChatCreationForm">
+        {% csrf_token %}
+
+        <h4>Group Name</h4>
+        {{ chat_group_creation_form.group_name }}
+
+        <br>
+
+        <h4>Group Members</h4>
+        {{ chat_group_creation_form.members }}
+
+        <br>
+
+        <button type="submit" value="submit-poll" name="submit-poll" class="submit">Save</button>
 </div>
+
+
+<script>
+    $('#groupChatCreationForm').submit(function(){
+        var $this = $(this);
+        var valid = true;
+    
+        if(valid){
+            //ajax
+            $.ajax({
+                url: "{% url connections:get_chat_group_creation %}",
+                type: "POST",
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(resp){
+                    if(resp.voting === 'success'){
+                        getConnectionsList();
+                        document.getElementById("groupChatCreationForm").reset();
+                    }
+                    else{
+                        alert(resp.voting);
+                    }
+
+                },
+                error: function(resp){
+                    console.log("chat group creation error");
+                }
+            });
+        }
+        return false;
+    });
+
+</script>
