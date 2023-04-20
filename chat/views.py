@@ -8,6 +8,7 @@ import datetime
 from django.contrib.auth.decorators import login_required
 
 from .models import Chat_History, Connection_Model, Chat_Message
+from .forms import Group_Connection_Form
 
 
 # to check if request is form ajax
@@ -195,5 +196,9 @@ def update_msg_seen_view(request, message_id):
 
 
 def get_chat_group_creation_view(request):
-    
-    return
+    chat_group_creation_form = Group_Connection_Form()
+    contents = {"chat_group_creation_form": chat_group_creation_form}
+
+    template = loader.get_template("pages/chat_group_creation.html")
+
+    return HttpResponse(template.render(contents, request))

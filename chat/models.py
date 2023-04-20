@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 # Create your models here.
 
 class Group_Connection(models.Model):
-    group_name = models.CharField(max_length=50)
+    group_name = models.CharField(max_length=50, unique=True)
 
     members = models.ManyToManyField(Custom_User, related_name="groups_in")
 
@@ -17,6 +17,14 @@ class Group_Connection(models.Model):
 
     def __str__(self):
         return self.group_name
+    
+    def save(self, *args, **kwargs):
+        #check max number of members <= 15
+        if len(self.members) > 15:
+            raise ValidationError("A Group can only have a max of 15 members!!")
+        
+        super(Group_Connection, self).save(*args, **kwargs)
+
 
 
 class Connection_Model(models.Model):
