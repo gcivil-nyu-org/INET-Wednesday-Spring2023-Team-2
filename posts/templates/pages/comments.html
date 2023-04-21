@@ -145,7 +145,7 @@
             event.preventDefault();
             var result = confirm("Do you want to delete your comment?");
             if (!result) {
-                alert("Comment gets to live another day!")
+                showMessage("Comment gets to live another day!")
             }
             else {
                 $.ajax({
