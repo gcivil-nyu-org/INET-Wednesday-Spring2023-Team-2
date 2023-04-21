@@ -17,8 +17,12 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         connections_recieved = user.connection_requests_received.filter(
             connection_status="Accepted"
         )
-        group_connects = user.groups_in.all().values_list('connection_id_for_group', flat=True)
-        group_connects = Connection_Model.objects.filter(connection_status="Accepted", id__in=group_connects)
+        group_connects = user.groups_in.all().values_list(
+            "connection_id_for_group", flat=True
+        )
+        group_connects = Connection_Model.objects.filter(
+            connection_status="Accepted", id__in=group_connects
+        )
 
         connections = connections_sent | connections_recieved | group_connects
 
@@ -63,21 +67,14 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
     def store_info_db(self, message, username, connection_id, timestamp):
         connection = Connection_Model.objects.get(id=connection_id)
         try:
-            chat_history = Chat_History.objects.get(
-                connection=connection
-            )
+            chat_history = Chat_History.objects.get(connection=connection)
         except (KeyError, Chat_History.DoesNotExist):
-            chat_history = Chat_History.objects.create(
-                connection=connection
-            )
+            chat_history = Chat_History.objects.create(connection=connection)
 
         # chat_history.history.append({"message": message,"username": username, "timestamp": timestamp},)
         # chat_history.save()
 
-        if (
-            connection.connection_status
-            == "Blocked"
-        ):
+        if connection.connection_status == "Blocked":
             async_to_sync(self.blockclose)(connection_id)
             return False, None
 

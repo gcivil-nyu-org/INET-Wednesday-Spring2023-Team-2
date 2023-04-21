@@ -37,5 +37,5 @@ urlpatterns = [
         "chat/exit_group/<connection_id>/",
         views.exit_group_view,
         name="exit_group",
-    )
+    ),
 ]

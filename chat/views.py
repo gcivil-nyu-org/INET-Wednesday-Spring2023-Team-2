@@ -32,8 +32,12 @@ def get_friends_info(request):
     connections_recieved = request.user.connection_requests_received.filter(
         connection_status="Accepted"
     )
-    group_connects = request.user.groups_in.all().values_list('connection_id_for_group', flat=True)
-    group_connects = Connection_Model.objects.filter(connection_status="Accepted", id__in=group_connects)
+    group_connects = request.user.groups_in.all().values_list(
+        "connection_id_for_group", flat=True
+    )
+    group_connects = Connection_Model.objects.filter(
+        connection_status="Accepted", id__in=group_connects
+    )
 
     # group_connects = [group_connect.connection_id_for_group for group_connect in group_connects]
 
@@ -121,13 +125,11 @@ def chat_history_box_view(request, connection_id):
         contents = {
             "connection_id": connection_id,
             "messages": messages,
-            "friend_name": connection.get_friend(
-                request.user
-            ),
+            "friend_name": connection.get_friend(request.user),
             "friend_pic": connection.get_friend(request.user).profile_picture.url,
             "is_group": is_group,
         }
-        
+
         return HttpResponse(template.render(contents, request))
 
     else:
@@ -217,12 +219,15 @@ class Get_Chat_Group_Creation_View(View):
             if int(connection_id):
                 group_ = Connection_Model.objects.get(id=connection_id).group
                 chat_group_creation_form = Group_Connection_Form(instance=group_)
-            
-            contents = {"chat_group_creation_form": chat_group_creation_form, "connection_id": connection_id}
+
+            contents = {
+                "chat_group_creation_form": chat_group_creation_form,
+                "connection_id": connection_id,
+            }
             template = loader.get_template("pages/chat_group_creation.html")
 
             return HttpResponse(template.render(contents, request))
-        
+
         else:
             return HttpResponse("Thou Shall not Enter!!")
 
@@ -236,7 +241,9 @@ class Get_Chat_Group_Creation_View(View):
                 print("here")
                 form_reset = False
                 group_ = Connection_Model.objects.get(id=connection_id).group
-                chat_group_creation_form = Group_Connection_Form(request.POST, instance=group_)
+                chat_group_creation_form = Group_Connection_Form(
+                    request.POST, instance=group_
+                )
             else:
                 connection_id = None
 
@@ -254,45 +261,80 @@ class Get_Chat_Group_Creation_View(View):
 
                 try:
                     if group_:
-                        group_.group_name = chat_group_creation_form.cleaned_data["group_name"]
-                        group_.members.set(chat_group_creation_form.cleaned_data["members"])
+                        group_.group_name = chat_group_creation_form.cleaned_data[
+                            "group_name"
+                        ]
+                        group_.members.set(
+                            chat_group_creation_form.cleaned_data["members"]
+                        )
                         group_.save()
 
                     else:
-                        group_ = Group_Connection.objects.create(group_created_by=request.user, 
-                                                        group_name=chat_group_creation_form.cleaned_data["group_name"])
-                        group_.members.set(chat_group_creation_form.cleaned_data["members"])
+                        group_ = Group_Connection.objects.create(
+                            group_created_by=request.user,
+                            group_name=chat_group_creation_form.cleaned_data[
+                                "group_name"
+                            ],
+                        )
+                        group_.members.set(
+                            chat_group_creation_form.cleaned_data["members"]
+                        )
                         group_.save()
                 except Exception as e:
-                    return JsonResponse({"group_creation": "fail", "errors": str(e), "form_reset": form_reset, "connection_id": connection_id})
-                
+                    return JsonResponse(
+                        {
+                            "group_creation": "fail",
+                            "errors": str(e),
+                            "form_reset": form_reset,
+                            "connection_id": connection_id,
+                        }
+                    )
+
                 # group_connection_model = Group_Connection.objects.get(group_name=chat_group_creation_form["group_name"])
                 try:
                     if form_reset:
                         Connection_Model.objects.create(group=group_)
                 except Exception as e:
-                    return JsonResponse({"group_creation": "fail", "errors": str(e), "form_reset": form_reset, "connection_id": connection_id})
+                    return JsonResponse(
+                        {
+                            "group_creation": "fail",
+                            "errors": str(e),
+                            "form_reset": form_reset,
+                            "connection_id": connection_id,
+                        }
+                    )
 
             else:
                 print(chat_group_creation_form.errors.values())
                 errors_ = ", ".join(list(chat_group_creation_form.errors.values())[0])
                 print("how", errors_)
-                return JsonResponse({"group_creation": "fail", "errors": errors_, "form_reset": form_reset, "connection_id": connection_id})
-            
-            return JsonResponse({"group_creation": "success", "errors": errors_, "form_reset": form_reset, "connection_id": connection_id})
+                return JsonResponse(
+                    {
+                        "group_creation": "fail",
+                        "errors": errors_,
+                        "form_reset": form_reset,
+                        "connection_id": connection_id,
+                    }
+                )
+
+            return JsonResponse(
+                {
+                    "group_creation": "success",
+                    "errors": errors_,
+                    "form_reset": form_reset,
+                    "connection_id": connection_id,
+                }
+            )
 
         else:
             return HttpResponse("Thou Shall not Enter!!")
-        
 
 
 def delete_group_view(request, connection_id):
     if is_ajax(request):
         group_ = Connection_Model.objects.get(id=connection_id).group
         group_.delete()
-        return JsonResponse(
-                {"delete": "success", "message": f"{group_} Terminated!"}
-            )
+        return JsonResponse({"delete": "success", "message": f"{group_} Terminated!"})
     else:
         return HttpResponse("Thou Shall not Enter!!")
 
@@ -303,7 +345,7 @@ def exit_group_view(request, connection_id):
         group_.members.remove(request.user)
         group_.save()
         return JsonResponse(
-                {"delete": "success", "message": f"{group_} wishes you Farewell!"}
-            )
+            {"delete": "success", "message": f"{group_} wishes you Farewell!"}
+        )
     else:
         return HttpResponse("Thou Shall not Enter!!")
