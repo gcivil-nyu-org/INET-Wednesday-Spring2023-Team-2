@@ -286,11 +286,12 @@ class Get_Chat_Group_Creation_View(View):
         
 
 
-# def get_chat_group_creation_view(request):
-#     if is_ajax(request):
-#         chat_group_creation_form = Group_Connection_Form()
-#         contents = {"chat_group_creation_form": chat_group_creation_form}
-
-#         template = loader.get_template("pages/chat_group_creation.html")
-
-#         return HttpResponse(template.render(contents, request))
+def delete_group_view(request, connection_id):
+    if is_ajax(request):
+        group_ = Connection_Model.objects.get(id=connection_id).group
+        group_.delete()
+        return JsonResponse(
+                {"delete": "success", "message": "Group Terminated!"}
+            )
+    else:
+        return HttpResponse("Thou Shall not Enter!!")

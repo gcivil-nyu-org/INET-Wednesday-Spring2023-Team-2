@@ -114,5 +114,36 @@
     }
 
 
+    function deleteChatGroup(connection_id) {
+        var result = confirm("Are you sure you want to delete this group?");
+        if (!result) {
+            showMessage("The Group survives!!")
+        }
+        else {
+            $.ajax({
+                url: "{% url 'connections:delete_group' connection_id=1 %}".replace(/1/, connection_id.toString()),
+                type: "GET",
+                success: function (response) {
+                    if (response.delete === "success") {
+                        getConnectionsList();
+                        showMessage(response.message);
+                        // openChatBox(response.connection_id);
+                        resetChatBox();
+                    } else {
+                        showMessage("Something went wrong")
+                    }
+                },
+                error: function () {
+                    console.log("deleteChatGroup error");
+                },
+            });
+        }
+    }
+
+    function resetChatBox(){
+        document.getElementById('chat_box').innerHTML = "";
+    }
+
+
     getConnectionsList();
 </script>
