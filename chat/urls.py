@@ -33,4 +33,9 @@ urlpatterns = [
         views.delete_group_view,
         name="delete_group",
     ),
+    path(
+        "chat/exit_group/<connection_id>/",
+        views.exit_group_view,
+        name="exit_group",
+    )
 ]

@@ -291,7 +291,19 @@ def delete_group_view(request, connection_id):
         group_ = Connection_Model.objects.get(id=connection_id).group
         group_.delete()
         return JsonResponse(
-                {"delete": "success", "message": "Group Terminated!"}
+                {"delete": "success", "message": f"{group_} Terminated!"}
+            )
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
+
+
+def exit_group_view(request, connection_id):
+    if is_ajax(request):
+        group_ = Connection_Model.objects.get(id=connection_id).group
+        group_.members.remove(request.user)
+        group_.save()
+        return JsonResponse(
+                {"delete": "success", "message": f"{group_} wishes you Farewell!"}
             )
     else:
         return HttpResponse("Thou Shall not Enter!!")
