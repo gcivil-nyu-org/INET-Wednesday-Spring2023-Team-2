@@ -128,6 +128,7 @@ def chat_history_box_view(request, connection_id):
             "friend_name": connection.get_friend(request.user),
             "friend_pic": connection.get_friend(request.user).profile_picture.url,
             "is_group": is_group,
+            "connection": connection,
         }
 
         return HttpResponse(template.render(contents, request))

@@ -14,16 +14,20 @@
                 <small>Online</small>
             </div>
         </div>
+        {% if is_group %}
         <div class="col-xs-6 col-sm-4 col-lg-2">
             <a onclick="openChatGroupCreation('{{ connection_id }}');">Edit</a>
         </div>
         <!-- show only if request.user == group.created_by / group.admin -->
+        {% if request.user == connection.group.created.by %}
         <div class="col-xs-6 col-sm-4 col-lg-2">
             <a onclick="deleteChatGroup('{{ connection_id }}');">Delete</a>
         </div>
+        {% endif %}
         <div class="col-xs-6 col-sm-4 col-lg-2">
             <a onclick="exitChatGroup('{{ connection_id }}');">Exit</a>
         </div>
+        {% endif %}
     </div>
 </div>
 <div class="chat-message clearfix">
