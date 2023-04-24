@@ -949,3 +949,21 @@ select {
 	color: #3366ff;
 
 }
+.history-option-text {
+	font-size: 16px;
+}
+.history-option-text.color1 {
+    color: #AED9E0;
+}
+
+.history-option-text.color2 {
+    color: #8CB369;
+}
+
+.history-option-text.color3 {
+    color: #D7A5E4;
+}
+
+.history-option-text.color4 {
+    color: #5D6DD3;
+}
