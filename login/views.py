@@ -442,13 +442,40 @@ class UserHistory(APIView):
             print("ajax request")
 
             user_ = Custom_User.objects.get(username=username_)
-            content = user_.posts_view_time.all().order_by("-view_time")
-            # TODO : ADD OPTION HERE
 
-            # .order_by('-view_time') order by relation field here
+
+
+
+            content = user_.posts_view_time.all().order_by(
+                "-view_time"
+            )  # .order_by('-view_time') order by relation field here
             # print(content)
+
+            history_results = []
+
+            for post in content:
+                options = []
+
+                for option in Options_Model.objects.filter(question=post):
+                    options.append(
+                        {
+                            "choice_text": option.choice_text,
+                        }
+                    )
+
+                history_results.append(
+                    {
+                        "id": post.id,
+                        "question_text": post.question_text,
+                        "category": post.category,
+                        "options": options,
+                    }
+                )
+
+
+
             return Response(
-                {"posts": content}, template_name="pages/profile_history.html"
+                {"posts": history_results}, template_name="pages/profile_history.html"
             )
 
         else:

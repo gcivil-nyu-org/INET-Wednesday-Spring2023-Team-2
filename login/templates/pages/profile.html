@@ -362,6 +362,7 @@ function sendFriendRequestProfile(uid) {
 		},
 		error: function(xhr, reported, error) {
 			// handle error response
+			showMessage(response.message);
 		},
 	});
 }
