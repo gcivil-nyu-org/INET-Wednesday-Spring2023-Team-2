@@ -975,3 +975,9 @@ select {
 .history-option-text.color4 {
     color: #5D6DD3;
 }
+
+.noti-post-title {
+	color: blue;
+	font-weight: bold;
+	font-size: 15px;
+}

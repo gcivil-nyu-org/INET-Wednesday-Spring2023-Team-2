@@ -23,27 +23,27 @@
         <ul>
           {% for noti in notifications reversed %}
               {% if noti.notification.noti_type == 'At' %}
-                <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> mentioned you in a post: <a href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
-                  {{ noti.post_id}} => {{ noti.question_text}} 
-                  <br>
+                <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> mentioned you in a post: <a class = "noti-post-title" href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
+                  {{ noti.post_id}} => {{ noti.question_text}}  :
+
                   <a class = "history-options">
                   {% for option in noti.options %}
-                      {{ option.choice_text }}{% if not forloop.last %}, {% endif %}
+                  <span class="history-option-text {% cycle 'color1' 'color2' 'color3' 'color4' %}">{{ option.choice_text }}</span>{% if not forloop.last %},{% endif %}
                   {% endfor %}
                   </a>
                 </a>
               {% elif noti.notification.noti_type == 'Comment' %}
-                <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> commented on your post: <a href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
-                  {{ noti.post_id}} => {{ noti.question_text }}
-                  <br>
+                <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> commented on your post: <a class = "noti-post-title" href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
+                  {{ noti.post_id}} => {{ noti.question_text }} :
+
                   <a class = "history-options">
                   {% for option in noti.options %}
-                      {{ option.choice_text }}{% if not forloop.last %}, {% endif %}
+                  <span class="history-option-text {% cycle 'color1' 'color2' 'color3' 'color4' %}">{{ option.choice_text }}</span>{% if not forloop.last %},{% endif %}
                   {% endfor %}
                   </a>
                 </a>
               {% endif %}
-              <span class="text-muted">{{ noti.notification.created_at }}</span>
+              <span class="text-muted">at {{ noti.notification.created_at }}</span>
             </li><br>
           {% endfor %}
         </ul>
