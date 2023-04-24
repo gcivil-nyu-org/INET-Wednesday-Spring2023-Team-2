@@ -923,13 +923,36 @@ def notification_page(request):
     # Retrieve all notifications for the current user
     notifications = Noti_Model.objects.filter(recipient=request.user)
 
+    notifications_results = []
+
+    for notification in notifications:
+        post = notification.post_at
+        options = []
+
+        for option in Options_Model.objects.filter(question=post):
+            options.append(
+                {
+                    "choice_text": option.choice_text,
+                }
+            )
+
+        notifications_results.append(
+            {
+                "post_id": post.id,
+                "notification": notification,
+                "question_text": post.question_text,
+                "category": post.category,
+                "options": options,
+            }
+        )
+
     # Mark all unread notifications as read
     for notification in notifications.filter(is_read=False):
         notification.is_read = True
         notification.save()
 
     context = {
-        "notifications": notifications,
+        "notifications": notifications_results,
     }
 
     return render(request, "pages/notification_page.html", context)
