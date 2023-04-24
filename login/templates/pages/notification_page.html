@@ -23,9 +23,9 @@
         <ul>
           {% for noti in notifications reversed %}
               {% if noti.noti_type == 'At' %}
-                <strong><a href="{% url 'account:profile_page' noti.sender.username %}">{{ noti.sender }}</a></strong> mentioned you in a post: <a href="{% url 'posts:post_generation_page' category='all' pid=noti.post_at.id %}">{{ noti.post_at }}</a>
+                <strong><a href="{% url 'account:profile_page' noti.sender.username %}">{{ noti.sender }}</a></strong> mentioned you in a post: <a class = "noti-link-post" href="{% url 'posts:post_generation_page' category='all' pid=noti.post_at.id %}">{{ noti.post_at }}</a>
               {% elif noti.noti_type == 'Comment' %}
-                <strong><a href="{% url 'account:profile_page' noti.sender.username %}">{{ noti.sender }}</a></strong> commented on your post: <a href="{% url 'posts:post_generation_page' category='all' pid=noti.post_at.id %}">{{ noti.post_at }}</a>
+                <strong><a href="{% url 'account:profile_page' noti.sender.username %}">{{ noti.sender }}</a></strong> commented on your post: <a class = "noti-link-post" href="{% url 'posts:post_generation_page' category='all' pid=noti.post_at.id %}">{{ noti.post_at }}</a>
               {% endif %}
               <span class="text-muted">{{ noti.created_at }}</span>
             </li><br>

@@ -461,6 +461,11 @@ select {
 	padding-top: 50px;
 }
 
+ .pfp-username {
+	font-size: 15px !important; 
+	text-align: center;
+}
+
 .user-history-container2,
 .polls-created-container {
   width: 50%;
@@ -921,7 +926,8 @@ select {
   }
 
   .text-muted {
-	font-size: 14px;
+	font-size: 11px;
+	color:grey;
   }
 
   .notif-container {
@@ -935,4 +941,11 @@ select {
 	min-height: 75%;
 	/* max-height: 75%; */
 	color:#222;
+}
+
+
+.noti-link-post {
+	font-size: 15px;
+	color: #3366ff;
+
 }

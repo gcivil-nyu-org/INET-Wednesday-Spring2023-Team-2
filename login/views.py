@@ -442,9 +442,10 @@ class UserHistory(APIView):
             print("ajax request")
 
             user_ = Custom_User.objects.get(username=username_)
-            content = user_.posts_view_time.all().order_by(
-                "-view_time"
-            )  # .order_by('-view_time') order by relation field here
+            content = user_.posts_view_time.all().order_by("-view_time")
+            # TODO : ADD OPTION HERE
+
+            # .order_by('-view_time') order by relation field here
             # print(content)
             return Response(
                 {"posts": content}, template_name="pages/profile_history.html"
