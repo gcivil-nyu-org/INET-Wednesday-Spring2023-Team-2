@@ -2,7 +2,13 @@
 {% for post_ in posts %}
 
 <div>
-    <li><a href="{% url 'posts:post_generation_page' category='all' pid=post_.post.id %}">{{ post_.question_text }}</a></li>
+    <li><a href="{% url 'posts:post_generation_page' category='all' pid=post_.id %}">{{ post_.id }}=>{{ post_.question_text }}
+        <br>
+        {% for option in post_.options %}
+            {{ option.choice_text }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+
+    </a></li>
 </div>
 
 {% endfor %}

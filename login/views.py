@@ -443,9 +443,6 @@ class UserHistory(APIView):
 
             user_ = Custom_User.objects.get(username=username_)
 
-
-
-
             content = user_.posts_view_time.all().order_by(
                 "-view_time"
             )  # .order_by('-view_time') order by relation field here
@@ -453,7 +450,8 @@ class UserHistory(APIView):
 
             history_results = []
 
-            for post in content:
+            for con in content:
+                post = con.post
                 options = []
 
                 for option in Options_Model.objects.filter(question=post):
@@ -471,8 +469,6 @@ class UserHistory(APIView):
                         "options": options,
                     }
                 )
-
-
 
             return Response(
                 {"posts": history_results}, template_name="pages/profile_history.html"
@@ -498,8 +494,30 @@ class UserPostsCreated(APIView):
                 "-created_time"
             )  # .order_by('-view_time') order by relation field here
 
+            created_results = []
+
+            for post in content:
+                options = []
+
+                for option in Options_Model.objects.filter(question=post):
+                    options.append(
+                        {
+                            "choice_text": option.choice_text,
+                        }
+                    )
+
+                created_results.append(
+                    {
+                        "id": post.id,
+                        "question_text": post.question_text,
+                        "category": post.category,
+                        "options": options,
+                    }
+                )
+
             return Response(
-                {"posts": content}, template_name="pages/profile_posts_created.html"
+                {"posts": created_results},
+                template_name="pages/profile_posts_created.html",
             )
 
         else:
