@@ -26,17 +26,21 @@
                 <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> mentioned you in a post: <a href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
                   {{ noti.post_id}} => {{ noti.question_text}} 
                   <br>
+                  <a class = "history-options">
                   {% for option in noti.options %}
                       {{ option.choice_text }}{% if not forloop.last %}, {% endif %}
                   {% endfor %}
+                  </a>
                 </a>
               {% elif noti.notification.noti_type == 'Comment' %}
                 <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> commented on your post: <a href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
                   {{ noti.post_id}} => {{ noti.question_text }}
                   <br>
+                  <a class = "history-options">
                   {% for option in noti.options %}
                       {{ option.choice_text }}{% if not forloop.last %}, {% endif %}
                   {% endfor %}
+                  </a>
                 </a>
               {% endif %}
               <span class="text-muted">{{ noti.notification.created_at }}</span>
