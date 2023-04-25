@@ -67,6 +67,11 @@
                             <div class="profile-notification-container">
                             <i class='bx bx-user icon'></i>
                             <span class="red-dot hidden"></span>
+                            {% if friend_request_count > 0 %}
+                                <span class="red-dot"></span>
+                            {% else %}
+                                <span class="red-dot hidden"></span>
+                            {% endif %}
                             </div>
                             <span class="text nav-text">Profile</span>
                         
@@ -76,10 +81,14 @@
 
                     <li class="nav-link" id="testy" onclick="getPosts();">
                         <a href={% url 'account:notifications' %}>
-                            <!-- <div class="profile-notification-container"> -->
+                            <div class="profile-notification-container">
                             <i class='bx bx-bell icon'></i>
-                            <!-- <span class="red-dot "></span>
-                            </div> -->
+                            {% if tagged_count > 0 %}
+                                <span class="red-dot"></span>
+                            {% else %}
+                                <span class="red-dot hidden"></span>
+                            {% endif %}
+                            </div>
                             <span class="text nav-text">Notifications</span>
                         </a>
                     </li>

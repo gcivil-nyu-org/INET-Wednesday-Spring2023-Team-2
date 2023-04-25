@@ -11,6 +11,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
+from django.contrib.sessions.models import Session
+from django.contrib.sessions.backends.db import SessionStore
+from showofhands.context_processors import tagged_count
 
 from .forms import LoginForm
 from .forms import RegisterForm
@@ -741,6 +744,7 @@ def send_friend_request(request, uid):
                 friend_request = Connection_Model.objects.create(
                     from_user=from_user, to_user=to_user
                 )
+                request.session["friend_request_sent"] = True
                 return JsonResponse(
                     {"status": f"Friend request sent to {to_user.username}!"}
                 )
@@ -758,10 +762,12 @@ def send_friend_request(request, uid):
                 if friend_request.connection_status == "Declined":
                     friend_request.connection_status = "Pending"
                     friend_request.save()
+                    request.session["friend_request_sent"] = True
                     return JsonResponse(
                         {"status": f"Friend request sent to {to_user.username}!"}
                     )
                 else:
+                    request.session["friend_request_sent"] = False
                     return JsonResponse(
                         {
                             "status": "error",
@@ -769,9 +775,11 @@ def send_friend_request(request, uid):
                         }
                     )
         except Connection_Model.DoesNotExist:
+            request.session["friend_request_sent"] = False
             return JsonResponse(
                 {"status": "error", "message": "Friend request not found."}
             )
+    request.session["friend_request_sent"] = False
     return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
@@ -829,6 +837,7 @@ def friend_requests(request, username_):
     pending_requests = Connection_Model.objects.filter(
         to_user=user, connection_status="Pending"
     )
+    friend_request_sent = request.session.pop("friend_request_sent", False)
     context = {"pending_requests": pending_requests}
     return render(request, "pages/friend_request.html", context)
 
@@ -938,6 +947,8 @@ def notification_page(request):
     context = {
         "notifications": notifications_results,
     }
+
+    request.session["tagged_count"] = tagged_count(request)["tagged_count"]
 
     return render(request, "pages/notification_page.html", context)
 
