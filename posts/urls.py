@@ -63,4 +63,5 @@ urlpatterns = [
     ),
     path("report/report_post/<int:post_id>/", views.report_post, name="report_post"),
     path("get_back/<category>/<int:pid>", views.get_back_api_view, name="get_back_api"),
+    path("analytics", views.show_analytics, name="analytics"),
 ]

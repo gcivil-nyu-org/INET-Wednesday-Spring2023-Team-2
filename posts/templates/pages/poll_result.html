@@ -24,6 +24,9 @@
                   </label> 
               
                   {% endfor %}
+                  <br><br>
+                    <button id="analytics-button" data-pid="{{ post.id }}">Analytics</button>
+                  <br>
                 </div>
               </div>
             </div>
@@ -155,4 +158,18 @@ getCommentsText();
         },
     });
   }
+
+  $(document).ready(function() {
+    $("#analytics-button").click(function() {
+      var pid = $("#analytics-button").data("pid");
+      $.ajax({
+        url: "{% url 'posts:analytics' %}",
+        type: "GET",
+        data: {'pid': pid},
+        success: function(response) {
+          $(".section").html(response);
+        }
+      });
+    });
+  });
 </script>
