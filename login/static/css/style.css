@@ -30,6 +30,13 @@ h3 {
 	font-size: 14px
 }
 
+h5 {
+	text-align: center;
+	margin:10px;
+	padding: 5px;
+	font-size: 18px
+}
+
 p {
 	font-size: 14px;
 	font-weight: 100;
@@ -316,6 +323,12 @@ select {
 .image-container {
 	width: 80%; /* or whatever width you want */
 	height: 50%; /* or whatever height you want */
+	background-color: transparent;
+}
+
+.image-container-groupchat {
+	width: 50%; /* or whatever width you want */
+	height: 30%; /* or whatever height you want */
 	background-color: transparent;
 }
   

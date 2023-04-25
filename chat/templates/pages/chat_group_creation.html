@@ -1,20 +1,20 @@
 {% load static %}
-<div>
+<div class="group-container">
     <form method = "POST" id="groupChatCreationForm">
         {% csrf_token %}
 
-        <h4>Group Name</h4>
+        <h5>Group Name</h5>
         {{ chat_group_creation_form.group_name }}
 
-        <br>
 
-        <h4>Group Members</h4>
+
+        <h5>Group Members</h5>
         {{ chat_group_creation_form.members }}
-        <br>
 
-        <h4>Choose a Group Profile Picture</h4>
-        <div class="image-container">
-            <img class="image-groupchat" src="{{ chat_group_creation_form.instance.profile_picture.url }}" alt="Image">
+
+        <h5>Choose a Group Profile Picture</h5>
+        <div class="image-container-groupchat">
+            <img class="image" src="{{ chat_group_creation_form.instance.profile_picture.url }}" alt="Image">
         </div>
         {{ chat_group_creation_form.profile_picture }}
 

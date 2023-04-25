@@ -222,3 +222,7 @@
     clear: both;
     height: 0;
 }
+
+.group-container{
+    overflow-y: auto;
+}
