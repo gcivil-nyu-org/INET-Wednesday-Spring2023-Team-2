@@ -12,7 +12,6 @@
     position: relative;
     border-radius: 50%;
     color: black;
-    overflow: hidden;
 }
 
 .pie-wrap .entry{
@@ -22,89 +21,8 @@
     align-items: center;
 }
 
-/* *the individual entries* */
-
-.sky-blue{
-    background-color: lightskyblue;
-    height:50%;
-    width: 50%;
-    display: block;
-}
-
 .light-yellow{
-    background-color: lightyellow;
+    /* background-color: lightyellow; */
     height:50%;
     width: 50%;
-}
-
-.pink{
-    background-color: pink;
-    height:50%;
-    position: absolute;
-    top: 0px;
-    right: 0;
-    width: 50%;
-    clip-path: polygon(0 0, 100% 0%, 0% 100%);
-}
-
-.purple{
-    background-color: purple;
-    height:50%;
-    width: 50%;
-    right: 0;
-    top: 0;
-    position: absolute;
-    clip-path:polygon(0% 100%, 100% 0%, 100% 100%);
-}
-
-.green{
-    background-color: limegreen;
-    height:50%;
-    width: 50%;
-    right: 0;
-    top: 50%;
-    position: absolute;
-    clip-path:polygon(0% 0%, 100% 0%, 100% 100%);
-}
-
-.wheat{
-    background-color: wheat;
-    height:50%;
-    width: 50%;
-    right: 0;
-    top: 50%;
-    position: absolute;
-    clip-path:polygon(0% 0%, 100% 100%, 0% 100%);
-}
-
-.pie-wrap .purple p{
-    position: absolute;
-    top: 140px;
-    color: white;
-}
-.pie-wrap .purple p:first-child{
-    top: 120px;
-}
-
-.pie-wrap .green p{
-    position: absolute;
-    top: 20px;
-}
-
-.pie-wrap .green p:first-child{
-    top: 0px;
-}
-
-.pie-wrap .pink p, .pie-wrap .wheat p{
-    position: absolute;
-    left: 20px;
-    top: 80px;
-}
-
-.pie-wrap .pink, .pie-wrap .wheat{
-    justify-content: flex-start;
-}
-
-.pie-wrap .pink p:first-child, .pie-wrap .wheat p:first-child{
-    top: 100px;
 }

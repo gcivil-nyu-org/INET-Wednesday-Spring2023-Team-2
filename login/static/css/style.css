@@ -325,6 +325,12 @@ select {
 	object-fit: cover; /* Scale the image while preserving its aspect ratio to cover the entire container */
 }
 
+.image-groupchat {
+	width: 50%; /* Make the image take up the full width of the container */
+	height: 50%; /* Make the image take up the full height of the container */
+	object-fit: cover; /* Scale the image while preserving its aspect ratio to cover the entire container */
+}
+
 
   /* new css for profile page */
   /* .profile-container{

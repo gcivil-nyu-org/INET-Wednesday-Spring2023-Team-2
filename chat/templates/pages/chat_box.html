@@ -8,25 +8,28 @@
             </a>
             <div class="chat-about">
                 <h6 class="m-b-0">
+                    {% if is_group %}
+                    <a href="#">{{ friend_name }}</a>
+                    {% else %}
                     <a href="../../account/profile/{{ friend_name }}/">{{ friend_name }}</a>
+                    {% endif %}
                 </h6>
                 <!-- get last login or something -->
-                <small>Online</small>
+                <!-- <small>Online</small> -->
             </div>
         </div>
         {% if is_group %}
-        <div class="col-xs-6 col-sm-4 col-lg-2">
-            <a onclick="openChatGroupCreation('{{ connection_id }}');">Edit</a>
-        </div>
-        <!-- show only if request.user == group.created_by / group.admin -->
-        {% if request.user == connection.group.created.by %}
-        <div class="col-xs-6 col-sm-4 col-lg-2">
-            <a onclick="deleteChatGroup('{{ connection_id }}');">Delete</a>
-        </div>
-        {% endif %}
-        <div class="col-xs-6 col-sm-4 col-lg-2">
-            <a onclick="exitChatGroup('{{ connection_id }}');">Exit</a>
-        </div>
+            <div class="col-xs-6 col-sm-4 col-lg-2 float-right">
+                <a onclick="openChatGroupCreation('{{ connection_id }}');">Edit</a>
+                <p></p>
+                <a onclick="exitChatGroup('{{ connection_id }}');">Exit</a>
+            </div>
+            <!-- show only if request.user == group.created_by / group.admin -->
+            {% if request.user == connection.group.created.by %}
+            <div class="col-xs-6 col-sm-4 col-lg-2">
+                <a onclick="deleteChatGroup('{{ connection_id }}');">Delete</a>
+            </div>
+            {% endif %}
         {% endif %}
     </div>
 </div>

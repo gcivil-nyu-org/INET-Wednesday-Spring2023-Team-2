@@ -1,41 +1,8 @@
 <div class="wrapper">
     <div class="pie-wrap">
-        <div class="light-yellow entry">
-            <p>25%</p>
-            <p class="entry-value">Rice</p>
-        </div>
-        
-        <div class="sky-blue entry">
-            <p>25%</p>
-            <p class="entry-value">Pasta</p>
-        </div>
-        
-        <div class="pink entry">
-            <p>12.5%</p>
-            <p class="entry-value">Beans </p>
-        </div>
-        
-        <div class="purple entry">
-            <p> 12.5%</p>
-            <p class="entry-value">Plantain</p>
-        </div>
-        
-        <div class="green entry">
-            <p> 12.5%</p>
-            <p class="entry-value">Potato</p>
-        </div>
-        
-        <div class="wheat entry">
-            <p> 12.5%</p>
-            <p class="entry-value">Yam</p>
-        </div>
-    </div>
-</div>
-<div class="wrapper">
-    <div class="pie-wrap">
-        {% for option in options %}
-        <div class="light-yellow entry">
-            <p id="percentage {{ forloop.counter }}"></p>
+        {% for option, percentage in option_percentage_list %}
+        <div class="light-yellow entry" style="background-color: #{{ option.color }};">
+            <p>{{ percentage }}%</p>
             <p class="entry-value">{{ option.choice_text }}</p>
         </div>
         {% endfor %}
@@ -43,11 +10,3 @@
 </div>
 
 <button id="results-button">Results</button>
-{% load static %}
-{% for option in options %}
-<script>
-    var percentage = Number('{{ option.votes }}')/Number('{{ total_votes }}');
-    document.getElementById('percentage {{ forloop.counter }}').innerHTML = percentage;
-    console.log('percentage {{ forloop.counter }}');
-</script>
-{% endfor %}

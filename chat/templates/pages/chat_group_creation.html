@@ -10,12 +10,11 @@
 
         <h4>Group Members</h4>
         {{ chat_group_creation_form.members }}
-
         <br>
 
         <h4>Choose a Group Profile Picture</h4>
         <div class="image-container">
-            <img class="image" src="{{ chat_group_creation_form.instance.profile_picture.url }}" alt="Image">
+            <img class="image-groupchat" src="{{ chat_group_creation_form.instance.profile_picture.url }}" alt="Image">
         </div>
         {{ chat_group_creation_form.profile_picture }}
 
