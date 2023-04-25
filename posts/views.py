@@ -675,6 +675,7 @@ def upvote_comment(request, comment_id):
                 comment.upvoted_by.remove(request.user)
                 comment.vote_count -= 1
                 comment.save()
+                return JsonResponse({"upvote": "success"})
             elif (
                 request.user not in comment.upvoted_by.all()
                 and request.user in comment.downvoted_by.all()
@@ -689,7 +690,9 @@ def upvote_comment(request, comment_id):
 
         except Comments_Model.DoesNotExist:
             return JsonResponse({"upvote": "error"})
-    return HttpResponse("Thou Shall not Enter!!")
+
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
 
 
 def downvote_comment(request, comment_id):
@@ -711,6 +714,7 @@ def downvote_comment(request, comment_id):
                 comment.downvoted_by.remove(request.user)
                 comment.vote_count += 1
                 comment.save()
+                return JsonResponse({"downvote": "success"})
             elif (
                 request.user not in comment.downvoted_by.all()
                 and request.user in comment.upvoted_by.all()
@@ -724,7 +728,9 @@ def downvote_comment(request, comment_id):
                 return JsonResponse({"downvote": "already downvoted"})
         except Comments_Model.DoesNotExist:
             return JsonResponse({"downvote": "error"})
-    return HttpResponse("Thou Shall not Enter!!")
+
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
 
 
 def show_comments_text_api(request, current_pid):
