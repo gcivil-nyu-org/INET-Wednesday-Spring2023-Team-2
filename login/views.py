@@ -431,11 +431,7 @@ def profile_view(request, username_):
 
 ## Change all classes to smthng like this and pass a parameter and render post_home.html and check in html to render the right page
 class UserHistory(APIView):
-    # renderer_classes = [TemplateHTMLRenderer]
-    # template_name = 'profile_list.html'
-
     renderer_classes = [TemplateHTMLRenderer]
-    # permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, username_):
         if is_ajax(request):
@@ -443,39 +439,27 @@ class UserHistory(APIView):
 
             user_ = Custom_User.objects.get(username=username_)
 
-            content = user_.posts_view_time.all().order_by(
-                "-view_time"
-            )  # .order_by('-view_time') order by relation field here
-            # print(content)
+            content = user_.posts_view_time.all().order_by("-view_time")
 
-            history_results = []
-
-            for con in content:
-                post = con.post
-                options = []
-
-                for option in Options_Model.objects.filter(question=post):
-                    options.append(
-                        {
-                            "choice_text": option.choice_text,
-                        }
-                    )
-
-                history_results.append(
-                    {
-                        "id": post.id,
-                        "question_text": post.question_text,
-                        "category": post.category,
-                        "options": options,
-                    }
-                )
+            history_results = [
+                {
+                    "id": post.id,
+                    "question_text": post.question_text,
+                    "category": post.category,
+                    "options": [
+                        {"choice_text": option.choice_text}
+                        for option in Options_Model.objects.filter(question=post)
+                    ],
+                }
+                for con in content
+                for post in [con.post]
+            ]
 
             return Response(
                 {"posts": history_results}, template_name="pages/profile_history.html"
             )
 
         else:
-            # print("url request")
             contents = profile_page_contents(request, username_)
 
             contents["tab_to_click"] = "nav-history-tab"

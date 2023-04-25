@@ -23,7 +23,9 @@
         <ul>
           {% for noti in notifications reversed %}
               {% if noti.notification.noti_type == 'At' %}
-                <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> mentioned you in a post: <a class = "noti-post-title" href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
+                <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> mentioned you in a post: 
+                <br>
+                <a class = "noti-post-title" href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
                   {{ noti.post_id}} => {{ noti.question_text}}  :
 
                   <a class = "history-options">
@@ -33,7 +35,9 @@
                   </a>
                 </a>
               {% elif noti.notification.noti_type == 'Comment' %}
-                <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> commented on your post: <a class = "noti-post-title" href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
+                <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> commented on your post: 
+                <br>
+                <a class = "noti-post-title" href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
                   {{ noti.post_id}} => {{ noti.question_text }} :
 
                   <a class = "history-options">
