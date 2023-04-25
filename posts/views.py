@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.template import loader
 from django.views import View
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.utils.safestring import mark_safe
 from .forms import PollForm
 import re
