@@ -234,7 +234,9 @@ class Get_Chat_Group_Creation_View(View):
 
     def post(self, request, connection_id):
         if is_ajax(request):
-            chat_group_creation_form = Group_Connection_Form(request.POST, request.FILES)
+            chat_group_creation_form = Group_Connection_Form(
+                request.POST, request.FILES
+            )
             errors_ = ""
             form_reset = True
             group_ = None
@@ -258,7 +260,9 @@ class Get_Chat_Group_Creation_View(View):
                             chat_group_creation_form.cleaned_data["members"]
                         )
                         if request.FILES.get("profile_picture"):
-                            group_.profile_picture = request.FILES.get("profile_picture")
+                            group_.profile_picture = request.FILES.get(
+                                "profile_picture"
+                            )
                         group_.save()
 
                     else:
@@ -272,7 +276,9 @@ class Get_Chat_Group_Creation_View(View):
                             chat_group_creation_form.cleaned_data["members"]
                         )
                         if request.FILES.get("profile_picture"):
-                            group_.profile_picture = request.FILES.get("profile_picture")
+                            group_.profile_picture = request.FILES.get(
+                                "profile_picture"
+                            )
                         group_.save()
                 except Exception as e:
                     return JsonResponse(
