@@ -23,13 +23,12 @@
                 <a onclick="openChatGroupCreation('{{ connection_id }}');">Edit</a>
                 <p></p>
                 <a onclick="exitChatGroup('{{ connection_id }}');">Exit</a>
-            </div>
-            <!-- show only if request.user == group.created_by / group.admin -->
-            {% if request.user == connection.group.group_created_by %}
-            <div class="col-xs-6 col-sm-4 col-lg-2">
+                <!-- show only if request.user == group.created_by / group.admin -->
+                {% if request.user == connection.group.group_created_by %}
+                <p></p>
                 <a onclick="deleteChatGroup('{{ connection_id }}');">Delete</a>
+                {% endif %}
             </div>
-            {% endif %}
         {% endif %}
     </div>
 </div>
