@@ -1,6 +1,6 @@
 {% load static %}
 <div class="group-container">
-    <form method = "POST" id="groupChatCreationForm">
+    <form method = "POST" id="groupChatCreationForm" enctype="multipart/form-data">
         {% csrf_token %}
 
         <h5>Group Name</h5>
@@ -19,6 +19,7 @@
         {{ chat_group_creation_form.profile_picture }}
 
         <button type="submit" value="submit-poll" name="submit-poll" class="submit">Save</button>
+    </form>
 </div>
 
 
@@ -32,7 +33,10 @@
             $.ajax({
                 url: "{% url 'connections:get_chat_group_creation' connection_id=connection_id %}",
                 type: "POST",
-                data: $(this).serialize(),
+                // data: $(this).serialize(),
+                data: new FormData(this),
+                processData: false,
+                contentType: false,
                 dataType: 'json',
                 success: function(resp){
                     if(resp.group_creation === 'success'){

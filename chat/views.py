@@ -234,7 +234,7 @@ class Get_Chat_Group_Creation_View(View):
 
     def post(self, request, connection_id):
         if is_ajax(request):
-            chat_group_creation_form = Group_Connection_Form(request.POST)
+            chat_group_creation_form = Group_Connection_Form(request.POST, request.FILES)
             errors_ = ""
             form_reset = True
             group_ = None
@@ -249,17 +249,6 @@ class Get_Chat_Group_Creation_View(View):
                 connection_id = None
 
             if chat_group_creation_form.is_valid():
-                # chat_group_creation_form.group_created_by = request.user
-                # try:
-                #     chat_group_creation_form.save()
-                # except:
-                #     errors_ = ", ".join(list(chat_group_creation_form.errors.values()))
-                #     print("hello", errors_)
-                #     return JsonResponse({"group_creation": "fail", "errors": errors_})
-                # group_ = chat_group_creation_form.save(commit=False)
-                # group_.created_by = request.user
-                # group_.save()
-
                 try:
                     if group_:
                         group_.group_name = chat_group_creation_form.cleaned_data[
@@ -268,6 +257,8 @@ class Get_Chat_Group_Creation_View(View):
                         group_.members.set(
                             chat_group_creation_form.cleaned_data["members"]
                         )
+                        if request.FILES.get("profile_picture"):
+                            group_.profile_picture = request.FILES.get("profile_picture")
                         group_.save()
 
                     else:
@@ -280,6 +271,8 @@ class Get_Chat_Group_Creation_View(View):
                         group_.members.set(
                             chat_group_creation_form.cleaned_data["members"]
                         )
+                        if request.FILES.get("profile_picture"):
+                            group_.profile_picture = request.FILES.get("profile_picture")
                         group_.save()
                 except Exception as e:
                     return JsonResponse(
