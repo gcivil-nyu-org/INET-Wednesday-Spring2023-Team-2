@@ -1,0 +1,64 @@
+{% load static %}
+<div class="group-container">
+    <form method = "POST" id="groupChatCreationForm">
+        {% csrf_token %}
+
+        <h5>Group Name</h5>
+        {{ chat_group_creation_form.group_name }}
+
+
+
+        <h5>Group Members</h5>
+        {{ chat_group_creation_form.members }}
+
+
+        <h5>Choose a Group Profile Picture</h5>
+        <div class="image-container-groupchat">
+            <img class="image" src="{{ chat_group_creation_form.instance.profile_picture.url }}" alt="Image">
+        </div>
+        {{ chat_group_creation_form.profile_picture }}
+
+        <button type="submit" value="submit-poll" name="submit-poll" class="submit">Save</button>
+</div>
+
+
+<script>
+    $('#groupChatCreationForm').submit(function(){
+        var $this = $(this);
+        var valid = true;
+    
+        if(valid){
+            //ajax
+            $.ajax({
+                url: "{% url 'connections:get_chat_group_creation' connection_id=connection_id %}",
+                type: "POST",
+                data: $(this).serialize(),
+                dataType: 'json',
+                success: function(resp){
+                    if(resp.group_creation === 'success'){
+                        getConnectionsList();
+                        if (resp.form_reset){
+                            showMessage("Group Created Successfully!");
+                            document.getElementById("groupChatCreationForm").reset();
+                        }
+                        else{
+                            showMessage("Edits Saved!");
+                            openChatBox(resp.connection_id);
+                        }
+                    }
+                    else{
+                        // display error msgs
+                        // alert(resp.errors);
+                        showMessage(resp.errors);
+                    }
+
+                },
+                error: function(resp){
+                    console.log("chat group creation error");
+                }
+            });
+        }
+        return false;
+    });
+
+</script>

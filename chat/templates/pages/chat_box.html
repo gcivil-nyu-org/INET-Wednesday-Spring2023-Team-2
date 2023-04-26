@@ -1,19 +1,36 @@
 {% load static %}
 <div class="chat-header clearfix">
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-xs-6 col-sm-8 col-lg-10">
             <a href="javascript:void(0);" data-toggle="modal" data-ta
             rget="#view_info">
                 <a href="../../account/profile/{{ friend_name }}/"><img src="{{ friend_pic }}" alt="avatar"></a>
             </a>
             <div class="chat-about">
                 <h6 class="m-b-0">
+                    {% if is_group %}
+                    <a href="#">{{ friend_name }}</a>
+                    {% else %}
                     <a href="../../account/profile/{{ friend_name }}/">{{ friend_name }}</a>
+                    {% endif %}
                 </h6>
                 <!-- get last login or something -->
-                <small>Online</small>
+                <!-- <small>Online</small> -->
             </div>
         </div>
+        {% if is_group %}
+            <div class="col-xs-6 col-sm-4 col-lg-2 float-right">
+                <a onclick="openChatGroupCreation('{{ connection_id }}');">Edit</a>
+                <p></p>
+                <a onclick="exitChatGroup('{{ connection_id }}');">Exit</a>
+            </div>
+            <!-- show only if request.user == group.created_by / group.admin -->
+            {% if request.user == connection.group.created.by %}
+            <div class="col-xs-6 col-sm-4 col-lg-2">
+                <a onclick="deleteChatGroup('{{ connection_id }}');">Delete</a>
+            </div>
+            {% endif %}
+        {% endif %}
     </div>
 </div>
 <div class="chat-message clearfix">
@@ -28,7 +45,7 @@
 </div>
 <div class="chat-history">
     <ul class="m-b-0" id="history">
-
+        <!-- chat messages go here -->
     </ul>
 </div>
 
@@ -51,11 +68,20 @@
     document.getElementById('history').insertAdjacentHTML('afterbegin', 
     '<ul class="m-b-0"><li class="clearfix"><div class="message-data-right"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message other-message float-right"> {{ message.message }} </div></li></ul>');
 </script>
+
+{% else %}
+
+{% if is_group %}
+<script>
+    document.getElementById('history').insertAdjacentHTML('afterbegin', 
+    '<ul class="m-b-0"><li class="clearfix"><div class="message-data"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message my-message"> <b>{{ message.user }}:</b> {{ message.message }} </div></li></ul>');
+</script>
 {% else %}
 <script>
     document.getElementById('history').insertAdjacentHTML('afterbegin', 
     '<ul class="m-b-0"><li class="clearfix"><div class="message-data"><span class="message-data-time">{{ message.timestamp }}</span></div><div class="message my-message"> {{ message.message }} </div></li></ul>');
 </script>
+{% endif %}
 
 {% if request.user not in message.seen_by.all %}
 <script>
@@ -85,7 +111,12 @@
                 document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data-right"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message other-message float-right"> ' + data.message + ' </div></li>');
             }
             else{
-                document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + data.message + ' </div></li>');
+                if (data.is_group){
+                    document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + '<b>' + data.username + ':</b> ' + data.message + ' </div></li>');
+                }
+                else{
+                    document.getElementById('history').insertAdjacentHTML('afterbegin', '<li class="clearfix"><div class="message-data"><span class="message-data-time">' + data.timestamp + '</span></div><div class="message my-message"> ' + data.message + ' </div></li>');
+                }
             }
         }
     }
@@ -97,25 +128,6 @@
         showMessage(message);
         // location.reload();
     };
-
-
-    function showMessage(message) {
-            var $message = $('<div class="report-message">' + message + '</div>');
-            $('body').append($message);
-            $message.css({
-                'position': 'fixed',
-                'top': '0',
-                'left': '0',
-                'width': '100%',
-                'padding': '10px',
-                'text-align': 'center',
-                'background-color': '#eee6f3',
-                'color':'#18191a',
-            });
-            $message.slideDown(300).delay(3000).slideUp(300, function () {
-                $message.remove();
-            });
-        }
 
 
 </script>

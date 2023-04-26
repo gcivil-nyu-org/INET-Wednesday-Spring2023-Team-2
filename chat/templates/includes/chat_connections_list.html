@@ -10,27 +10,32 @@
     </li>
 {% endfor %}
 
+<li class="cleafix">
+    <a onclick="openChatGroupCreation(0);">
+        <i class='bx bx-chat icon'></i>
+        <div class="about">
+            <div class="name">Create New Group </div>
+           
+        </div>
+    </a>
+</li>
+
 
 <script>
 
 function updateNotificationBadge(requestCount, id) {
     const badge = document.getElementById(id);
-    console.log(badge);
 
 
     if (requestCount > 0) {
         badge.classList.remove('hidden');
         badge.textContent = requestCount;
-        console.log("here");
+
     } else {
         badge.classList.add('hidden');
 
-    }
-
-
-    
+    } 
 }
-
 
 </script>
 

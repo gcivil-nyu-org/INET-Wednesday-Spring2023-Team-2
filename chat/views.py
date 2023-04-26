@@ -3,11 +3,18 @@ from django.http import HttpResponse
 from django.template import loader
 from django.views.generic import TemplateView
 from django.db.models import Q
+from django.contrib import messages
+from django.http import JsonResponse
+from django.views import View
+
 import datetime
+
+from rest_framework.views import APIView
 
 from django.contrib.auth.decorators import login_required
 
-from .models import Chat_History, Connection_Model, Chat_Message
+from .models import Chat_History, Connection_Model, Chat_Message, Group_Connection
+from .forms import Group_Connection_Form
 
 
 # to check if request is form ajax
@@ -25,8 +32,16 @@ def get_friends_info(request):
     connections_recieved = request.user.connection_requests_received.filter(
         connection_status="Accepted"
     )
+    group_connects = request.user.groups_in.all().values_list(
+        "connection_id_for_group", flat=True
+    )
+    group_connects = Connection_Model.objects.filter(
+        connection_status="Accepted", id__in=group_connects
+    )
 
-    friends = connections_sent | connections_recieved
+    # group_connects = [group_connect.connection_id_for_group for group_connect in group_connects]
+
+    friends = connections_sent | connections_recieved | group_connects
 
     # returns all connection models that has from_user = user or to_user=user
     return friends
@@ -100,17 +115,22 @@ def chat_history_box_view(request, connection_id):
     ) and is_ajax(request):
         messages = get_chat_history(connection_id)
 
+        connection = Connection_Model.objects.get(id=connection_id)
+
+        is_group = False
+        if connection.group:
+            is_group = True
+
         template = loader.get_template("pages/chat_box.html")
         contents = {
             "connection_id": connection_id,
             "messages": messages,
-            "friend_name": Connection_Model.objects.get(id=connection_id).get_friend(
-                request.user
-            ),
-            "friend_pic": Connection_Model.objects.get(id=connection_id)
-            .get_friend(request.user)
-            .profile_picture.url,
+            "friend_name": connection.get_friend(request.user),
+            "friend_pic": connection.get_friend(request.user).profile_picture.url,
+            "is_group": is_group,
+            "connection": connection,
         }
+
         return HttpResponse(template.render(contents, request))
 
     else:
@@ -155,7 +175,7 @@ def get_chat_connections_list_view(request):
                 latest_message = latest_message_formatting(latest_message)
             except:
                 unread_msg_count = 0
-                latest_message = None
+                latest_message = ""
 
             friend_object.append(
                 (
@@ -189,5 +209,144 @@ def update_msg_seen_view(request, message_id):
 
         return HttpResponse("success")
 
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
+
+
+class Get_Chat_Group_Creation_View(View):
+    def get(self, request, connection_id):
+        if is_ajax(request):
+            chat_group_creation_form = Group_Connection_Form()
+            if int(connection_id):
+                group_ = Connection_Model.objects.get(id=connection_id).group
+                chat_group_creation_form = Group_Connection_Form(instance=group_)
+
+            contents = {
+                "chat_group_creation_form": chat_group_creation_form,
+                "connection_id": connection_id,
+            }
+            template = loader.get_template("pages/chat_group_creation.html")
+
+            return HttpResponse(template.render(contents, request))
+
+        else:
+            return HttpResponse("Thou Shall not Enter!!")
+
+    def post(self, request, connection_id):
+        if is_ajax(request):
+            chat_group_creation_form = Group_Connection_Form(request.POST)
+            errors_ = ""
+            form_reset = True
+            group_ = None
+            if int(connection_id):
+                print("here")
+                form_reset = False
+                group_ = Connection_Model.objects.get(id=connection_id).group
+                chat_group_creation_form = Group_Connection_Form(
+                    request.POST, instance=group_
+                )
+            else:
+                connection_id = None
+
+            if chat_group_creation_form.is_valid():
+                # chat_group_creation_form.group_created_by = request.user
+                # try:
+                #     chat_group_creation_form.save()
+                # except:
+                #     errors_ = ", ".join(list(chat_group_creation_form.errors.values()))
+                #     print("hello", errors_)
+                #     return JsonResponse({"group_creation": "fail", "errors": errors_})
+                # group_ = chat_group_creation_form.save(commit=False)
+                # group_.created_by = request.user
+                # group_.save()
+
+                try:
+                    if group_:
+                        group_.group_name = chat_group_creation_form.cleaned_data[
+                            "group_name"
+                        ]
+                        group_.members.set(
+                            chat_group_creation_form.cleaned_data["members"]
+                        )
+                        group_.save()
+
+                    else:
+                        group_ = Group_Connection.objects.create(
+                            group_created_by=request.user,
+                            group_name=chat_group_creation_form.cleaned_data[
+                                "group_name"
+                            ],
+                        )
+                        group_.members.set(
+                            chat_group_creation_form.cleaned_data["members"]
+                        )
+                        group_.save()
+                except Exception as e:
+                    return JsonResponse(
+                        {
+                            "group_creation": "fail",
+                            "errors": str(e),
+                            "form_reset": form_reset,
+                            "connection_id": connection_id,
+                        }
+                    )
+
+                # group_connection_model = Group_Connection.objects.get(group_name=chat_group_creation_form["group_name"])
+                try:
+                    if form_reset:
+                        Connection_Model.objects.create(group=group_)
+                except Exception as e:
+                    return JsonResponse(
+                        {
+                            "group_creation": "fail",
+                            "errors": str(e),
+                            "form_reset": form_reset,
+                            "connection_id": connection_id,
+                        }
+                    )
+
+            else:
+                print(chat_group_creation_form.errors.values())
+                errors_ = ", ".join(list(chat_group_creation_form.errors.values())[0])
+                print("how", errors_)
+                return JsonResponse(
+                    {
+                        "group_creation": "fail",
+                        "errors": errors_,
+                        "form_reset": form_reset,
+                        "connection_id": connection_id,
+                    }
+                )
+
+            return JsonResponse(
+                {
+                    "group_creation": "success",
+                    "errors": errors_,
+                    "form_reset": form_reset,
+                    "connection_id": connection_id,
+                }
+            )
+
+        else:
+            return HttpResponse("Thou Shall not Enter!!")
+
+
+def delete_group_view(request, connection_id):
+    if is_ajax(request):
+        group_ = Connection_Model.objects.get(id=connection_id).group
+        group_.delete()
+        return JsonResponse({"delete": "success", "message": f"{group_} Terminated!"})
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
+
+
+def exit_group_view(request, connection_id):
+    if is_ajax(request):
+        group_ = Connection_Model.objects.get(id=connection_id).group
+        group_.members.remove(request.user)
+        group_.save()
+        return JsonResponse(
+            {"delete": "success", "message": f"{group_} wishes you Farewell!"}
+        )
     else:
         return HttpResponse("Thou Shall not Enter!!")

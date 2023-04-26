@@ -9,7 +9,7 @@
             <a href="{% url 'account:profile_page' friend.friend.username %}">
             <img src="{{ friend.friend.profile_picture.url }}" class="profile-picture" alt="{{ friend.username }}" height="50px" width="50px">
             </a>
-            <p>{{ friend.friend.username }}</p>
+            <p class = "pfp-username">{{ friend.friend.username }}</p>
         </div>
         {% endif %}
 

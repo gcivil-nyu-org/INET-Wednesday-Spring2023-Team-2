@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.template import loader
 from django.views import View
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.utils.safestring import mark_safe
 from .forms import PollForm
 import re
@@ -28,7 +28,7 @@ from django.contrib.auth.decorators import login_required
 
 
 import random
-
+import json
 
 from .models import (
     Post_Model,
@@ -197,6 +197,26 @@ def results_view(request, pid, change_url, category):
     return HttpResponse(template.render(contents, request))
 
     # return render(request, "pages/posts_home.html", contents)
+
+
+def show_analytics(request):
+    pid = request.GET.get("pid")
+    post_ = Post_Model.objects.get(pk=pid)
+    options_ = Options_Model.objects.filter(question=post_)
+
+    total_votes = sum(option.votes for option in options_)
+    percentage_list = [option.votes / total_votes * 100 for option in options_]
+
+    option_percentage_list = zip(options_, percentage_list)
+
+    contents = {
+        "post": post_,
+        "option_percentage_list": option_percentage_list,
+    }
+
+    template = loader.get_template("pages/poll_analytics.html")
+
+    return HttpResponse(template.render(contents, request))
 
 
 ##api view
@@ -675,6 +695,7 @@ def upvote_comment(request, comment_id):
                 comment.upvoted_by.remove(request.user)
                 comment.vote_count -= 1
                 comment.save()
+                return JsonResponse({"upvote": "success"})
             elif (
                 request.user not in comment.upvoted_by.all()
                 and request.user in comment.downvoted_by.all()
@@ -689,7 +710,9 @@ def upvote_comment(request, comment_id):
 
         except Comments_Model.DoesNotExist:
             return JsonResponse({"upvote": "error"})
-    return HttpResponse("Thou Shall not Enter!!")
+
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
 
 
 def downvote_comment(request, comment_id):
@@ -711,6 +734,7 @@ def downvote_comment(request, comment_id):
                 comment.downvoted_by.remove(request.user)
                 comment.vote_count += 1
                 comment.save()
+                return JsonResponse({"downvote": "success"})
             elif (
                 request.user not in comment.downvoted_by.all()
                 and request.user in comment.upvoted_by.all()
@@ -724,7 +748,9 @@ def downvote_comment(request, comment_id):
                 return JsonResponse({"downvote": "already downvoted"})
         except Comments_Model.DoesNotExist:
             return JsonResponse({"downvote": "error"})
-    return HttpResponse("Thou Shall not Enter!!")
+
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
 
 
 def show_comments_text_api(request, current_pid):

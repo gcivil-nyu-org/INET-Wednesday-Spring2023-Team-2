@@ -11,6 +11,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
+from django.contrib.sessions.models import Session
+from django.contrib.sessions.backends.db import SessionStore
+from showofhands.context_processors import tagged_count
 
 from .forms import LoginForm
 from .forms import RegisterForm
@@ -431,27 +434,35 @@ def profile_view(request, username_):
 
 ## Change all classes to smthng like this and pass a parameter and render post_home.html and check in html to render the right page
 class UserHistory(APIView):
-    # renderer_classes = [TemplateHTMLRenderer]
-    # template_name = 'profile_list.html'
-
     renderer_classes = [TemplateHTMLRenderer]
-    # permission_classes = [permissions.IsAdminUser]
 
     def get(self, request, username_):
         if is_ajax(request):
             print("ajax request")
 
             user_ = Custom_User.objects.get(username=username_)
-            content = user_.posts_view_time.all().order_by(
-                "-view_time"
-            )  # .order_by('-view_time') order by relation field here
-            # print(content)
+
+            content = user_.posts_view_time.all().order_by("-view_time")
+
+            history_results = [
+                {
+                    "id": post.id,
+                    "question_text": post.question_text,
+                    "category": post.category,
+                    "options": [
+                        {"choice_text": option.choice_text}
+                        for option in Options_Model.objects.filter(question=post)
+                    ],
+                }
+                for con in content
+                for post in [con.post]
+            ]
+
             return Response(
-                {"posts": content}, template_name="pages/profile_history.html"
+                {"posts": history_results}, template_name="pages/profile_history.html"
             )
 
         else:
-            # print("url request")
             contents = profile_page_contents(request, username_)
 
             contents["tab_to_click"] = "nav-history-tab"
@@ -470,8 +481,30 @@ class UserPostsCreated(APIView):
                 "-created_time"
             )  # .order_by('-view_time') order by relation field here
 
+            created_results = []
+
+            for post in content:
+                options = []
+
+                for option in Options_Model.objects.filter(question=post):
+                    options.append(
+                        {
+                            "choice_text": option.choice_text,
+                        }
+                    )
+
+                created_results.append(
+                    {
+                        "id": post.id,
+                        "question_text": post.question_text,
+                        "category": post.category,
+                        "options": options,
+                    }
+                )
+
             return Response(
-                {"posts": content}, template_name="pages/profile_posts_created.html"
+                {"posts": created_results},
+                template_name="pages/profile_posts_created.html",
             )
 
         else:
@@ -711,6 +744,7 @@ def send_friend_request(request, uid):
                 friend_request = Connection_Model.objects.create(
                     from_user=from_user, to_user=to_user
                 )
+                request.session["friend_request_sent"] = True
                 return JsonResponse(
                     {"status": f"Friend request sent to {to_user.username}!"}
                 )
@@ -728,10 +762,12 @@ def send_friend_request(request, uid):
                 if friend_request.connection_status == "Declined":
                     friend_request.connection_status = "Pending"
                     friend_request.save()
+                    request.session["friend_request_sent"] = True
                     return JsonResponse(
                         {"status": f"Friend request sent to {to_user.username}!"}
                     )
                 else:
+                    request.session["friend_request_sent"] = False
                     return JsonResponse(
                         {
                             "status": "error",
@@ -739,9 +775,11 @@ def send_friend_request(request, uid):
                         }
                     )
         except Connection_Model.DoesNotExist:
+            request.session["friend_request_sent"] = False
             return JsonResponse(
                 {"status": "error", "message": "Friend request not found."}
             )
+    request.session["friend_request_sent"] = False
     return JsonResponse({"status": "error", "message": "Not an AJAX request."})
 
 
@@ -799,6 +837,7 @@ def friend_requests(request, username_):
     pending_requests = Connection_Model.objects.filter(
         to_user=user, connection_status="Pending"
     )
+    friend_request_sent = request.session.pop("friend_request_sent", False)
     context = {"pending_requests": pending_requests}
     return render(request, "pages/friend_request.html", context)
 
@@ -877,14 +916,39 @@ def notification_page(request):
     # Retrieve all notifications for the current user
     notifications = Noti_Model.objects.filter(recipient=request.user)
 
+    notifications_results = []
+
+    for notification in notifications:
+        post = notification.post_at
+        options = []
+
+        for option in Options_Model.objects.filter(question=post):
+            options.append(
+                {
+                    "choice_text": option.choice_text,
+                }
+            )
+
+        notifications_results.append(
+            {
+                "post_id": post.id,
+                "notification": notification,
+                "question_text": post.question_text,
+                "category": post.category,
+                "options": options,
+            }
+        )
+
     # Mark all unread notifications as read
     for notification in notifications.filter(is_read=False):
         notification.is_read = True
         notification.save()
 
     context = {
-        "notifications": notifications,
+        "notifications": notifications_results,
     }
+
+    request.session["tagged_count"] = tagged_count(request)["tagged_count"]
 
     return render(request, "pages/notification_page.html", context)
 

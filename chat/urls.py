@@ -23,4 +23,19 @@ urlpatterns = [
         views.update_msg_seen_view,
         name="update_msg_seen",
     ),
+    path(
+        "chat/get_chat_group_creation/<connection_id>/",
+        views.Get_Chat_Group_Creation_View.as_view(),
+        name="get_chat_group_creation",
+    ),
+    path(
+        "chat/delete_group/<connection_id>/",
+        views.delete_group_view,
+        name="delete_group",
+    ),
+    path(
+        "chat/exit_group/<connection_id>/",
+        views.exit_group_view,
+        name="exit_group",
+    ),
 ]

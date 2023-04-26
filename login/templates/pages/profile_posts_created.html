@@ -2,7 +2,14 @@
 {% for post in posts %}
 
 <div>
-    <li><a href="{% url 'posts:post_generation_page' category='all' pid=post.id %}">{{ post }}</a></li>
+    <li><a class = "history-title" href="{% url 'posts:post_generation_page' category='all' pid=post.id %}">{{ post.id }}=>{{ post.question_text }}
+        <br>
+        {% for option in post.options %}
+        <a class = "history-options">
+        <span class="history-option-text {% cycle 'color1' 'color2' 'color3' 'color4' %}">{{ option.choice_text }}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+        </a>
+    </a></li>
 </div>
 
 {% endfor %}

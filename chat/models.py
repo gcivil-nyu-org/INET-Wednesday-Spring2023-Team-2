@@ -4,18 +4,89 @@ from django.core.exceptions import ValidationError
 
 from datetime import datetime, timedelta
 
+import os
+
+
+def validate_image_extension(value):
+    allowed_extensions = [".jpg", ".jpeg", ".png"]
+    ext = os.path.splitext(value.name)[-1]
+    if not ext.lower() in allowed_extensions:
+        raise ValidationError(
+            "Only image files with the following extensions are allowed: %s"
+            % ", ".join(allowed_extensions)
+        )
+
+
 # Create your models here.
+
+
+class Group_Connection(models.Model):
+    profile_picture = models.ImageField(
+        upload_to="Group-Profile-Pictures/",
+        default="Group-Profile-Pictures/default-group-profile.jpeg",
+        validators=[validate_image_extension],
+    )
+
+    group_name = models.CharField(max_length=50, unique=True)
+
+    members = models.ManyToManyField(Custom_User, related_name="groups_in")
+
+    group_created_time = models.DateTimeField(auto_now_add=True)
+
+    group_created_by = models.ForeignKey(
+        Custom_User, on_delete=models.CASCADE, related_name="groups_created"
+    )
+
+    def __str__(self):
+        return self.group_name
+
+    def save(self, *args, **kwargs):
+        if Custom_User.objects.filter(username=self.group_name).exists():
+            raise ValidationError(
+                "There's a username with the entered Group Name. Must be Unique!!"
+            )
+        else:
+            super(Group_Connection, self).save(*args, **kwargs)
+
+    ###USE:
+    ### self._state.adding is True creating
+    ### self._state.adding is False updating
+
+    ##TODO: fix  "<Group_Connection: cc>" needs to have a value for field "id" before this many-to-many relationship can be used.
+    # def save(self, *args, **kwargs):
+    #     if self.members:
+    #         #check max number of members <= 15
+    #         if len(self.members) > 15:
+    #             raise ValidationError("A Group can only have a max of 15 members!!")
+    #         else:
+    #             super(Group_Connection, self).save(*args, **kwargs)
+    #     else:
+    #         super(Group_Connection, self).save(*args, **kwargs)
 
 
 class Connection_Model(models.Model):
     from_user = models.ForeignKey(
-        Custom_User, on_delete=models.CASCADE, related_name="connection_requests_sent"
+        Custom_User,
+        on_delete=models.CASCADE,
+        related_name="connection_requests_sent",
+        blank=True,
+        null=True,
     )
     to_user = models.ForeignKey(
         Custom_User,
         on_delete=models.CASCADE,
         related_name="connection_requests_received",
+        blank=True,
+        null=True,
     )
+    group = models.OneToOneField(
+        Group_Connection,
+        on_delete=models.CASCADE,
+        related_name="connection_id_for_group",
+        blank=True,
+        null=True,
+    )
+
     blocked_by = models.ForeignKey(
         Custom_User,
         on_delete=models.CASCADE,
@@ -39,12 +110,20 @@ class Connection_Model(models.Model):
     )
 
     def __str__(self):
-        return str(self.id) + " => " + str(self.from_user) + " + " + str(self.to_user)
+        if self.from_user and self.to_user:
+            return (
+                str(self.id) + " => " + str(self.from_user) + " + " + str(self.to_user)
+            )
+        else:
+            return str(self.id) + " => " + self.group.__str__()
 
     def get_friend(self, user):
-        if user == self.from_user:
-            return self.to_user
-        return self.from_user
+        if self.from_user and self.to_user:
+            if user == self.from_user:
+                return self.to_user
+            return self.from_user
+        else:
+            return self.group
 
     def connection_exists(cls, from_user, to_user):
         return (
@@ -111,72 +190,44 @@ class Connection_Model(models.Model):
         return False
 
     def save(self, *args, **kwargs):
-        # print(self.connection_status, self.from_user, self.to_user, Connection_Model.objects.get(
-        #         from_user=self.from_user, to_user=self.to_user
-        #     ).connection_status)
-        if not (
-            Connection_Model.objects.filter(
-                from_user=self.from_user, to_user=self.to_user
-            ).exists()
-            or Connection_Model.objects.filter(
-                from_user=self.to_user, to_user=self.from_user
-            ).exists()
-        ):
-            super(Connection_Model, self).save(*args, **kwargs)
+        # 2 users
+        if self.to_user and self.from_user and not self.group:
+            if not (
+                Connection_Model.objects.filter(
+                    from_user=self.from_user, to_user=self.to_user
+                ).exists()
+                or Connection_Model.objects.filter(
+                    from_user=self.to_user, to_user=self.from_user
+                ).exists()
+            ):
+                super(Connection_Model, self).save(*args, **kwargs)
 
-        elif self.save_checks(to_user=self.to_user, from_user=self.from_user):
-            super(Connection_Model, self).save(*args, **kwargs)
+            elif self.save_checks(to_user=self.to_user, from_user=self.from_user):
+                super(Connection_Model, self).save(*args, **kwargs)
 
-        elif self.save_checks(to_user=self.from_user, from_user=self.to_user):
-            super(Connection_Model, self).save(*args, **kwargs)
+            elif self.save_checks(to_user=self.from_user, from_user=self.to_user):
+                super(Connection_Model, self).save(*args, **kwargs)
+
+            else:
+                raise ValidationError(
+                    "Connection between specified users already exists!!"
+                )
+
+        # group
+        elif self.group and not (self.from_user or self.to_user):
+            # check no blocks
+            if self.blocked_by:
+                raise ValidationError(
+                    "Group Connection cannot be blocked from Connection Model!!"
+                )
+
+            # save as accepted connection
+            else:
+                self.connection_status = "Accepted"
+                super(Connection_Model, self).save(*args, **kwargs)
 
         else:
-            raise ValidationError("Connection between specified users already exists!!")
-
-        # ((Connection_Model.objects.filter(from_user=self.from_user, to_user=self.to_user).exists()
-        # and Connection_Model.objects.get(from_user=self.from_user, to_user=self.to_user).connection_status == "Declined") or (Connection_Model.objects.filter(from_user=self.to_user, to_user=self.from_user).exists() and Connection_Model.objects.get(from_user=self.to_user, to_user=self.from_user).connection_status == "Declined"))
-
-    # def save(self, *args, **kwargs):
-    #     if (
-    #         Connection_Model.objects.filter(
-    #             from_user=self.from_user, to_user=self.to_user
-    #         ).exists()
-    #         and Connection_Model.objects.get(
-    #             from_user=self.from_user, to_user=self.to_user
-    #         ).connection_status
-    #         == "Pending"
-    #         and self.connection_status != "Pending"
-    #     ):
-    #         Connection_Model.objects.get(
-    #             from_user=self.from_user, to_user=self.to_user
-    #         ).delete()
-    #         super(Connection_Model, self).save(*args, **kwargs)
-    #     elif (
-    #         Connection_Model.objects.filter(
-    #             to_user=self.from_user, from_user=self.to_user
-    #         ).exists()
-    #         and Connection_Model.objects.get(
-    #             to_user=self.from_user, from_user=self.to_user
-    #         ).connection_status
-    #         == "Pending"
-    #         and self.connection_status != "Pending"
-    #     ):
-    #         Connection_Model.objects.get(
-    #             to_user=self.from_user, from_user=self.to_user
-    #         ).delete()
-    #         super(Connection_Model, self).save(*args, **kwargs)
-    #     elif (
-    #         Connection_Model.objects.filter(
-    #             from_user=self.from_user, to_user=self.to_user
-    #         ).exists()
-    #     ) or (
-    #         Connection_Model.objects.filter(
-    #             to_user=self.from_user, from_user=self.to_user
-    #         ).exists()
-    #     ):
-    #         raise ValidationError("Connection between specified users already exists!!")
-
-    #     super(Connection_Model, self).save(*args, **kwargs)
+            raise ValidationError("Connection requires 2 users/ group!!")
 
 
 class Chat_Message(models.Model):

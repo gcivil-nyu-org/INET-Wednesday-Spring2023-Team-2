@@ -30,6 +30,13 @@ h3 {
 	font-size: 14px
 }
 
+h5 {
+	text-align: center;
+	margin:10px;
+	padding: 5px;
+	font-size: 18px
+}
+
 p {
 	font-size: 14px;
 	font-weight: 100;
@@ -318,10 +325,22 @@ select {
 	height: 50%; /* or whatever height you want */
 	background-color: transparent;
 }
+
+.image-container-groupchat {
+	width: 50%; /* or whatever width you want */
+	height: 30%; /* or whatever height you want */
+	background-color: transparent;
+}
   
 .image {
 	width: 100%; /* Make the image take up the full width of the container */
 	height: 100%; /* Make the image take up the full height of the container */
+	object-fit: cover; /* Scale the image while preserving its aspect ratio to cover the entire container */
+}
+
+.image-groupchat {
+	width: 50%; /* Make the image take up the full width of the container */
+	height: 50%; /* Make the image take up the full height of the container */
 	object-fit: cover; /* Scale the image while preserving its aspect ratio to cover the entire container */
 }
 
@@ -453,6 +472,11 @@ select {
 	width: 50%;
 	z-index: 2;
 	padding-top: 50px;
+}
+
+ .pfp-username {
+	font-size: 15px !important; 
+	text-align: center;
 }
 
 .user-history-container2,
@@ -915,7 +939,8 @@ select {
   }
 
   .text-muted {
-	font-size: 14px;
+	font-size: 11px;
+	color:grey;
   }
 
   .notif-container {
@@ -929,4 +954,43 @@ select {
 	min-height: 75%;
 	/* max-height: 75%; */
 	color:#222;
+}
+
+
+.noti-link-post {
+	font-size: 15px;
+	color: #3366ff;
+
+}
+.history-title {
+	font-size:16px;
+	font-weight: bold;
+
+}
+.history-option-text {
+	font-size: 16px;
+}
+.history-option-text {
+	font-size: 15px;
+}
+.history-option-text.color1 {
+    color: #AED9E0;
+}
+
+.history-option-text.color2 {
+    color: #8CB369;
+}
+
+.history-option-text.color3 {
+    color: #D7A5E4;
+}
+
+.history-option-text.color4 {
+    color: #5D6DD3;
+}
+
+.noti-post-title {
+	color: blue;
+	font-weight: bold;
+	font-size: 15px;
 }

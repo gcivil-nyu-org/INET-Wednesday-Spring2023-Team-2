@@ -82,5 +82,94 @@
         });
     }
 
+    function openChatGroupCreation(connection_id){
+        $.ajax({
+            url: "{% url 'connections:get_chat_group_creation' connection_id=1 %}".replace(/1/, connection_id.toString()),
+            type: "GET",
+            success: function(resp){
+                $("#chat_box").html(resp);
+            },
+            error: function(resp){
+                console.log("openChatGroupCreation error");
+            }
+        });
+    }
+
+    function showMessage(message) {
+        var $message = $('<div class="report-message">' + message + '</div>');
+        $('body').append($message);
+        $message.css({
+            'position': 'fixed',
+            'top': '0',
+            'left': '0',
+            'width': '100%',
+            'padding': '10px',
+            'text-align': 'center',
+            'background-color': '#eee6f3',
+            'color':'#18191a',
+        });
+        $message.slideDown(300).delay(3000).slideUp(300, function () {
+            $message.remove();
+        });
+    }
+
+
+    function deleteChatGroup(connection_id) {
+        var result = confirm("Are you sure you want to delete this group?");
+        if (!result) {
+            showMessage("The Group survives!!")
+        }
+        else {
+            $.ajax({
+                url: "{% url 'connections:delete_group' connection_id=1 %}".replace(/1/, connection_id.toString()),
+                type: "GET",
+                success: function (response) {
+                    if (response.delete === "success") {
+                        getConnectionsList();
+                        showMessage(response.message);
+                        // openChatBox(response.connection_id);
+                        resetChatBox();
+                    } else {
+                        showMessage("Something went wrong")
+                    }
+                },
+                error: function () {
+                    console.log("deleteChatGroup error");
+                },
+            });
+        }
+    }
+
+    function resetChatBox(){
+        document.getElementById('chat_box').innerHTML = "";
+    }
+
+    function exitChatGroup(connection_id) {
+        var result = confirm("Are you sure you want to exit this group?");
+        if (!result) {
+            showMessage("You Live to text another day in the group!!")
+        }
+        else {
+            $.ajax({
+                url: "{% url 'connections:exit_group' connection_id=1 %}".replace(/1/, connection_id.toString()),
+                type: "GET",
+                success: function (response) {
+                    if (response.delete === "success") {
+                        getConnectionsList();
+                        showMessage(response.message);
+                        // openChatBox(response.connection_id);
+                        resetChatBox();
+                    } else {
+                        showMessage("Something went wrong")
+                    }
+                },
+                error: function () {
+                    console.log("deleteChatGroup error");
+                },
+            });
+        }
+    }
+
+
     getConnectionsList();
 </script>

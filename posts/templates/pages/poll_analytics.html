@@ -1,0 +1,12 @@
+<div class="wrapper">
+    <div class="pie-wrap">
+        {% for option, percentage in option_percentage_list %}
+        <div class="light-yellow entry" style="background-color: #{{ option.color }};">
+            <p>{{ percentage }}%</p>
+            <p class="entry-value">{{ option.choice_text }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<button id="results-button">Results</button>

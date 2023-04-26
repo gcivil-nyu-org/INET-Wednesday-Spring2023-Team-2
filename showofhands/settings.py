@@ -94,6 +94,8 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
+                "showofhands.context_processors.tagged_count",
+                "showofhands.context_processors.friend_request_count",
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",

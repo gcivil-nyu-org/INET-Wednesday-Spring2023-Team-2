@@ -17,8 +17,14 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         connections_recieved = user.connection_requests_received.filter(
             connection_status="Accepted"
         )
+        group_connects = user.groups_in.all().values_list(
+            "connection_id_for_group", flat=True
+        )
+        group_connects = Connection_Model.objects.filter(
+            connection_status="Accepted", id__in=group_connects
+        )
 
-        connections = connections_sent | connections_recieved
+        connections = connections_sent | connections_recieved | group_connects
 
         self.group_name_map = {}
         async for connection in connections:
@@ -59,22 +65,16 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def store_info_db(self, message, username, connection_id, timestamp):
+        connection = Connection_Model.objects.get(id=connection_id)
         try:
-            chat_history = Chat_History.objects.get(
-                connection=Connection_Model.objects.get(id=connection_id)
-            )
+            chat_history = Chat_History.objects.get(connection=connection)
         except (KeyError, Chat_History.DoesNotExist):
-            chat_history = Chat_History.objects.create(
-                connection=Connection_Model.objects.get(id=connection_id)
-            )
+            chat_history = Chat_History.objects.create(connection=connection)
 
         # chat_history.history.append({"message": message,"username": username, "timestamp": timestamp},)
         # chat_history.save()
 
-        if (
-            Connection_Model.objects.get(id=connection_id).connection_status
-            == "Blocked"
-        ):
+        if connection.connection_status == "Blocked":
             async_to_sync(self.blockclose)(connection_id)
             return False, None
 
@@ -88,7 +88,11 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
 
         chat_history.append_latest_message(message, timestamp)
 
-        return True, message_id
+        is_group = False
+        if connection.group:
+            is_group = True
+
+        return True, message_id, is_group
 
     # This function receive messages from WebSocket.
     async def receive(self, text_data):
@@ -98,7 +102,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         connection_id = text_data_json["connection_id"]
         timestamp = datetime.now()
 
-        success, message_id = await self.store_info_db(
+        success, message_id, is_group = await self.store_info_db(
             message, username, connection_id, timestamp
         )
 
@@ -113,6 +117,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                     "closed": False,
                     "connection_id": connection_id,
                     "message_id": str(message_id),
+                    "is_group": is_group,
                 },
             )
 
@@ -124,6 +129,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         closed = event["closed"]
         connection_id = event["connection_id"]
         message_id = event["message_id"]
+        is_group = event["is_group"]
 
         # send message and username of sender to websocket
         await self.send(
@@ -135,6 +141,7 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
                     "closed": closed,
                     "connection_id": connection_id,
                     "message_id": message_id,
+                    "is_group": is_group,
                 }
             )
         )
