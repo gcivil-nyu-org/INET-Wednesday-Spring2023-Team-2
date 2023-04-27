@@ -101,6 +101,10 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
         username = text_data_json["username"]
         connection_id = text_data_json["connection_id"]
         timestamp = datetime.now()
+        user = self.scope["user"]
+
+        if connection_id not in self.group_name_map:
+            await self.initiate_connections(user)
 
         success, message_id, is_group = await self.store_info_db(
             message, username, connection_id, timestamp
