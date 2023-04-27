@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import SearchFriendsView
 
 app_name = "connections"
 
@@ -48,4 +49,5 @@ urlpatterns = [
         views.update_user_pending_status_view,
         name="update_user_pending_status",
     ),
+    path("search/", SearchFriendsView.as_view(), name="search_friends"),
 ]

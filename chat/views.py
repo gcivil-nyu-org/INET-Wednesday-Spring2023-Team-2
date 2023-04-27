@@ -7,6 +7,9 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views import View
 
+from login.views import get_user_friends_list
+
+
 import datetime
 
 from rest_framework.views import APIView
@@ -14,6 +17,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.decorators import login_required
 
 from .models import Chat_History, Connection_Model, Chat_Message, Group_Connection
+from login.models import Custom_User
 from .forms import Group_Connection_Form
 
 
@@ -23,6 +27,53 @@ def is_ajax(request):
 
 
 # Create your views here.
+
+
+class SearchFriendsView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get("search", "")
+
+        if query:
+            friends = get_user_friends_list(request.user)
+            user_results = Custom_User.objects.filter(
+                Q(
+                    id__in=[
+                        friend.to_user.id
+                        for friend in friends
+                        if friend.from_user == request.user
+                    ]
+                    + [
+                        friend.from_user.id
+                        for friend in friends
+                        if friend.to_user == request.user
+                    ]
+                )
+                & Q(username__icontains=query)
+            ).distinct()
+        else:
+            user_results = Custom_User.objects.none()
+
+        search_results = []
+
+        for user in user_results:
+            connection = (
+                Connection_Model.objects.filter(
+                    from_user=user, to_user=request.user, connection_status="Accepted"
+                ).first()
+                or Connection_Model.objects.filter(
+                    from_user=request.user, to_user=user, connection_status="Accepted"
+                ).first()
+            )
+
+            search_results.append(
+                {
+                    "id": user.id,
+                    "username": user.username,
+                    "connection_id": connection.id,
+                }
+            )
+
+        return JsonResponse({"search_results": search_results})
 
 
 def get_friends_info(request):

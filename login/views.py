@@ -23,7 +23,8 @@ from .forms import PasswordResetConfirmationForm
 from .tokens import account_activation_token, password_reset_token
 from .models import Custom_User
 from chat.models import Connection_Model
-from chat.views import get_friends_info
+
+# from chat.views import get_friends_info
 from posts.models import Post_Model, Options_Model, Noti_Model
 
 

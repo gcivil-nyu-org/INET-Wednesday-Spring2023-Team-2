@@ -68,7 +68,7 @@
     new Autocomplete('#userAutocomplete', {
         search: input => {
             if (input.length < 1) { return [] }
-            return fetch(`/posts/search/?search=${input}`)
+            return fetch(`/connections/search/?search=${input}`)
                 .then(response => response.json())
                 .then(data => {
                     return data.search_results.filter(result => result.username)
@@ -76,7 +76,8 @@
                             return {
                                 type: "user",
                                 id: result.id,
-                                username: result.username
+                                username: result.username,
+                                connection_id: result.connection_id
                             }
                         });
                 });
@@ -84,7 +85,7 @@
         renderResult: (result, props) => {
             if (result.type === "user") {
                 return `
-                    <a href="#" onclick="handleUserResultClick('${result.type}', '${result.username}')">
+                    <a href="#" onclick="handleUserResultClick('${result.type}', '${result.connection_id}')">
                         <ul class="autocomplete-result" data-id="${result.id}">
                             <li class="autocomplete-username">
                                 <strong>${result.username}</strong>
@@ -95,12 +96,11 @@
         }
     });
 
-    function handleUserResultClick(type, username) {
+    function handleUserResultClick(type, connection_id) {
         if (type === "user") {
-            // You can update this function to perform any desired action when a user is selected from the search results
+            // console.log('Selected user:', username);
 
-            // window.location.href = `/chat/${username}/`;
-            console.log('Selected user:', username);
+            openChatBox(connection_id);
         }
     }
 
