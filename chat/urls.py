@@ -38,4 +38,14 @@ urlpatterns = [
         views.exit_group_view,
         name="exit_group",
     ),
+    path(
+        "chat/add_message_notification/",
+        views.add_message_notification_view,
+        name="add_message_notification",
+    ),
+    path(
+        "chat/update_user_pending_status/",
+        views.update_user_pending_status_view,
+        name="update_user_pending_status",
+    ),
 ]

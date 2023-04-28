@@ -32,6 +32,8 @@ class Custom_User(AbstractUser):
         validators=[validate_image_extension],
     )
 
+    has_unread_messages = models.BooleanField(blank=True, null=True)
+
     def __str__(self):
         return self.username
 

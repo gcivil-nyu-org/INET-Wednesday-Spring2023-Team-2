@@ -74,21 +74,6 @@ def get_num_new_messages(request):
 
 @login_required
 def chat_page(request):
-    # friends = get_friends_info(request)
-    # friends = friends.order_by('-latest_message_time')
-    # friend_object = [
-    #     (
-    #         friend.get_friend(request.user),
-    #         friend,
-    #     )
-    #     for friend in friends
-    # ]
-
-    # context = {
-    #     "friends": friends,
-    #     "friend_object": friend_object,
-    # }
-
     return render(request, "pages/chat.html")
 
 
@@ -148,22 +133,9 @@ def get_chat_connections_list_view(request):
     if is_ajax(request):
         friends = get_friends_info(request)
         friends = friends.order_by("-latest_message_time")
-
-        # friends = friends.order_by("-get_chat_history__latest_message_time")
-        # print(friends[0].get_chat_history.all()[0].history.filter(~Q(user=request.user)).filter(~Q(seen_by__username__contains=request.user.username)).count())
-        # friend_object = [
-        #     (
-        #         friend.get_friend(request.user),
-        #         friend,
-        #         friend.get_chat_history.all()[0]
-        #         .history.filter(~Q(user=request.user))
-        #         .filter(~Q(seen_by__username__contains=request.user.username))
-        #         .count(),
-        #     )
-        #     for friend in friends
-        # ]
-
         friend_object = []
+        has_unread_messages = False
+
         for friend in friends:
             try:
                 unread_msg_count = (
@@ -177,6 +149,9 @@ def get_chat_connections_list_view(request):
                 unread_msg_count = 0
                 latest_message = ""
 
+            if unread_msg_count:
+                has_unread_messages = True
+
             friend_object.append(
                 (
                     friend.get_friend(request.user),
@@ -185,6 +160,9 @@ def get_chat_connections_list_view(request):
                     latest_message,
                 )
             )
+
+        request.user.has_unread_messages = has_unread_messages
+        request.user.save()
 
         contents = {
             "friends": friends,
@@ -347,5 +325,34 @@ def exit_group_view(request, connection_id):
         return JsonResponse(
             {"delete": "success", "message": f"{group_} wishes you Farewell!"}
         )
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
+
+
+##TODO: Delete ONLY IF model idea works
+# def get_unread_messages_count(request):
+#     friends = get_friends_info(request)
+#     unread_msg_count = (
+#         friend.get_chat_history.history.filter(~Q(user=request.user))
+#         .filter(~Q(seen_by__username__contains=request.user.username))
+#         .count()
+#     )
+
+
+def add_message_notification_view(request):
+    if is_ajax(request):
+        # print(request.user.has_unread_messages)
+        if request.user.has_unread_messages:
+            return JsonResponse({"pending": "true"})
+        return JsonResponse({"pending": "false"})
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
+
+
+def update_user_pending_status_view(request):
+    if is_ajax(request):
+        request.user.has_unread_messages = True
+        request.user.save()
+        return JsonResponse({"pending": "true"})
     else:
         return HttpResponse("Thou Shall not Enter!!")

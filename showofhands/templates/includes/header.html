@@ -152,6 +152,16 @@
 </body>
 </html>
 
+
+<!-- ChatSocket -->
+<script type="text/javascript" src="{% static '../static/js/chatSocketUniv.js' %}"></script>
+{% block notiscripts %}
+
+{% include "includes/messageNotification.html" %}
+
+{% endblock notiscripts %}
+
+
 <!----===== Autocomplete Search ===== -->
 <script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
 <script>
@@ -223,4 +233,5 @@
     }
 
 
+    addMessageNotification();
 </script>
