@@ -66,43 +66,67 @@
     // console.log("{{ friend_object.1.1.get_chat_history }}")
 
     new Autocomplete('#userAutocomplete', {
-        search: input => {
-            if (input.length < 1) { return [] }
-            return fetch(`/connections/search/?search=${input}`)
-                .then(response => response.json())
-                .then(data => {
-                    return data.search_results.filter(result => result.username)
-                        .map(result => {
-                            return {
-                                type: "user",
-                                id: result.id,
-                                username: result.username,
-                                connection_id: result.connection_id
-                            }
-                        });
-                });
-        },
-        renderResult: (result, props) => {
-            if (result.type === "user") {
-                return `
-                    <a href="#" onclick="handleUserResultClick('${result.type}', '${result.connection_id}')">
-                        <ul class="autocomplete-result" data-id="${result.id}">
-                            <li class="autocomplete-username">
-                                <strong>${result.username}</strong>
-                            </li>
-                        </ul>
-                    </a>`;
-            }
-        }
-    });
+    search: input => {
+        if (input.length < 1) { return [] }
+        return fetch(`/connections/search/?search=${input}`)
+            .then(response => response.json())
+            .then(data => {
+                const userResults = data.search_results.filter(result => result.username)
+                    .map(result => {
+                        return {
+                            type: "user",
+                            id: result.id,
+                            username: result.username,
+                            connection_id: result.connection_id
+                        }
+                    });
 
-    function handleUserResultClick(type, connection_id) {
-        if (type === "user") {
-            // console.log('Selected user:', username);
+                const groupResults = data.search_results.filter(result => result.group_name)
+                    .map(result => {
+                        return {
+                            type: "group",
+                            id: result.id,
+                            group_name: result.group_name,
+                            group_id: result.group_id
+                        }
+                    });
 
-            openChatBox(connection_id);
+                return [...userResults, ...groupResults];
+            });
+    },
+    renderResult: (result, props) => {
+        if (result.type === "user") {
+            return `
+                <a href="#" onclick="handleResultClick('${result.type}', '${result.connection_id}')">
+                    <ul class="autocomplete-result" data-id="${result.id}">
+                        <li class="autocomplete-username">
+                            <strong>${result.username}</strong>
+                        </li>
+                    </ul>
+                </a>`;
+        } else if (result.type === "group") {
+            return `
+                <a href="#" onclick="handleResultClick('${result.type}', '${result.group_id}')">
+                    <ul class="autocomplete-result" data-id="${result.id}">
+                        <li class="autocomplete-groupname">
+                            <strong>${result.group_name}</strong>
+                        </li>
+                    </ul>
+                </a>`;
         }
     }
+});
+
+function handleResultClick(type, id) {
+    console.log("TYPE ", type);
+    console.log("ID ", id);
+
+    if (type === "user") {
+        openChatBox(id);
+    } else if (type === "group") {
+        openChatBox(id);
+    }
+}
 
     function getConnectionsList(){
         $.ajax({

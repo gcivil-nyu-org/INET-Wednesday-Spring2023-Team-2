@@ -33,6 +33,8 @@ class SearchFriendsView(TemplateView):
     def get(self, request, *args, **kwargs):
         query = request.GET.get("search", "")
 
+        search_results = []
+
         if query:
             friends = get_user_friends_list(request.user)
             user_results = Custom_User.objects.filter(
@@ -50,28 +52,43 @@ class SearchFriendsView(TemplateView):
                 )
                 & Q(username__icontains=query)
             ).distinct()
-        else:
-            user_results = Custom_User.objects.none()
 
-        search_results = []
+            for user in user_results:
+                connection = (
+                    Connection_Model.objects.filter(
+                        from_user=user,
+                        to_user=request.user,
+                        connection_status="Accepted",
+                    ).first()
+                    or Connection_Model.objects.filter(
+                        from_user=request.user,
+                        to_user=user,
+                        connection_status="Accepted",
+                    ).first()
+                )
 
-        for user in user_results:
-            connection = (
-                Connection_Model.objects.filter(
-                    from_user=user, to_user=request.user, connection_status="Accepted"
-                ).first()
-                or Connection_Model.objects.filter(
-                    from_user=request.user, to_user=user, connection_status="Accepted"
-                ).first()
-            )
+                search_results.append(
+                    {
+                        "id": user.id,
+                        "username": user.username,
+                        "connection_id": connection.id,
+                        "type": "user",
+                    }
+                )
 
-            search_results.append(
-                {
-                    "id": user.id,
-                    "username": user.username,
-                    "connection_id": connection.id,
-                }
-            )
+            group_results = Group_Connection.objects.filter(
+                Q(members__id=request.user.id) & Q(group_name__icontains=query)
+            ).distinct()
+
+            for group in group_results:
+                search_results.append(
+                    {
+                        "id": group.id,
+                        "group_name": group.group_name,
+                        "group_id": group.id,
+                        "type": "group",
+                    }
+                )
 
         return JsonResponse({"search_results": search_results})
 
@@ -245,7 +262,8 @@ def update_msg_seen_view(request, message_id):
 class Get_Chat_Group_Creation_View(View):
     def get(self, request, connection_id):
         if is_ajax(request):
-            chat_group_creation_form = Group_Connection_Form()
+            friends = get_user_friends(request.user)
+            chat_group_creation_form = Group_Connection_Form(friends=friends)
             if int(connection_id):
                 group_ = Connection_Model.objects.get(id=connection_id).group
                 chat_group_creation_form = Group_Connection_Form(instance=group_)
@@ -407,3 +425,16 @@ def update_user_pending_status_view(request):
         return JsonResponse({"pending": "true"})
     else:
         return HttpResponse("Thou Shall not Enter!!")
+def get_user_friends(user):
+    friends = (
+        Custom_User.objects.filter(
+            Q(connection_requests_received__from_user=user)
+            & Q(connection_requests_received__connection_status="Accepted")
+        )
+        | Custom_User.objects.filter(
+            Q(connection_requests_sent__to_user=user)
+            & Q(connection_requests_sent__connection_status="Accepted")
+        )
+    ).distinct()
+
+    return friends
