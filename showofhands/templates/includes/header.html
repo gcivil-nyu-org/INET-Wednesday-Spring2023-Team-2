@@ -97,9 +97,10 @@
                     <li class="nav-link">
                         <!-- modify link later -->
                         <a href={% url 'connections:chat_page' %}>
-                            <i class='bx bx-chat icon'>
-                                {{ num_new_messages }}
-                            </i>
+                            <div class="profile-notification-container">
+                            <i class='bx bx-chat icon'></i>
+                            <span id = "chat-notification" class="red-dot hidden"></span>
+                            </div>
                             <span class="text nav-text">Chat</span>
                         </a>
                     </li>

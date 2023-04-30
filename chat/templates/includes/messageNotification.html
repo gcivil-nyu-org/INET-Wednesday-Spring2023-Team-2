@@ -11,11 +11,15 @@
             success: function(resp){
                 if (resp.pending === "true") {
                     // add notification dot in header
-                    console.log("notification added lol")
+                    // console.log("notification added")
+                    const badge = document.getElementById('chat-notification');
+                    badge.classList.remove('hidden');
                 }
                 else if (resp.pending == "false"){
                     // remove notification dot in header
-                    console.log("notification removed lol")
+                    // console.log("notification removed")
+                    const badge = document.getElementById('chat-notification');
+                    badge.classList.add('hidden');
                 }
             },
             error: function(resp){
