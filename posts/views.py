@@ -561,6 +561,7 @@ class CommentsView(View):
                     noti_post = Noti_Model.objects.create(
                         recipient=post_.created_by,
                         sender=request.user,
+                        content_text=comment_text,
                         post_at=post_,
                         noti_type="Comment",
                     )
@@ -584,6 +585,7 @@ class CommentsView(View):
                             noti_at = Noti_Model.objects.create(
                                 recipient=target,
                                 sender=request.user,
+                                content_text=comment_text,
                                 post_at=post_,
                                 noti_type="At",
                             )
