@@ -6,12 +6,15 @@ from chat.views import (
     get_chat_history,
     get_num_new_messages,
     latest_message_formatting,
+    Get_Chat_Group_Creation_View,
 )
 from chat.models import (
     Connection_Model,
     Chat_Message,
     Chat_History,
+    Group_Connection,
 )
+from chat.forms import Group_Connection_Form
 
 
 class TestChatViews(TestCase):
@@ -111,3 +114,21 @@ class TestChatViews(TestCase):
         expected_message = "This is a long messa..."
         formatted_message = latest_message_formatting(message)
         self.assertEqual(formatted_message, expected_message)
+
+
+class TestGroupChatView(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = Custom_User.objects.create_user(
+            username="testuser", password="12345"
+        )
+        self.friend1 = Custom_User.objects.create_user(
+            username="friend1", password="12345"
+        )
+        self.friend2 = Custom_User.objects.create_user(
+            username="friend2", password="12345"
+        )
+        self.group = Group_Connection.objects.create(
+            group_created_by=self.user, group_name="Test Group"
+        )
+        self.connection = Connection_Model.objects.create(group=self.group)

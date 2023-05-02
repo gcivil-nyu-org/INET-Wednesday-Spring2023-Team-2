@@ -214,7 +214,10 @@ def show_analytics(request):
     options_ = Options_Model.objects.filter(question=post_)
 
     total_votes = sum(option.votes for option in options_)
-    percentage_list = [option.votes / total_votes * 100 for option in options_]
+    if total_votes == 0:
+        percentage_list = [0 for option in options_]
+    else:
+        percentage_list = [option.votes / total_votes * 100 for option in options_]
 
     option_percentage_list = zip(options_, percentage_list)
 
