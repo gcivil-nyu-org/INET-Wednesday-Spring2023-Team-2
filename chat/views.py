@@ -427,6 +427,8 @@ def update_user_pending_status_view(request):
         return JsonResponse({"pending": "true"})
     else:
         return HttpResponse("Thou Shall not Enter!!")
+
+
 def get_user_friends(user):
     friends = (
         Custom_User.objects.filter(
