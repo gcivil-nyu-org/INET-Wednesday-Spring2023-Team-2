@@ -723,6 +723,7 @@ select {
 }
 
 .text-center{
+	text-align: center;
 	bottom: 0;
 	position: relative;
 }
