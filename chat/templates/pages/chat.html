@@ -87,6 +87,7 @@
                             type: "group",
                             id: result.id,
                             group_name: result.group_name,
+                            connection_id: result.connection_id,
                             group_id: result.group_id
                         }
                     });
@@ -97,7 +98,7 @@
     renderResult: (result, props) => {
         if (result.type === "user") {
             return `
-                <a href="#" onclick="handleResultClick('${result.type}', '${result.connection_id}')">
+                <a href="#" onclick="handleUserResultClick('${result.type}', '${result.connection_id}')">
                     <ul class="autocomplete-result" data-id="${result.id}">
                         <li class="autocomplete-username">
                             <strong>${result.username}</strong>
@@ -106,7 +107,7 @@
                 </a>`;
         } else if (result.type === "group") {
             return `
-                <a href="#" onclick="handleResultClick('${result.type}', '${result.group_id}')">
+                <a href="#" onclick="handleUserResultClick('${result.type}', '${result.connection_id}')">
                     <ul class="autocomplete-result" data-id="${result.id}">
                         <li class="autocomplete-groupname">
                             <strong>${result.group_name}</strong>
@@ -117,7 +118,7 @@
     }
 });
 
-function handleResultClick(type, id) {
+function handleUserResultClick(type, id) {
     console.log("TYPE ", type);
     console.log("ID ", id);
 
