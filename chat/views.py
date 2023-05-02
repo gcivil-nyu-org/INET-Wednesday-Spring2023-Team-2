@@ -413,7 +413,7 @@ def exit_group_view(request, connection_id):
 def add_message_notification_view(request):
     if is_ajax(request):
         # print(request.user.has_unread_messages)
-        if request.user.has_unread_messages:
+        if request.user.is_authenticated and request.user.has_unread_messages:
             return JsonResponse({"pending": "true"})
         return JsonResponse({"pending": "false"})
     else:

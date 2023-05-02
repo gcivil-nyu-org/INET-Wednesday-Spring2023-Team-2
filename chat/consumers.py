@@ -36,6 +36,9 @@ class ChatRoomConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         user = self.scope["user"]
 
+        if not user.is_authenticated:
+            return
+
         await self.initiate_connections(user)
 
         # self.chat_box_name = self.scope["url_route"]["kwargs"]["connection_id"]
