@@ -2,7 +2,11 @@ from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 
 from login.models import Custom_User
-from chat.views import get_chat_history, get_num_new_messages
+from chat.views import (
+    get_chat_history,
+    get_num_new_messages,
+    latest_message_formatting,
+)
 from chat.models import (
     Connection_Model,
     Chat_Message,
@@ -95,3 +99,15 @@ class TestChatViews(TestCase):
         request.user = self.user
         num_new_messages = get_num_new_messages(request)
         self.assertEqual(num_new_messages, 1)
+
+    def test_latest_message_formatting(self):
+        # Test message less than 20 characters
+        message = "Hello world"
+        formatted_message = latest_message_formatting(message)
+        self.assertEqual(formatted_message, message)
+
+        # Test message more than 20 characters
+        message = "This is a long message that needs to be formatted"
+        expected_message = "This is a long messa..."
+        formatted_message = latest_message_formatting(message)
+        self.assertEqual(formatted_message, expected_message)

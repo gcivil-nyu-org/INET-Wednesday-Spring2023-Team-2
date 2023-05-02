@@ -1,28 +1,43 @@
-.wrapper{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.wrapper {
+    width:100%;
+
 }
 
-.pie-wrap{
+.bars {
+    position: relative; /* add this to allow positioning of the line */
     border: 2px solid black;
-    width: 400px;
-    height: 400px;
-    margin: 10% 50px;
-    position: relative;
-    border-radius: 50%;
-    color: black;
+    background-color: snow;
+    margin: 15%;
 }
 
-.pie-wrap .entry{
+.bars div {
+    position: relative; /* add this to allow positioning of the line */
+    width: 100%;
+    height: 50px; /* add a height for demonstration purposes */
+    margin-bottom: 10px; /* add some margin between the bars */
+}
+
+.percentage-value {
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
+    height: 100%;
 }
 
-.light-yellow{
-    /* background-color: lightyellow; */
-    height:50%;
-    width: 50%;
+.entry-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.x-axis-label {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.y-axis-label {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%) rotate(-90deg);
 }

@@ -167,7 +167,7 @@ getCommentsText();
         type: "GET",
         data: {'pid': pid},
         success: function(response) {
-          $(".section").html(response);
+          $(".poll-display-container").html(response);
         }
       });
     });

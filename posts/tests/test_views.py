@@ -1,6 +1,12 @@
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse, resolve
-from posts.views import PostsView, show_curr_post_api_view, home_view, results_view
+from posts.views import (
+    PostsView,
+    show_curr_post_api_view,
+    home_view,
+    results_view,
+    show_analytics,
+)
 from posts.models import Post_Model, Options_Model, Comments_Model, UserPostViewTime
 from login.models import Custom_User
 from django.test import Client
@@ -61,6 +67,25 @@ class ResultsViewTest(TestCase):
         # print(response)
         # print(str(response.content, encoding='utf8'))
         self.assertEqual(response.status_code, 200)
+
+    # def test_show_analytics(self):
+    #     self.client.login(username="testuser", password="test")
+    #     response = self.client.get(reverse("show_analytics"), {"pid": self.post.id})
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertContains(response, "Test question")
+
+    #     options = response.context["option_percentage_list"]
+    #     self.assertEqual(len(options), 2)
+
+    #     for option, percentage in options:
+    #         if option.id == self.option1.id:
+    #             self.assertEqual(option.choice_text, "option1")
+    #             self.assertEqual(percentage, 100.0)
+    #         elif option.id == self.option2.id:
+    #             self.assertEqual(option.choice_text, "option2")
+    #             self.assertEqual(percentage, 0.0)
+    #         else:
+    #             self.fail("Unexpected option")
 
 
 class NextPostTest(TestCase):
