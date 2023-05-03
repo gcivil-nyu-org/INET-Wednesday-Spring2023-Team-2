@@ -167,6 +167,14 @@ def results_view(request, pid, change_url, category):
     options_ = post_.options_model_set.all().order_by("id")
     user_option = request.user.user_option.get(question=post_)
 
+    total_votes = sum(option.votes for option in options_)
+    if total_votes == 0:
+        percentage_list = [0 for option in options_]
+    else:
+        percentage_list = [option.votes / total_votes * 100 for option in options_]
+
+    option_percentage_list = zip(options_, percentage_list)
+
     # user_choice = post_.options_model_set.get(chosen_by=request.user)
     # user_color_ = user_choice.color
     contents = {
@@ -177,6 +185,7 @@ def results_view(request, pid, change_url, category):
         "show_poll_results": False,
         "change_url": change_url,
         "category": category,
+        "option_percentage_list": option_percentage_list,
     }
     template = loader.get_template("pages/poll_result.html")
 
@@ -205,7 +214,10 @@ def show_analytics(request):
     options_ = Options_Model.objects.filter(question=post_)
 
     total_votes = sum(option.votes for option in options_)
-    percentage_list = [option.votes / total_votes * 100 for option in options_]
+    if total_votes == 0:
+        percentage_list = [0 for option in options_]
+    else:
+        percentage_list = [option.votes / total_votes * 100 for option in options_]
 
     option_percentage_list = zip(options_, percentage_list)
 
@@ -552,6 +564,7 @@ class CommentsView(View):
                     noti_post = Noti_Model.objects.create(
                         recipient=post_.created_by,
                         sender=request.user,
+                        content_text=comment_text,
                         post_at=post_,
                         noti_type="Comment",
                     )
@@ -575,6 +588,7 @@ class CommentsView(View):
                             noti_at = Noti_Model.objects.create(
                                 recipient=target,
                                 sender=request.user,
+                                content_text=comment_text,
                                 post_at=post_,
                                 noti_type="At",
                             )

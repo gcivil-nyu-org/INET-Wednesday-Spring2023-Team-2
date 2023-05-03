@@ -4,6 +4,7 @@
 <head>
     <link rel="stylesheet" type="text/css" href="{% static '../static/css/chat.css' %}"/>
     <link rel="stylesheet" type="text/css" href="{% static '../static/css/style.css' %}" />
+    <link rel="stylesheet" href="https://unpkg.com/@trevoreyre/autocomplete-js/dist/style.css"/>
 </head>
 
 <div class="container">
@@ -14,7 +15,10 @@
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Search...">
+                        <div id="userAutocomplete" class="autocomplete">
+                            <input type="text" class="form-control autocomplete-input" placeholder="Search...">
+                            <ul class="autocomplete-result-list"></ul>
+                        </div>
                     </div>
                 </div>
                 <ul class="list-unstyled chat-list mt-2 mb-0" id="chat_connections_list">
@@ -50,10 +54,80 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
-<script type="text/javascript" src="{% static '../static/js/chatSocketUniv.js' %}"></script>
+
+{% block notiscripts %}
+
+{% include "includes/messageNotification.html" %}
+
+{% endblock notiscripts %}
+<script src="https://unpkg.com/@trevoreyre/autocomplete-js"></script>
 
 <script>
     // console.log("{{ friend_object.1.1.get_chat_history }}")
+
+    new Autocomplete('#userAutocomplete', {
+    search: input => {
+        if (input.length < 1) { return [] }
+        return fetch(`/connections/search/?search=${input}`)
+            .then(response => response.json())
+            .then(data => {
+                const userResults = data.search_results.filter(result => result.username)
+                    .map(result => {
+                        return {
+                            type: "user",
+                            id: result.id,
+                            username: result.username,
+                            connection_id: result.connection_id
+                        }
+                    });
+
+                const groupResults = data.search_results.filter(result => result.group_name)
+                    .map(result => {
+                        return {
+                            type: "group",
+                            id: result.id,
+                            group_name: result.group_name,
+                            connection_id: result.connection_id,
+                            group_id: result.group_id
+                        }
+                    });
+
+                return [...userResults, ...groupResults];
+            });
+    },
+    renderResult: (result, props) => {
+        if (result.type === "user") {
+            return `
+                <a href="#" onclick="handleUserResultClick('${result.type}', '${result.connection_id}')">
+                    <ul class="autocomplete-result" data-id="${result.id}">
+                        <li class="autocomplete-username">
+                            <strong>${result.username}</strong>
+                        </li>
+                    </ul>
+                </a>`;
+        } else if (result.type === "group") {
+            return `
+                <a href="#" onclick="handleUserResultClick('${result.type}', '${result.connection_id}')">
+                    <ul class="autocomplete-result" data-id="${result.id}">
+                        <li class="autocomplete-groupname">
+                            <strong>${result.group_name}</strong>
+                        </li>
+                    </ul>
+                </a>`;
+        }
+    }
+});
+
+function handleUserResultClick(type, id) {
+    console.log("TYPE ", type);
+    console.log("ID ", id);
+
+    if (type === "user") {
+        openChatBox(id);
+    } else if (type === "group") {
+        openChatBox(id);
+    }
+}
 
     function getConnectionsList(){
         $.ajax({
@@ -61,6 +135,7 @@
             type: "GET",
             success: function(resp){
                 $("#chat_connections_list").html(resp);
+                addMessageNotification();
             },
             error: function(resp){
                 console.log("getConnectionsList error");
@@ -170,6 +245,10 @@
         }
     }
 
+    function addMessagestoStatus(data){
+        // document.getElementById("connection_status-" + data.connection_id).innerHTML = " <i class='fa fa-circle online'></i> " + data.message + " ";
+        getConnectionsList();
+    }
 
     getConnectionsList();
 </script>

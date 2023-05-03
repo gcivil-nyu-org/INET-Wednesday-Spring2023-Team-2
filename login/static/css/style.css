@@ -14,6 +14,7 @@ body {
 }
 
 h1 {
+	padding-top: 5%;
 	font-weight: bold;
 	margin: 0;
 	color:#222;
@@ -93,6 +94,7 @@ form {
 	padding: 0 50px;
 	height: 100%;
 	text-align: center;
+	overflow:auto;
 }
 
 input {
@@ -721,6 +723,7 @@ select {
 }
 
 .text-center{
+	text-align: center;
 	bottom: 0;
 	position: relative;
 }
@@ -939,7 +942,7 @@ select {
   }
 
   .text-muted {
-	font-size: 11px;
+	font-size: 13px;
 	color:grey;
   }
 
@@ -962,6 +965,12 @@ select {
 	color: #3366ff;
 
 }
+
+.noti-content-text {
+	font-size: 15px;
+	color: darkcyan;
+
+}
 .history-title {
 	font-size:16px;
 	font-weight: bold;
@@ -969,10 +978,9 @@ select {
 }
 .history-option-text {
 	font-size: 16px;
+	word-break: break-word;
 }
-.history-option-text {
-	font-size: 15px;
-}
+
 .history-option-text.color1 {
     color: #AED9E0;
 }

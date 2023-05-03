@@ -23,8 +23,8 @@
         <ul>
           {% for noti in notifications reversed %}
               {% if noti.notification.noti_type == 'At' %}
+                {% if noti.notification.sender != request.user %}
                 <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> mentioned you in a post: 
-                <br>
                 <a class = "noti-post-title" href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
                   {{ noti.post_id}} => {{ noti.question_text}}  :
 
@@ -34,9 +34,13 @@
                   {% endfor %}
                   </a>
                 </a>
-              {% elif noti.notification.noti_type == 'Comment' %}
-                <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> commented on your post: 
+                <span class="text-muted">at {{ noti.notification.created_at }}</span>
                 <br>
+                <span class="noti-content-text">{{noti.notification.content_text}}</span>
+                {% endif %}
+              {% elif noti.notification.noti_type == 'Comment' %}
+                {% if noti.notification.sender != request.user %}
+                <strong><a href="{% url 'account:profile_page' noti.notification.sender.username %}">{{ noti.notification.sender }}</a></strong> commented on your post: 
                 <a class = "noti-post-title" href="{% url 'posts:post_generation_page' category='all' pid=noti.post_id %}">
                   {{ noti.post_id}} => {{ noti.question_text }} :
 
@@ -46,9 +50,12 @@
                   {% endfor %}
                   </a>
                 </a>
+                <span class="text-muted">at {{ noti.notification.created_at }}</span>
+                <br>
+                <tabs><span class="noti-content-text">{{noti.notification.content_text}}</span>
+                {% endif %}
               {% endif %}
-              <span class="text-muted">at {{ noti.notification.created_at }}</span>
-            </li><br>
+              <br>
           {% endfor %}
         </ul>
     </div>

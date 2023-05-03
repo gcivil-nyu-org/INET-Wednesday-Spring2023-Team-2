@@ -1,12 +1,16 @@
+
+<h2 class="question">{{ post.question_text }}</h2>
+<br>
 <div class="wrapper">
-    <div class="pie-wrap">
+    <div class="bars">
         {% for option, percentage in option_percentage_list %}
-        <div class="light-yellow entry" style="background-color: #{{ option.color }};">
-            <p>{{ percentage }}%</p>
-            <p class="entry-value">{{ option.choice_text }}</p>
+        <div style="background-color: #{{ option.color }}; width: {{ percentage }}%;">
+            <p class="percentage-value">{{ percentage }}%</p>
         </div>
+        <p class="entry-value">{{ option.choice_text }}</p>
+        <hr>
         {% endfor %}
     </div>
+    <div class="x-axis-label">Percentage of Votes</div>
+    <div class="y-axis-label">Options</div>
 </div>
-
-<button id="results-button">Results</button>

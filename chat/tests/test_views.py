@@ -2,12 +2,25 @@ from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 
 from login.models import Custom_User
-from chat.views import get_chat_history, get_num_new_messages
+from chat.views import (
+    get_chat_history,
+    get_num_new_messages,
+    latest_message_formatting,
+    Get_Chat_Group_Creation_View,
+)
 from chat.models import (
     Connection_Model,
     Chat_Message,
     Chat_History,
+    Group_Connection,
 )
+from chat.forms import Group_Connection_Form
+from chat.models import Group_Connection
+from unittest.mock import patch
+from django.contrib.auth import get_user_model
+from django.http import JsonResponse
+from django.core.files.uploadedfile import SimpleUploadedFile
+import json
 
 
 class TestChatViews(TestCase):
@@ -95,3 +108,71 @@ class TestChatViews(TestCase):
         request.user = self.user
         num_new_messages = get_num_new_messages(request)
         self.assertEqual(num_new_messages, 1)
+
+    def test_latest_message_formatting(self):
+        # Test message less than 20 characters
+        message = "Hello world"
+        formatted_message = latest_message_formatting(message)
+        self.assertEqual(formatted_message, message)
+
+        # Test message more than 20 characters
+        message = "This is a long message that needs to be formatted"
+        expected_message = "This is a long messa..."
+        formatted_message = latest_message_formatting(message)
+        self.assertEqual(formatted_message, expected_message)
+
+    def test_search_friends(self):
+        user1 = Custom_User.objects.create(
+            username="user1", email="user1@test.com", password="testpassword"
+        )
+        user2 = Custom_User.objects.create(
+            username="user2", email="user2@test.com", password="testpassword"
+        )
+        user3 = Custom_User.objects.create(
+            username="user3", email="user3@test.com", password="testpassword"
+        )
+        group1 = Group_Connection.objects.create(
+            group_created_by=user1, group_name="Group 1"
+        )
+        group1.members.add(user2)
+        group1.members.add(user3)
+        connect2 = Connection_Model.objects.create(
+            from_user=user2, to_user=user1, connection_status="Accepted"
+        )
+        group1_connection = Connection_Model.objects.create(
+            group=group1, connection_status="Accepted"
+        )
+        self.client.force_login(user1)
+        url = reverse("connections:search_friends")
+        response = self.client.get(url + "?search=user2")
+        expected_response = JsonResponse(
+            {
+                "search_results": [
+                    {
+                        "id": user2.id,
+                        "username": user2.username,
+                        "connection_id": connect2.id,
+                        "type": "user",
+                    }
+                ]
+            }
+        )
+        self.assertEqual(response.content.decode(), expected_response.content.decode())
+
+
+class TestGroupChatView(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+        self.user = Custom_User.objects.create_user(
+            username="testuser", password="12345"
+        )
+        self.friend1 = Custom_User.objects.create_user(
+            username="friend1", password="12345"
+        )
+        self.friend2 = Custom_User.objects.create_user(
+            username="friend2", password="12345"
+        )
+        self.group = Group_Connection.objects.create(
+            group_created_by=self.user, group_name="Test Group"
+        )
+        self.connection = Connection_Model.objects.create(group=self.group)

@@ -143,7 +143,7 @@ class Noti_Model(models.Model):
         ("At", "At"),
         ("Comment", "Comment"),
     ]
-
+    content_text = models.CharField(max_length=500, default="empty comment")
     noti_type = models.CharField(
         max_length=20, choices=noti_type_options, default="Invalid"
     )

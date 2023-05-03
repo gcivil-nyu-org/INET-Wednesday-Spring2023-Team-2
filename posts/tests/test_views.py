@@ -1,6 +1,12 @@
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse, resolve
-from posts.views import PostsView, show_curr_post_api_view, home_view, results_view
+from posts.views import (
+    PostsView,
+    show_curr_post_api_view,
+    home_view,
+    results_view,
+    show_analytics,
+)
 from posts.models import Post_Model, Options_Model, Comments_Model, UserPostViewTime
 from login.models import Custom_User
 from django.test import Client
@@ -61,6 +67,14 @@ class ResultsViewTest(TestCase):
         # print(response)
         # print(str(response.content, encoding='utf8'))
         self.assertEqual(response.status_code, 200)
+
+    def test_show_analytics_view(self):
+        response = self.client.get(reverse("posts:analytics"), {"pid": self.post.id})
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "pages/poll_analytics.html")
+        self.assertContains(response, self.post.question_text)
+        self.assertContains(response, self.option1.choice_text)
+        self.assertContains(response, self.option2.choice_text)
 
 
 class NextPostTest(TestCase):

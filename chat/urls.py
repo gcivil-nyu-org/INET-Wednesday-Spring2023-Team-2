@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import SearchFriendsView
 
 app_name = "connections"
 
@@ -38,4 +39,15 @@ urlpatterns = [
         views.exit_group_view,
         name="exit_group",
     ),
+    path(
+        "chat/add_message_notification/",
+        views.add_message_notification_view,
+        name="add_message_notification",
+    ),
+    path(
+        "chat/update_user_pending_status/",
+        views.update_user_pending_status_view,
+        name="update_user_pending_status",
+    ),
+    path("search/", SearchFriendsView.as_view(), name="search_friends"),
 ]

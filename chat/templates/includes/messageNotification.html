@@ -1,0 +1,47 @@
+{% block notiscripts %}
+
+<script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
+<script>
+
+    function addMessageNotification(){
+        $.ajax({
+            url: "{% url 'connections:add_message_notification' %}",
+            type: "GET",
+            success: function(resp){
+                if (resp.pending === "true") {
+                    // add notification dot in header
+                    // console.log("notification added")
+                    const badge = document.getElementById('chat-notification');
+                    badge.classList.remove('hidden');
+                }
+                else if (resp.pending == "false"){
+                    // remove notification dot in header
+                    // console.log("notification removed")
+                    const badge = document.getElementById('chat-notification');
+                    badge.classList.add('hidden');
+                }
+            },
+            error: function(resp){
+                console.log("addMessageNotification error");
+            }
+        });
+    }
+
+
+    function updateUserPendingStatus(){
+        $.ajax({
+            url: "{% url 'connections:update_user_pending_status' %}",
+            type: "GET",
+            success: function(resp){
+                addMessageNotification();
+                },
+            error: function(resp){
+                console.log("addMessageNotification error");
+            }
+        });
+    }
+
+</script>
+
+{% endblock notiscripts %}

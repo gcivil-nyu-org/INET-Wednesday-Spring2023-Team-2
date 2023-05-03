@@ -35,7 +35,7 @@ class PollForm(forms.ModelForm):
         ("24", "24 Hours"),
     ]
     delay = forms.ChoiceField(choices=DELAY_CHOICES)
-    category = forms.MultipleChoiceField(choices=Post_Model.category_list)
+    category = forms.ChoiceField(choices=Post_Model.category_list)
 
     choice1 = forms.CharField(max_length=200)
     choice2 = forms.CharField(max_length=200)

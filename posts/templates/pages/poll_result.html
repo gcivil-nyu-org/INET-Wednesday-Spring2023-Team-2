@@ -24,9 +24,11 @@
                   </label> 
               
                   {% endfor %}
+                  {% if show_poll_results %}
                   <br><br>
                     <button id="analytics-button" data-pid="{{ post.id }}">Analytics</button>
                   <br>
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -35,6 +37,7 @@
       </div>
       <div class="footer">
         <div class="text-center">
+          <p id="resultReveal"></p>
           Created by <a href="{% url 'account:profile_page' post.created_by %}">{{ post.created_by }}</a>
           <a id="PostReport{{ post.id }}" onclick="reportPost(event, '{{ post.id }}')"><i class="fas fa-exclamation-triangle"></i></a>
                 
@@ -167,7 +170,7 @@ getCommentsText();
         type: "GET",
         data: {'pid': pid},
         success: function(response) {
-          $(".section").html(response);
+          $(".poll-display-container").html(response);
         }
       });
     });

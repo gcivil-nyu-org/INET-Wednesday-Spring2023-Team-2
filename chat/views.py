@@ -7,6 +7,9 @@ from django.contrib import messages
 from django.http import JsonResponse
 from django.views import View
 
+from login.views import get_user_friends_list
+
+
 import datetime
 
 from rest_framework.views import APIView
@@ -14,6 +17,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.decorators import login_required
 
 from .models import Chat_History, Connection_Model, Chat_Message, Group_Connection
+from login.models import Custom_User
 from .forms import Group_Connection_Form
 
 
@@ -23,6 +27,72 @@ def is_ajax(request):
 
 
 # Create your views here.
+
+
+class SearchFriendsView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get("search", "")
+
+        search_results = []
+
+        if query:
+            friends = get_user_friends_list(request.user)
+            user_results = Custom_User.objects.filter(
+                Q(
+                    id__in=[
+                        friend.to_user.id
+                        for friend in friends
+                        if friend.from_user == request.user
+                    ]
+                    + [
+                        friend.from_user.id
+                        for friend in friends
+                        if friend.to_user == request.user
+                    ]
+                )
+                & Q(username__icontains=query)
+            ).distinct()
+
+            for user in user_results:
+                connection = (
+                    Connection_Model.objects.filter(
+                        from_user=user,
+                        to_user=request.user,
+                        connection_status="Accepted",
+                    ).first()
+                    or Connection_Model.objects.filter(
+                        from_user=request.user,
+                        to_user=user,
+                        connection_status="Accepted",
+                    ).first()
+                )
+
+                search_results.append(
+                    {
+                        "id": user.id,
+                        "username": user.username,
+                        "connection_id": connection.id,
+                        "type": "user",
+                    }
+                )
+
+            group_results = Group_Connection.objects.filter(
+                Q(members__id=request.user.id) & Q(group_name__icontains=query)
+            ).distinct()
+
+            for group in group_results:
+                connection = group.connection_id_for_group
+                search_results.append(
+                    {
+                        "id": group.id,
+                        "group_name": group.group_name,
+                        "group_id": group.id,
+                        "connection_id": connection.id,
+                        "type": "group",
+                    }
+                )
+
+        return JsonResponse({"search_results": search_results})
 
 
 def get_friends_info(request):
@@ -74,21 +144,6 @@ def get_num_new_messages(request):
 
 @login_required
 def chat_page(request):
-    # friends = get_friends_info(request)
-    # friends = friends.order_by('-latest_message_time')
-    # friend_object = [
-    #     (
-    #         friend.get_friend(request.user),
-    #         friend,
-    #     )
-    #     for friend in friends
-    # ]
-
-    # context = {
-    #     "friends": friends,
-    #     "friend_object": friend_object,
-    # }
-
     return render(request, "pages/chat.html")
 
 
@@ -148,22 +203,9 @@ def get_chat_connections_list_view(request):
     if is_ajax(request):
         friends = get_friends_info(request)
         friends = friends.order_by("-latest_message_time")
-
-        # friends = friends.order_by("-get_chat_history__latest_message_time")
-        # print(friends[0].get_chat_history.all()[0].history.filter(~Q(user=request.user)).filter(~Q(seen_by__username__contains=request.user.username)).count())
-        # friend_object = [
-        #     (
-        #         friend.get_friend(request.user),
-        #         friend,
-        #         friend.get_chat_history.all()[0]
-        #         .history.filter(~Q(user=request.user))
-        #         .filter(~Q(seen_by__username__contains=request.user.username))
-        #         .count(),
-        #     )
-        #     for friend in friends
-        # ]
-
         friend_object = []
+        has_unread_messages = False
+
         for friend in friends:
             try:
                 unread_msg_count = (
@@ -177,6 +219,9 @@ def get_chat_connections_list_view(request):
                 unread_msg_count = 0
                 latest_message = ""
 
+            if unread_msg_count:
+                has_unread_messages = True
+
             friend_object.append(
                 (
                     friend.get_friend(request.user),
@@ -185,6 +230,9 @@ def get_chat_connections_list_view(request):
                     latest_message,
                 )
             )
+
+        request.user.has_unread_messages = has_unread_messages
+        request.user.save()
 
         contents = {
             "friends": friends,
@@ -216,7 +264,8 @@ def update_msg_seen_view(request, message_id):
 class Get_Chat_Group_Creation_View(View):
     def get(self, request, connection_id):
         if is_ajax(request):
-            chat_group_creation_form = Group_Connection_Form()
+            friends = get_user_friends(request.user)
+            chat_group_creation_form = Group_Connection_Form(friends=friends)
             if int(connection_id):
                 group_ = Connection_Model.objects.get(id=connection_id).group
                 chat_group_creation_form = Group_Connection_Form(instance=group_)
@@ -256,13 +305,13 @@ class Get_Chat_Group_Creation_View(View):
                         group_.group_name = chat_group_creation_form.cleaned_data[
                             "group_name"
                         ]
-                        group_.members.set(
-                            chat_group_creation_form.cleaned_data["members"]
-                        )
                         if request.FILES.get("profile_picture"):
                             group_.profile_picture = request.FILES.get(
                                 "profile_picture"
                             )
+                        members = list(chat_group_creation_form.cleaned_data["members"])
+                        members.apend(request.user)
+                        group_.members.set(members)
                         group_.save()
 
                     else:
@@ -272,13 +321,13 @@ class Get_Chat_Group_Creation_View(View):
                                 "group_name"
                             ],
                         )
-                        group_.members.set(
-                            chat_group_creation_form.cleaned_data["members"]
-                        )
                         if request.FILES.get("profile_picture"):
                             group_.profile_picture = request.FILES.get(
                                 "profile_picture"
                             )
+                        members = list(chat_group_creation_form.cleaned_data["members"])
+                        members.append(request.user)
+                        group_.members.set(members)
                         group_.save()
                 except Exception as e:
                     return JsonResponse(
@@ -349,3 +398,47 @@ def exit_group_view(request, connection_id):
         )
     else:
         return HttpResponse("Thou Shall not Enter!!")
+
+
+##TODO: Delete ONLY IF model idea works
+# def get_unread_messages_count(request):
+#     friends = get_friends_info(request)
+#     unread_msg_count = (
+#         friend.get_chat_history.history.filter(~Q(user=request.user))
+#         .filter(~Q(seen_by__username__contains=request.user.username))
+#         .count()
+#     )
+
+
+def add_message_notification_view(request):
+    if is_ajax(request):
+        # print(request.user.has_unread_messages)
+        if request.user.is_authenticated and request.user.has_unread_messages:
+            return JsonResponse({"pending": "true"})
+        return JsonResponse({"pending": "false"})
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
+
+
+def update_user_pending_status_view(request):
+    if is_ajax(request):
+        request.user.has_unread_messages = True
+        request.user.save()
+        return JsonResponse({"pending": "true"})
+    else:
+        return HttpResponse("Thou Shall not Enter!!")
+
+
+def get_user_friends(user):
+    friends = (
+        Custom_User.objects.filter(
+            Q(connection_requests_received__from_user=user)
+            & Q(connection_requests_received__connection_status="Accepted")
+        )
+        | Custom_User.objects.filter(
+            Q(connection_requests_sent__to_user=user)
+            & Q(connection_requests_sent__connection_status="Accepted")
+        )
+    ).distinct()
+
+    return friends
