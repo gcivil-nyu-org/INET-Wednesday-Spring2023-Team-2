@@ -18,6 +18,8 @@ from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.mail import send_mail
 from django.core import mail
+from datetime import timezone
+from posts.models import Noti_Model
 
 from login.models import Custom_User
 from login.tokens import account_activation_token, password_reset_token
@@ -877,3 +879,18 @@ class TestBlockAndUnblockFriend(TestCase):
                 "message": "You don't have permission to unblock this user.",
             },
         )
+
+
+class TestNotificationPage(TestCase):
+    def setUp(self):
+        self.user = Custom_User.objects.create_user(
+            username="testuser",
+            email="testuser@example.com",
+            password="testpass123",
+        )
+
+    def test_notification_page(self):
+        self.client.login(username="testuser", password="testpass123")
+        response = self.client.get(reverse("account:notifications"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "pages/notification_page.html")
