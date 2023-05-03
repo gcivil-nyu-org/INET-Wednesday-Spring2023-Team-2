@@ -268,7 +268,7 @@ class Get_Chat_Group_Creation_View(View):
             chat_group_creation_form = Group_Connection_Form(friends=friends)
             if int(connection_id):
                 group_ = Connection_Model.objects.get(id=connection_id).group
-                chat_group_creation_form = Group_Connection_Form(instance=group_)
+                chat_group_creation_form = Group_Connection_Form(instance=group_, friends=friends)
 
             contents = {
                 "chat_group_creation_form": chat_group_creation_form,
@@ -310,7 +310,7 @@ class Get_Chat_Group_Creation_View(View):
                                 "profile_picture"
                             )
                         members = list(chat_group_creation_form.cleaned_data["members"])
-                        members.apend(request.user)
+                        members.append(request.user)
                         group_.members.set(members)
                         group_.save()
 
