@@ -143,7 +143,12 @@ class Noti_Model(models.Model):
         ("At", "At"),
         ("Comment", "Comment"),
     ]
-    content_text = models.CharField(max_length=500, default="empty comment")
+    related_comment = models.ForeignKey(
+        Comments_Model,
+        on_delete=models.CASCADE,
+        related_name="related_noti_comment",
+        null=True,
+    )
     noti_type = models.CharField(
         max_length=20, choices=noti_type_options, default="Invalid"
     )
@@ -160,4 +165,6 @@ class Noti_Model(models.Model):
             + self.post_at.id.__str__()
             + "//type: "
             + self.noti_type.__str__()
+            + "//time: "
+            + self.created_at.__str__()
         )
