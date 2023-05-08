@@ -217,7 +217,9 @@ def show_analytics(request):
     if total_votes == 0:
         percentage_list = [0 for option in options_]
     else:
-        percentage_list = [option.votes / total_votes * 100 for option in options_]
+        percentage_list = [
+            round(option.votes / total_votes * 100, 2) for option in options_
+        ]
 
     option_percentage_list = zip(options_, percentage_list)
 
