@@ -25,6 +25,17 @@ class Command(BaseCommand):
             "test_user3",
             "test_user4",
             "test_user5",
+            "ajt9616",
+            "bc3177",
+            "jsw9232",
+            "jz5348",
+            "jg6269",
+            "lre250",
+            "mm13064",
+            "ng2451",
+            "rs8117",
+            "vs2476",
+            "yc3346",
         ]
         for user in users:
             if not Custom_User.objects.filter(username=user).exists():
