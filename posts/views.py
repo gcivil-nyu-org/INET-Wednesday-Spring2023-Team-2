@@ -586,7 +586,7 @@ class CommentsView(View):
                             is_read=False,
                         ).first()
 
-                        if not noti_at:
+                        if not noti_at and post_.created_by != target:
                             noti_at = Noti_Model.objects.create(
                                 recipient=target,
                                 sender=request.user,
@@ -602,6 +602,7 @@ class CommentsView(View):
                 comment_text = re.sub(r"@(\w+)", check_mention_user_exist, comment_text)
                 comment_text = comment_text.replace("\r\n", "<br>")
                 comments_.comment_text = comment_text
+                comments_.save()
                 return JsonResponse({"commment": "success"})
         else:
             return HttpResponse("Thou Shall not Enter!!")
