@@ -217,7 +217,9 @@ def show_analytics(request):
     if total_votes == 0:
         percentage_list = [0 for option in options_]
     else:
-        percentage_list = [option.votes / total_votes * 100 for option in options_]
+        percentage_list = [
+            round(option.votes / total_votes * 100, 2) for option in options_
+        ]
 
     option_percentage_list = zip(options_, percentage_list)
 
@@ -550,7 +552,7 @@ class CommentsView(View):
                     question=post_, chosen_by=request.user
                 ).first()
                 comment_text = comments_form.cleaned_data["comment_text"]
-
+                comments_.save()
                 # Comment notification
                 noti_post = Noti_Model.objects.filter(
                     recipient=post_.created_by,
@@ -564,7 +566,7 @@ class CommentsView(View):
                     noti_post = Noti_Model.objects.create(
                         recipient=post_.created_by,
                         sender=request.user,
-                        content_text=comment_text,
+                        related_comment=comments_,
                         post_at=post_,
                         noti_type="Comment",
                     )
@@ -588,7 +590,7 @@ class CommentsView(View):
                             noti_at = Noti_Model.objects.create(
                                 recipient=target,
                                 sender=request.user,
-                                content_text=comment_text,
+                                related_comment=comments_,
                                 post_at=post_,
                                 noti_type="At",
                             )
@@ -600,7 +602,6 @@ class CommentsView(View):
                 comment_text = re.sub(r"@(\w+)", check_mention_user_exist, comment_text)
                 comment_text = comment_text.replace("\r\n", "<br>")
                 comments_.comment_text = comment_text
-                comments_.save()
                 return JsonResponse({"commment": "success"})
         else:
             return HttpResponse("Thou Shall not Enter!!")

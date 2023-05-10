@@ -915,7 +915,9 @@ def decline_friend_request(request, uid):
 @login_required
 def notification_page(request):
     # Retrieve all notifications for the current user
-    notifications = Noti_Model.objects.filter(recipient=request.user)
+    notifications = Noti_Model.objects.filter(recipient=request.user).order_by(
+        "created_at"
+    )
 
     notifications_results = []
 

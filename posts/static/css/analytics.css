@@ -1,13 +1,16 @@
 .wrapper {
     width:100%;
-
+    overflow: auto;
 }
 
 .bars {
     position: relative; /* add this to allow positioning of the line */
     border: 2px solid black;
     background-color: snow;
-    margin: 15%;
+    margin-top: 5%;
+    margin-bottom: 2%;
+    margin-left: 15%;
+    margin-right: 15%;
 }
 
 .bars div {

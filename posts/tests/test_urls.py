@@ -98,7 +98,7 @@ class ViewsFunctions(TestCase):
         response = self.client.post(
             reverse("posts:create_poll"),
             {
-                "prefix": "Show of hands if",
+                "prefix": "Show of hands",
                 "category": "sports",
                 "delay": "0",
                 "choice1": "Option 1",
@@ -110,7 +110,7 @@ class ViewsFunctions(TestCase):
         self.assertEqual(response.status_code, 302)
 
         post1 = Post_Model.objects.last()
-        self.assertEqual(post1.question_text, "Show of hands if")
+        self.assertEqual(post1.question_text, "Show of hands")
         self.assertEqual(post1.category, ["sports"])
         self.assertEqual(post1.created_by, user)
 

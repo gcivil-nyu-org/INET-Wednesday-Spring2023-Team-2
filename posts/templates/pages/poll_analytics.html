@@ -1,7 +1,5 @@
-
-<h2 class="question">{{ post.question_text }}</h2>
-<br>
 <div class="wrapper">
+    <h2 class="question">{{ post.question_text }}</h2>
     <div class="bars">
         {% for option, percentage in option_percentage_list %}
         <div style="background-color: #{{ option.color }}; width: {{ percentage }}%;">
