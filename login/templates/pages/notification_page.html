@@ -36,7 +36,7 @@
                 </a>
                 <span class="text-muted">at {{ noti.notification.created_at }}</span>
                 <br>
-                <span class="noti-content-text">{{noti.notification.related_comment.comment_text}}</span>
+                <span class="noti-content-text">{{noti.notification.related_comment.comment_text | safe }}</span>
                 {% endif %}
               {% elif noti.notification.noti_type == 'Comment' %}
                 {% if noti.notification.sender != request.user %}
@@ -52,7 +52,7 @@
                 </a>
                 <span class="text-muted">at {{ noti.notification.created_at }}</span>
                 <br>
-                <tabs><span class="noti-content-text">{{noti.notification.related_comment.comment_text}}</span>
+                <tabs><span class="noti-content-text">{{noti.notification.related_comment.comment_text | safe }}</span>
                 {% endif %}
               {% endif %}
               <br>
