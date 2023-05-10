@@ -20,11 +20,9 @@ from .models import Post_Model, Options_Model
 
 class PollForm(forms.ModelForm):
     PREFIX_OPTIONS = [
-        ("Show of hands if", "Show of hands if"),
+        ("Show of hands", "Show of hands"),
         ("Would you rather", "Would you rather"),
         ("Do you prefer", "Do you prefer"),
-        ("Have you ever", "Have you ever"),
-        ("How important is", "How important is"),
         ("own_ques", "Type your own question ..."),
     ]
     prefix = forms.ChoiceField(choices=PREFIX_OPTIONS)

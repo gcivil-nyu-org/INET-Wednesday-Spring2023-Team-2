@@ -36,10 +36,10 @@ class Post_Model(models.Model):
     # view_time = models.DateTimeField(auto_now_add=True, blank=True)
 
     category_list = [
+        ("misc", "Misc"),
         ("sports", "Sports"),
         ("fantasy", "Fantasy"),
         ("entertainment", "Entertainment"),
-        ("misc", "Misc"),
     ]
     category = MultiSelectField(
         max_length=100, choices=category_list, max_choices=3, default="misc"
