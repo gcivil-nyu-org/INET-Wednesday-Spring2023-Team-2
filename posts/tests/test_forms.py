@@ -12,7 +12,7 @@ class TestCommentFormValid(TestCase):
 class TestPollFormValid(TestCase):
     def test_poll_form_valid(self):
         form_data = {
-            "prefix": "Show of hands if",
+            "prefix": "Show of hands",
             "question": "Testing questions",
             "delay": "8",
             "category": "entertainment",
@@ -40,7 +40,7 @@ class TestPollFormValid(TestCase):
 
     def test_poll_form_invalid_no_required(self):
         form_data = {
-            "prefix": "Show of hands if",
+            "prefix": "Show of hands",
             "question": "",
             "delay": "8",
             "category": "entertainment",
