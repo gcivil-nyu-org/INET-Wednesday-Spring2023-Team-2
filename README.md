@@ -3,7 +3,17 @@
 [![Build Status](https://app.travis-ci.com/gcivil-nyu-org/INET-Wednesday-Spring2023-Team-2.svg?branch=develop)](https://app.travis-ci.com/gcivil-nyu-org/INET-Wednesday-Spring2023-Team-2)
 [![Coverage Status](https://coveralls.io/repos/github/gcivil-nyu-org/INET-Wednesday-Spring2023-Team-2/badge.svg?branch=develop)](https://coveralls.io/github/gcivil-nyu-org/INET-Wednesday-Spring2023-Team-2?branch=develop)
 
+## NYU-CS6063-INET-Wednesday-Spring2023-Team-2
+[Hariharan Nagasubramaniam](https://github.com/Soester10)<br>
+[Danny Nie](https://github.com/eggers09)<br>
+[Linyue Shen](https://github.com/ls4934)<br>
+[Elise Siino](https://github.com/esiino1)<br>
+[Xiao Lin](https://github.com/xiaolin-zhong)
 
+## Description
+A fun, social app for polling and connecting with people. Allows registered users to create and interact with existing polls, comment your opinions, reply to/ upvote/ downvote other comments. You can sent friend requests to other users and connect with them. Our chat functionality allows users to communicate with each other and discuss about their choices in the polls. We have also added a timed delay on poll results to induce more interaction and a live comment section and debate and share your opinions. We also have a group chat functionality that allows users to from a smaller and restricted section for the included users to discuss.
+
+## Local Setup
 Backend setup (Ideally use Python 3.8 +)
 ```
 $ python3 -m venv python_venv
@@ -49,3 +59,17 @@ Runserver
 ```
 $ python manage.py runserver
 ```
+
+## AWS Setup
+Follow [this](https://testdriven.io/blog/django-elastic-beanstalk/)
+
+Sync env variables with Elastic Beanstalk
+```
+eb setenv 'cat showofhands/.env | sed '/^#/ d' | sed '/^$/ d'
+```
+
+Note: 
+> &#8594; Replace POSTGRES credentials in your .env file<br>
+> &#8594; CI/CD setup with travis will deploy once PR is merged<br>
+> &#8594; S3 for file storage will be configured once deployed<br>
+> &#8594; T2 Redis for cache memory will be configured once deployed
