@@ -11,7 +11,7 @@
 [Xiao Lin](https://github.com/xiaolin-zhong)
 
 ## Description
-A fun, social app for polling and connecting with people...
+A fun, social app for polling and connecting with people. Allows registered users to create and interact with existing polls, comment your opinions, reply to/ upvote/ downvote other comments. You can sent friend requests to other users and connect with them. Our chat functionality allows users to communicate with each other and discuss about their choices in the polls. We have also added a timed delay on poll results to induce more interaction and a live comment section and debate and share your opinions. We also have a group chat functionality that allows users to from a smaller and restricted section for the included users to discuss.
 
 ## Local Setup
 Backend setup (Ideally use Python 3.8 +)
